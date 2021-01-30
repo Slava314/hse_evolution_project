@@ -21,8 +21,6 @@ add_executable(evolution_project
         source/Game.cpp
         source/Player.cpp)
 
-
 include_directories(include)
 
 target_link_libraries(evolution_project sfml-graphics sfml-audio)
-
