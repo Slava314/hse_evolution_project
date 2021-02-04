@@ -24,6 +24,8 @@ public:
 
     void set_outline_thickness(float thickness);
 
+    sf::Vector2f get_size();
+
     sf::Vector2f const &get_position();
 
     bool is_clicked(sf::Vector2i const &mouse_position);

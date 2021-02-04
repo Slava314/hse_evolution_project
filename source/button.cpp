@@ -36,6 +36,10 @@ sf::Vector2f const &Button::get_position() {
     return shape.getPosition();
 }
 
+sf::Vector2f Button::get_size() {
+    return shape.getSize();
+}
+
 
 sf::Text const &Text_Button::get_text() {
     return text;
