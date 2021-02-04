@@ -10,6 +10,7 @@ int main() {
                                   sf::Style::Titlebar | sf::Style::Close);
     start_window.setPosition({50, 50});
 
+
     sf::Font font;
     font.loadFromFile("../times.ttf");
 
@@ -19,11 +20,14 @@ int main() {
         sf::Vector2f((start_window.getSize().x - start_button.get_shape().getSize().x) / 2.0,
                      (start_window.getSize().y - start_button.get_shape().getSize().y) / 2.0));
 
+
     bool new_window = false;
 
+    bool new_window = 0;
     while (start_window.isOpen()) {
         sf::Event event;
         while (start_window.pollEvent(event)) {
+
             switch (event.type) {
                 case sf::Event::Closed:
                     start_window.close();
@@ -34,11 +38,16 @@ int main() {
                             new_window = true;
                             start_window.close();
                         }
+
                     }
                     break;
                 default:
                     break;
             }
+
+//            if (event.type == sf::Event::Resized) {
+//                start_button.set_text_size(32);
+//            }
         }
         start_window.clear();
         start_window.draw(start_button.get_shape());
@@ -101,6 +110,7 @@ int main() {
         int left_point_animals = (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size() + 1) -
                                   free_space * player_animals.size()) /
                                  2;
+
 
         while (game_window.isOpen()) {
             sf::Event event;
