@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "button.h"
+#include <vector>
 
 int main() {
     constexpr int WINDOW_WIDTH = 1800;
@@ -22,8 +23,7 @@ int main() {
 
 
     bool new_window = false;
-
-    bool new_window = 0;
+    
     while (start_window.isOpen()) {
         sf::Event event;
         while (start_window.pollEvent(event)) {
@@ -102,6 +102,7 @@ int main() {
         }
         int selected_card = -1;
 
+
         std::vector<Button> player_animals;
         Button place_for_new_card({CARD_WIDTH, CARD_HEIGHT});
         place_for_new_card.set_color(sf::Color::Black);
@@ -110,6 +111,17 @@ int main() {
         int left_point_animals = (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size() + 1) -
                                   free_space * player_animals.size()) /
                                  2;
+
+
+        std::vector<sf::RectangleShape> player_cards(6, sf::RectangleShape({140, 210}));
+        for (int i = 0; i < 6; ++i) {
+            player_cards[i].setFillColor(sf::Color(73, 215, 115));
+            player_cards[i].setOutlineThickness(5);
+            player_cards[i].setOutlineColor(sf::Color(4, 137, 44));
+
+            player_cards[i].setPosition((game_window.getSize().x - player_cards[i].getSize().x) / 6.0f * i + 125,
+                                   (game_window.getSize().y  - player_cards[i].getSize().y) / 6.0f * 5);
+        }
 
 
         while (game_window.isOpen()) {
@@ -204,6 +216,7 @@ int main() {
             game_window.draw(deck_shape);
             game_window.draw(deck_text);
             for (auto card : player_cards) {
+
                 game_window.draw(card.get_shape());
             }
             for (auto card : player_animals) {
@@ -213,6 +226,7 @@ int main() {
                 game_window.draw(place_for_new_card.get_shape());
             }
             game_window.draw(left);
+
             game_window.display();
         }
     }
