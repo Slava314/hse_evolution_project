@@ -70,7 +70,9 @@ int main() {
         left.setPosition(0, WINDOW_HEIGHT / 4);
         left.setFillColor(sf::Color(55, 55, 55));
 
+
         sf::Text food_count("food: 0", font);
+
 
         sf::RectangleShape deck_shape({CARD_WIDTH, CARD_HEIGHT});
         deck_shape.setFillColor(sf::Color(73, 215, 115));
@@ -78,6 +80,7 @@ int main() {
         deck_shape.setOutlineColor(sf::Color(4, 137, 44));
         deck_shape.setPosition((WINDOW_WIDTH - CARD_WIDTH) / 2.0,
                                (WINDOW_HEIGHT - CARD_HEIGHT) / 2.0 - 150);
+
 
         sf::Text deck_text("deck: 0",
                            font);  // TODO get number of cards in deck
@@ -113,14 +116,18 @@ int main() {
                                  2;
 
 
-        std::vector<sf::RectangleShape> player_cards(6, sf::RectangleShape({140, 210}));
-        for (int i = 0; i < 6; ++i) {
-            player_cards[i].setFillColor(sf::Color(73, 215, 115));
-            player_cards[i].setOutlineThickness(5);
-            player_cards[i].setOutlineColor(sf::Color(4, 137, 44));
 
-            player_cards[i].setPosition((game_window.getSize().x - player_cards[i].getSize().x) / 6.0f * i + 125,
-                                   (game_window.getSize().y  - player_cards[i].getSize().y) / 6.0f * 5);
+        std::vector<Button> player_cards(6, Button({CARD_WIDTH, CARD_HEIGHT}));
+        int free_space = (game_window.getSize().x - player_cards.size() * CARD_WIDTH) /
+                         (player_cards.size() + 1);
+        for (int i = 0; i < player_cards.size(); ++i) {
+            player_cards[i].set_color(sf::Color(73, 215, 115));
+            player_cards[i].set_outline_thickness(5);
+            player_cards[i].set_outline_color(sf::Color(4, 137, 44));
+
+            player_cards[i].set_position(sf::Vector2f(
+                    CARD_WIDTH * i + free_space * (i + 1),
+                    (game_window.getSize().y - CARD_HEIGHT) / 6.0f * 5));
         }
 
 
