@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "button.h"
+#include <vector>
 
 int main() {
     sf::RenderWindow start_window(sf::VideoMode(1500, 1000), "Start_window", sf::Style::Default);
@@ -60,9 +61,20 @@ int main() {
 
         sf::Text deck_text("deck: 0", font); //need number of cards
 
-        deck_text.setPosition(deck_shape.getPosition().x + (deck_shape.getSize().x - deck_text.getGlobalBounds().width) / 2.0f,
-                              deck_shape.getPosition().y);
+        deck_text.setPosition(
+                deck_shape.getPosition().x + (deck_shape.getSize().x - deck_text.getGlobalBounds().width) / 2.0f,
+                deck_shape.getPosition().y);
 
+
+        std::vector<sf::RectangleShape> player_cards(6, sf::RectangleShape({140, 210}));
+        for (int i = 0; i < 6; ++i) {
+            player_cards[i].setFillColor(sf::Color(73, 215, 115));
+            player_cards[i].setOutlineThickness(5);
+            player_cards[i].setOutlineColor(sf::Color(4, 137, 44));
+
+            player_cards[i].setPosition((game_window.getSize().x - player_cards[i].getSize().x) / 6.0f * i + 125,
+                                   (game_window.getSize().y  - player_cards[i].getSize().y) / 6.0f * 5);
+        }
 
 
         while (game_window.isOpen()) {
@@ -76,6 +88,9 @@ int main() {
             game_window.clear();
             game_window.draw(deck_shape);
             game_window.draw(deck_text);
+            for (auto card : player_cards) {
+                game_window.draw(card);
+            }
             game_window.display();
         }
     }
