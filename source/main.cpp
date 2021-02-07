@@ -217,6 +217,7 @@ int main() {
                         }
                     }
                 }
+
             }
 
             game_window.clear();
@@ -239,16 +240,7 @@ int main() {
         }
       }
 
-      game_window.clear();
-      game_window.draw(deck_shape);
-      game_window.draw(deck_text);
-      for (auto card : player_cards) {
-        game_window.draw(card.get_shape());
-      }
-      game_window.draw(left);
-      game_window.display();
-    }
-  }
+
 
   return 0;
 }

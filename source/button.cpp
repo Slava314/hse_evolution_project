@@ -38,9 +38,11 @@ sf::Vector2f const &Button::get_position() {
 sf::Vector2f Button::get_size() {
   return shape.getSize();
 }
+
 void Button::set_scale(sf::Vector2f scale) {
   shape.setScale(scale);
 }
+
 void Button::activate() {
   is_active = 1;
   sf::Color color = shape.getFillColor();
@@ -50,6 +52,7 @@ void Button::activate() {
   color.a = 255;
   shape.setOutlineColor(color);
 }
+
 void Button::deactivate() {
   is_active = 0;
   sf::Color color = shape.getFillColor();
@@ -129,4 +132,8 @@ void Text_Button::deactivate() {
 
 void Text_Button::set_text_color(sf::Color color) {
     text.setFillColor(color);
+}
+
+void Text_Button::set_text_color(sf::Color color) {
+  text.setFillColor(color);
 }
