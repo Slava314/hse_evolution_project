@@ -9,8 +9,7 @@ add_compile_options(-O3 -Wall -Werror -Wformat-security -Wignored-qualifiers -Wi
         -Wmissing-field-initializers -Wctor-dtor-privacy -Wnon-virtual-dtor
         -Wold-style-cast -Woverloaded-virtual -Wsign-promo -Weffc++)
 
-find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
-
+find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
 add_executable(evolution_project
         source/main.cpp
@@ -25,4 +24,5 @@ add_executable(evolution_project
 include_directories(include)
 
 target_link_libraries(evolution_project sfml-graphics sfml-audio)
+
 
