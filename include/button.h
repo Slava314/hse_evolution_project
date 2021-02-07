@@ -43,11 +43,10 @@ class Text_Button : public Button {
 
   void set_position(sf::Vector2f const &position_) override;
   void set_text_size(int size);
+  void set_text_color(sf::Color color);
   void set_scale(sf::Vector2f scale) override;
   void activate() override;
   void deactivate() override;
-
-
 
   sf::Text const &get_text();
 

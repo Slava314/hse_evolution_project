@@ -7,7 +7,8 @@ int main() {
   constexpr int WINDOW_HEIGHT = 1000;
 
   sf::RenderWindow
-      start_window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window", sf::Style::Titlebar | sf::Style::Close);
+      start_window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
+                   sf::Style::Titlebar | sf::Style::Close);
   start_window.setPosition({50, 50});
 
   sf::Font font;
@@ -50,7 +51,8 @@ int main() {
     //TODO создание игры с колодой игроками и тд наверное в другой файл вообще всё надо вынести
 
     sf::RenderWindow
-        game_window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window", sf::Style::Titlebar | sf::Style::Close);
+        game_window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
+                    sf::Style::Titlebar | sf::Style::Close);
 
     constexpr int CARD_WIDTH = 100;
     constexpr int CARD_HEIGHT = 150;
@@ -76,14 +78,24 @@ int main() {
 
     std::vector<Button> player_cards(6, Button({CARD_WIDTH, CARD_HEIGHT}));
     int free_space = 20;
-    int left_point = (WINDOW_WIDTH - CARD_WIDTH * player_cards.size() - free_space * (player_cards.size() - 1)) / 2;
+    int left_point_cards =
+        (WINDOW_WIDTH - CARD_WIDTH * player_cards.size() - free_space * (player_cards.size() - 1)) / 2;
     for (int i = 0; i < player_cards.size(); ++i) {
       player_cards[i].set_color(sf::Color(73, 215, 115));
       player_cards[i].set_outline_thickness(5);
       player_cards[i].set_outline_color(sf::Color(4, 137, 44));
-      player_cards[i].set_position(sf::Vector2f(left_point + (free_space + CARD_WIDTH) * i,
+      player_cards[i].set_position(sf::Vector2f(left_point_cards + (free_space + CARD_WIDTH) * i,
                                                 WINDOW_HEIGHT - CARD_HEIGHT - 50));
     }
+    int selected_card = -1;
+
+    std::vector<Button> player_animals;
+    Button place_for_new_card({CARD_WIDTH, CARD_HEIGHT});
+    place_for_new_card.set_color(sf::Color::Black);
+    place_for_new_card.set_outline_thickness(5);
+    place_for_new_card.set_outline_color(sf::Color(4, 137, 44));
+    int left_point_animals =
+        (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size() + 1) - free_space * player_animals.size()) / 2;
 
     while (game_window.isOpen()) {
       sf::Event event;
@@ -94,16 +106,78 @@ int main() {
         if (event.type == sf::Event::MouseButtonPressed) {
           if (event.mouseButton.button == sf::Mouse::Left) {
             for (int i = 0; i < player_cards.size(); ++i) {
-              if (player_cards[i].is_clicked(sf::Mouse::getPosition(game_window))) {
-//                player_cards.erase(std::next(player_cards.begin(), i));
-//                left_point =
-//                    (WINDOW_WIDTH - CARD_WIDTH * player_cards.size() - free_space * (player_cards.size() - 1)) / 2;
-//                for (int j = 0; j < player_cards.size(); ++j) {
-//                  player_cards[j].set_position(sf::Vector2f(left_point + (free_space + CARD_WIDTH) * j,
-//                                                            WINDOW_HEIGHT - CARD_HEIGHT - 50));
-//                }
-                player_cards[i].deactivate();
-                break;
+              if (player_cards[i].is_clicked(sf::Mouse::getPosition(game_window)) &&
+                  player_cards[i].is_active) {
+                if (selected_card != i) {
+                  selected_card = i;
+                  for (int j = 0; j < player_cards.size(); ++j) {
+                    if (i != j) {
+                      player_cards[j].deactivate();
+                    }
+                  }
+                  left_point_animals =
+                      (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size() + 1)
+                          - free_space * (player_animals.size())) / 2;
+                  place_for_new_card.set_position(sf::Vector2f(
+                      left_point_animals + (free_space + CARD_WIDTH) * player_animals.size(),
+                      WINDOW_HEIGHT - CARD_HEIGHT - 300));
+                  for (int j = 0; j < player_animals.size(); ++j) {
+                    player_animals[j].set_position(sf::Vector2f(
+                        left_point_animals + (free_space + CARD_WIDTH) * j,
+                        WINDOW_HEIGHT - CARD_HEIGHT - 300));
+                  }
+
+                  break;
+                } else {
+                  selected_card = -1;
+                  player_cards[i].deactivate();
+                  for (int j = 0; j < player_cards.size(); ++j) {
+                    player_cards[j].activate();
+                  }
+
+                  left_point_animals =
+                      (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size()) -
+                          free_space * (player_animals.size() - 1))
+                          / 2;
+                  for (int j = 0; j < player_animals.size(); ++j) {
+                    player_animals[j].set_position(sf::Vector2f(
+                        left_point_animals + (free_space + CARD_WIDTH) * j,
+                        WINDOW_HEIGHT - CARD_HEIGHT - 300));
+                  }
+                }
+
+              }
+
+            }
+            if (place_for_new_card.is_clicked(sf::Mouse::getPosition(game_window))) {
+              player_cards.erase(std::next(player_cards.begin(), selected_card));
+              selected_card = -1;
+
+              left_point_cards =
+                  (WINDOW_WIDTH - CARD_WIDTH * player_cards.size() -
+                      free_space * (player_cards.size() - 1)) / 2;
+              for (int j = 0; j < player_cards.size(); ++j) {
+                player_cards[j].set_position(
+                    sf::Vector2f(left_point_cards + (free_space + CARD_WIDTH) * j,
+                                 WINDOW_HEIGHT - CARD_HEIGHT - 50));
+              }
+
+              player_animals.push_back(Button({CARD_WIDTH, CARD_HEIGHT}));
+              player_animals.back().set_color(sf::Color(73, 215, 115));
+              player_animals.back().set_outline_thickness(5);
+              player_animals.back().set_outline_color(sf::Color(4, 137, 44));
+
+              left_point_animals =
+                  (WINDOW_WIDTH - CARD_WIDTH * (player_animals.size()) -
+                      free_space * (player_animals.size() - 1)) / 2;
+              for (int j = 0; j < player_animals.size(); ++j) {
+                player_animals[j].set_position(sf::Vector2f(
+                    left_point_animals + (free_space + CARD_WIDTH) * j,
+                    WINDOW_HEIGHT - CARD_HEIGHT - 300));
+              }
+
+              for (int j = 0; j < player_cards.size(); ++j) {
+                player_cards[j].activate();
               }
             }
           }
@@ -115,6 +189,12 @@ int main() {
       game_window.draw(deck_text);
       for (auto card : player_cards) {
         game_window.draw(card.get_shape());
+      }
+      for (auto card : player_animals) {
+        game_window.draw(card.get_shape());
+      }
+      if (selected_card != -1) {
+        game_window.draw(place_for_new_card.get_shape());
       }
       game_window.draw(left);
       game_window.display();
