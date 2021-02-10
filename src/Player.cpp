@@ -1,10 +1,14 @@
 //
 // Created by Андрей Шеремеев on 07.02.2021.
 //
-#include "Player.h"
 
-namespace {
+#include "Cards.h"
+#include "Animal.h"
+
+#include <string>
+
 struct Player {
+  std::string name;
   std::vector<std::unique_ptr<Card>> cards_in_hands;
   std::vector<Animal> animals_on_board;
 
@@ -29,5 +33,12 @@ struct Player {
     cards_in_hands.erase(cards_in_hands.begin() + which_card);
   }
 
+  bool can_make_move(){}
+
+
+  std::vector<std::unique_ptr<Card>> get_cards(){
+    return cards_in_hands;
+  }
+
+
 };
-}

@@ -8,7 +8,10 @@
 #include "Cards.h"
 #include "Animal.h"
 
+#include <string>
 struct Player {
+  std::string name;
+
   std::vector<std::unique_ptr<Card>> cards_in_hands;
   std::vector<Animal> animals_on_board;
 
@@ -19,6 +22,11 @@ struct Player {
   void use_card_as_animal(int which_card) {}
 
   void use_card_as_property(int which_card, int to_which_card) {}
+
+//  std::vector<std::unique_ptr<Card>> get_cards{};
+
+  bool can_make_move(){}
+
 };
 
 #endif //EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

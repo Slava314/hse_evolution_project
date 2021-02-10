@@ -11,11 +11,13 @@
 #include <random>
 #include <memory>
 
+#include "Game.h"
 #include "Properties.h"
 #include "Animal.h"
 #include "Board.h"
 #include "Cards.h"
 #include "Player.h"
+
 
 
 int main() {
@@ -28,8 +30,9 @@ int main() {
   //--------------------
 
 
-  Deck deck;
-  deck.generate_deck(cards_info);
+//  Deck deck;
+//
+//  deck.generate_deck(cards_info);
 //   assert(deck.deck.size() == MUST_BE_IN_DECK);
 
 
@@ -52,7 +55,11 @@ int main() {
 //  for (int kI = 0; kI < player1.cards_owning_in_hands(); ++kI) {
 //    std::cout << player1.cards_in_hands[kI] << " ";
 //  }
-Board board;
+//Board board;
+//Player ok;
+//Game g;
+//  std::vector<std::vector<std::unique_ptr<Animal>>> a;
+//  g.board.plyers_animals_on_board *a = g.players[0].animals_on_board;
 
 
 }
