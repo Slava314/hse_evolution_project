@@ -8,7 +8,7 @@ add_compile_options(-Wall -Wextra -Wshadow)
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
-add_executable(evolution_project src/main.cpp)
+add_executable(evolution_project source/main.cpp)
 #add_executable(try try.cpp)
 
 include_directories(include)
