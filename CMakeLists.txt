@@ -14,4 +14,3 @@ include_directories(include)
 
 target_link_libraries(evolution_project sfml-graphics sfml-audio)
 #target_link_libraries(try sfml-graphics sfml-audio)
-
