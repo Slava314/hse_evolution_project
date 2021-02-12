@@ -5,10 +5,11 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_PLAYER_H_
 #define EVOLUTION_PROJECT_INCLUDE_PLAYER_H_
 
-#include "Cards.h"
 #include "Animal.h"
-
+#include "Cards.h"
+#include <vector>
 #include <string>
+
 struct Player {
   std::string name;
 

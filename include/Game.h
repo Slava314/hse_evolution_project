@@ -14,15 +14,18 @@
 
 struct Game {
 
-  std::vector<Player> players;
-  Deck deck;
-  Board board;
+    std::vector<Player> players;
+    Deck deck;
+    Board board;
 
-  void shuffle_players(int quantity);
+    void shuffle_players(int quantity);
 
-  void start_game() {}
+    void start_game() {}
 
-
+    static Game &get_game() {
+        static Game game;
+        return game;
+    }
 
 };
 
