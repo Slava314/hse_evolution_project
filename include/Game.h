@@ -18,7 +18,7 @@ struct Game {
   Deck deck;
   Board board;
 
-  int shuffle_players(int quantity) {}
+  void shuffle_players(int quantity);
 
   void start_game() {}
 

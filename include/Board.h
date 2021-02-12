@@ -12,7 +12,7 @@
 
 struct Board {
 
-  std::vector<Animal> get_players_animals(Player player){}
+  std::vector<Animal> get_players_animals(Player player);
 
   //ждем Эмили для этого
 // TODO добавляем еды
