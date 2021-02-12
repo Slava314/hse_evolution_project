@@ -11,7 +11,6 @@ add_compile_options(-O3 -Wall -Werror -Wformat-security -Wignored-qualifiers -Wi
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
-
 add_executable(evolution_project
         source/main.cpp
         source/button.cpp
