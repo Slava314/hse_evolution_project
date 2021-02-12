@@ -1,65 +1,41 @@
-//
-// Created by Андрей Шеремеев on 30.01.2021.
-//
-
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <string>
-#include <cassert>
-#include <algorithm>
-#include <random>
-#include <memory>
-
-#include "Game.h"
-#include "Properties.h"
-#include "Animal.h"
-#include "Board.h"
-#include "Cards.h"
-#include "Player.h"
-
-
+#include <SFML/Graphics.hpp>
+#include "button.h"
 
 int main() {
-  // THESE IS IMPORTANT
-  constexpr int N = 3;
-  std::vector<std::pair<Properties, int>> cards_info(N);
-  cards_info[0] = {ЖИРОВОЙ_ЗАПАС, 8};
-  cards_info[1] = {БОЛЬШОЕ, 8};
-  cards_info[2] = {ТОПОТУН, 8};
-  //--------------------
+    sf::RenderWindow start_window(sf::VideoMode(1000, 800), "Start_window", sf::Style::Default);
+
+    sf::Font font;
+    font.loadFromFile("../times.ttf");
+
+    Text_Button start_button(sf::Vector2f(200, 40), "Start", font);
+    start_button.set_color(sf::Color(55, 55, 55));
+    start_button.set_position(
+            sf::Vector2f((start_window.getSize().x - start_button.get_shape().getSize().x) / 2.0,
+                         (start_window.getSize().y -
+                          start_button.get_shape().getSize().y) / 2.0));
+
+    //start_button.set_text_size(20);
+
+    while (start_window.isOpen()) {
+        sf::Event event;
+        while (start_window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                start_window.close();
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    if(start_button.is_clicked(sf::Mouse::getPosition(start_window))){
+                        start_window.close();
+                    }
+                }
+            }
+        }
 
 
-//  Deck deck;
-//
-//  deck.generate_deck(cards_info);
-//   assert(deck.deck.size() == MUST_BE_IN_DECK);
+        start_window.clear();
+        start_window.draw(start_button.get_shape());
+        start_window.draw(start_button.get_text());
+        start_window.display();
+    }
 
-
-//    for (int i = 0; i < deck.deck.size(); ++i) {
-//        std::cout << deck.deck[i]->property1 << " ";
-//    }
-//
-//    std::cout << std::endl;
-//    for (int i = 0; i < deck.deck.size(); ++i) {
-//        std::cout << deck.deck[i]->property2 << " ";
-//    }
-
-//---------
-
-//  Player player1;
-//  whoose_next_turn(1, 1);
-//  Deck d;
-//  d.generate_deck(cards_info);
-////  cards_delivery();
-//  for (int kI = 0; kI < player1.cards_owning_in_hands(); ++kI) {
-//    std::cout << player1.cards_in_hands[kI] << " ";
-//  }
-//Board board;
-//Player ok;
-//Game g;
-//  std::vector<std::vector<std::unique_ptr<Animal>>> a;
-//  g.board.plyers_animals_on_board *a = g.players[0].animals_on_board;
-
-
+    return 0;
 }
