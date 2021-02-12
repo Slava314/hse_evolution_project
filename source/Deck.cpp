@@ -36,10 +36,10 @@ void Deck::cards_delivery(Deck &deck, std::vector<Player> &players) {
       need_to_get = players[i].cards_in_hands.size() + 1;
     }
 
-    for (int i = 0; i < need_to_get; ++i) {
+    for (int j = 0; j < need_to_get; ++j) {
 //    std::move(end(deck.deck), end(deck.deck), std::inserter(player.cards_in_hands, end(player.cards_in_hands)));
-      players[i].cards_in_hands.push_back(nullptr);
-      std::swap(deck.deck_of_cards.back(), players[i].cards_in_hands.back());
+      players[j].cards_in_hands.push_back(nullptr);
+      std::swap(deck.deck_of_cards.back(), players[j].cards_in_hands.back());
       deck.deck_of_cards.pop_back();
     }
   }

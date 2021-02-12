@@ -27,7 +27,7 @@ struct Player {
 
   bool can_make_move();
 
-  std::vector<std::unique_ptr<Card>> get_cards();
+  std::vector<std::unique_ptr<Card>> const & get_cards() const;
 
 };
 

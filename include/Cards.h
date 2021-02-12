@@ -10,12 +10,13 @@ struct Card {
   Properties property = ДЕФОЛТНЫЙ;
   int extra_food = 0;
   explicit Card(Properties i) : property(i) {}
-  virtual ~Card() {};
+  Card(const Card &card){};
+//  virtual ~Card() {};
 };
 
 struct FatTissue : Card {
   explicit FatTissue(Properties i) : Card(i) {
-    bool is_it_full = 0;
+    [[maybe_unused]] bool is_it_full = 0;
   }
 
 };
@@ -30,6 +31,5 @@ struct Stomper : Card {
   explicit Stomper(Properties i) : Card(i) {
   }
 };
-
 
 #endif //EVOLUTION_PROJECT_INCLUDE_CARDS_H_
