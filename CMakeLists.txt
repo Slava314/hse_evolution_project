@@ -15,11 +15,11 @@ find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 add_executable(evolution_project
         source/main.cpp
         source/button.cpp
-        source/Animal.cpp
-        source/Board.cpp
-        source/Deck.cpp
-        source/Game.cpp
-        source/Player.cpp)
+        source/animal.cpp
+        source/board.cpp
+        source/deck.cpp
+        source/game.cpp
+        source/player.cpp)
 
 
 include_directories(include)
