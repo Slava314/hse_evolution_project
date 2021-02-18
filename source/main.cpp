@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "button.h"
+#include <vector>
 
 int main() {
     constexpr int WINDOW_WIDTH = 1800;

@@ -7,6 +7,7 @@
 #include <utility>
 
 class Button {
+  
 public:
     bool is_active = 1;
 
@@ -61,3 +62,4 @@ private:
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H
+
