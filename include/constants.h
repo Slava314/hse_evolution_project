@@ -3,8 +3,8 @@
 
 constexpr unsigned int WINDOW_WIDTH = 1800;
 constexpr unsigned int WINDOW_HEIGHT = 1000;
-constexpr unsigned int CARD_WIDTH = 100;
-constexpr unsigned int CARD_HEIGHT = 150;
+constexpr unsigned int CARD_WIDTH = 120;
+constexpr unsigned int CARD_HEIGHT = 175;
 constexpr unsigned int LEFT_WIDTH = 50;
 constexpr unsigned int free_space = 20;
 
