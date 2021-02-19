@@ -20,9 +20,10 @@ public:
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     std::vector<Button> player_cards_buttons;
-    std::vector<sf::RectangleShape> player_animals_shapes;
+    std::vector<Text_Button> player_animals_shapes;
     int selected_card = -1;
     Button place_for_new_animal;
+    Text_Button end_turn;
 
     void make_deck_shape();
     void run_game();

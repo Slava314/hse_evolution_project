@@ -41,11 +41,13 @@ public:
     explicit Text_Button(sf::Vector2f shape_, sf::Text text_)
         : Button(shape_), text(std::move(text_)) {
     }
+    explicit Text_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
+        : Button(shape_), text(line, font) {
+    }
     explicit Text_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
         : Button(shape_), text(line, font) {
     }
-    ~Text_Button() override {
-    }
+    ~Text_Button() override = default;
 
     void set_position(sf::Vector2f const &position_) override;
     void set_text_size(int size);
@@ -53,6 +55,9 @@ public:
     void set_scale(sf::Vector2f scale) override;
     void activate() override;
     void deactivate() override;
+    void set_text(const std::wstring &line);
+    void set_text(const std::string &line);
+    void set_font(sf::Font const &font);
 
     sf::Text const &get_text();
 

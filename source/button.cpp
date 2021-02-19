@@ -109,3 +109,14 @@ void Text_Button::deactivate() {
 void Text_Button::set_text_color(sf::Color color) {
     text.setFillColor(color);
 }
+void Text_Button::set_text(const std::wstring &line) {
+    text.setString(line);
+}
+
+void Text_Button::set_text(const std::string &line) {
+    text.setString(line);
+}
+
+void Text_Button::set_font(sf::Font const &font) {
+    text.setFont(font);
+}
