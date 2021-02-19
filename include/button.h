@@ -7,9 +7,8 @@
 #include <utility>
 
 class Button {
-  
 public:
-    bool is_active = 1;
+    bool is_active = true;
 
     Button() = default;
     explicit Button(sf::Vector2f shape) : shape(shape) {
@@ -62,4 +61,3 @@ private:
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H
-
