@@ -9,12 +9,15 @@ void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
             switch (card.first) {
                 case ЖИРОВОЙ_ЗАПАС:
                     deck_of_cards.push_back(std::make_unique<FatTissue>(FatTissue(card.first)));
+                    break;
                 case БОЛЬШОЕ:
                     deck_of_cards.push_back(std::make_unique<Big>(Big(card.first)));
+                    break;
                 case ТОПОТУН:
                     deck_of_cards.push_back(std::make_unique<Stomper>(Stomper(card.first)));
+                    break;
                 default:
-                    continue;
+                    break;
             }
         }
     }
@@ -28,7 +31,7 @@ int Deck::get_deck_size() const {
 }
 
 // TODO - check its correctness
-void Deck::cards_delivery(Deck &deck, std::vector<Player> &players) {
+void Deck::cards_delivery(std::vector<Player> &players) {
     for (auto i = 0; i < players.size(); ++i) {
         int need_to_get;
         if (players[i].cards_in_hands.empty()) {
@@ -41,9 +44,9 @@ void Deck::cards_delivery(Deck &deck, std::vector<Player> &players) {
             //    std::move(end(deck.deck), end(deck.deck),
             //    std::inserter(Player.cards_in_hands,
             //    end(Player.cards_in_hands)));
-            players[j].cards_in_hands.push_back(nullptr);
-            std::swap(deck.deck_of_cards.back(), players[j].cards_in_hands.back());
-            deck.deck_of_cards.pop_back();
+            players[i].cards_in_hands.push_back(nullptr);
+            std::swap(deck_of_cards.back(), players[i].cards_in_hands.back());
+            deck_of_cards.pop_back();
         }
     }
 }

@@ -14,7 +14,7 @@ struct Deck {
 
     int get_deck_size() const;
 
-    void cards_delivery(Deck &deck, std::vector<Player> &players);
+    void cards_delivery(std::vector<Player> &players);
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_DECK_H_
