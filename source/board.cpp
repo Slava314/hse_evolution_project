@@ -1,5 +1,3 @@
-#include "board.h"
-
 // TODO - поддержать правильное их расположение (как и сами игроки в векторе
 // players)
 
@@ -12,6 +10,13 @@
 //модифицироваться и нужно отображать изменения в обоих случаях то есть в фазе
 //Кормления они вызовуться в каждый ход игрока
 
-std::vector<Animal> Board::get_players_animals(Player player) {
-    return player.animals_on_board;
+#include "board.h"
+
+//std::vector<Animal> Board::get_players_animals(Player player) {
+//    return player.animals_on_board;
+//}
+
+void Board::use_card_as_animal(){
+//тут тогда нужно использовать карту как у игрока
+//и добавить ее же в вектор в Board
 }
