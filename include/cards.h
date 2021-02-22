@@ -5,16 +5,12 @@
 
 #include <iostream>
 struct Card {
-    Properties property = ДЕФОЛТНЫЙ;
+    Properties property = DEFAULT;
     int extra_food = 0;
     Card(Properties prop) : property(prop){}
-//    ~Card(){
-//        std::cout << "~Card" << std::endl;
-//    }
 protected:
     explicit Card(Properties i, int food) : property(i), extra_food(food) {
     }
-    //          virtual ~Card() {};
 };
 
 

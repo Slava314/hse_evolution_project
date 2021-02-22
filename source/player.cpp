@@ -31,7 +31,8 @@ void Player::use_card_as_property(int which_card, int to_which_card) {
 }
 
 bool Player::can_lay_out_as_animal() const {
-    return (!cards_in_hands.empty());
+    //это неправда - тут нужно брать значение колоды и этого буля
+    return (!cards_in_hands.empty() or !chose_to_end_phase);
 }
 
 std::vector<std::unique_ptr<Card>> const &Player::get_cards() const {
