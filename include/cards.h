@@ -3,29 +3,30 @@
 
 #include "properties.h"
 
+#include <iostream>
 struct Card {
-    Properties property = ДЕФОЛТНЫЙ;
+    Properties property = DEFAULT;
     int extra_food = 0;
-    explicit Card(Properties i) : property(i) {
+    Card(Properties prop) : property(prop){}
+protected:
+    explicit Card(Properties i, int food) : property(i), extra_food(food) {
     }
-    Card(const Card &card){};
-    //  virtual ~Card() {};
 };
 
+
 struct FatTissue : Card {
-    explicit FatTissue(Properties i) : Card(i) {
+    explicit FatTissue(Properties &prop) : Card(prop, 0) {
         [[maybe_unused]] bool is_it_full = 0;
     }
 };
 
 struct Big : Card {
-    explicit Big(Properties i) : Card(i) {
-        extra_food = 1;
+    explicit Big(Properties &prop) : Card(prop, 1) {
     }
 };
 
 struct Stomper : Card {
-    explicit Stomper(Properties i) : Card(i) {
+    explicit Stomper(Properties &prop) : Card(prop, 0) {
     }
 };
 

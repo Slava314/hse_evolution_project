@@ -24,5 +24,3 @@ add_executable(${PROJECT_NAME}
 include_directories(include)
 
 target_link_libraries(evolution_project sfml-graphics sfml-audio)
-
-
