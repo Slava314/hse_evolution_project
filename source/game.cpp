@@ -58,7 +58,7 @@ void Game::prepare_game() {
     cards_info[2] = {STOMPER, 8};
     deck.generate_deck(cards_info);
 
-    font.loadFromFile("../times.ttf");
+    font.loadFromFile("../t.ttf");
     game_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                        sf::Style::Titlebar | sf::Style::Close);
     cur_phase = Start_developing;

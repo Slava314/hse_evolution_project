@@ -15,7 +15,7 @@ int main() {
 //    start_window.setPosition({50, 50});
 //
 //    sf::Font font;
-//    font.loadFromFile("../times.ttf");
+//    font.loadFromFile("../t.ttf");
 //
 //    Text_Button start_button(sf::Vector2f(200, 40), "Start", font);
 //    start_button.set_color(sf::Color(55, 55, 55));

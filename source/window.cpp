@@ -22,7 +22,7 @@ std::unique_ptr<Window> Start_Window::handle_events() {
         }
         window.clear();
         //        sf::Font font;
-        //        font.loadFromFile("../times.ttf");
+        //        font.loadFromFile("../t.ttf");
         //        sf::Text text("start", font);
         draw();
         //        window.draw(text);
@@ -33,8 +33,6 @@ std::unique_ptr<Window> Start_Window::handle_events() {
 }
 
 void Start_Window::make_start_button() {
-    sf::Font font;
-    font.loadFromFile("../times.ttf");
     start_button = Text_Button(sf::Vector2f(200, 40), "Start", font);
     start_button.set_color(sf::Color(55, 55, 55));
     start_button.set_position(

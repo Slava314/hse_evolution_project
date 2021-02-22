@@ -19,6 +19,7 @@ public:
     Start_Window(){
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
                       sf::Style::Titlebar | sf::Style::Close);
+        font.loadFromFile("resources/t.ttf");
         make_start_button();
     }
 
@@ -27,6 +28,7 @@ public:
 
 private:
     Text_Button start_button;
+    sf::Font font;
 
     void make_start_button();
     void draw() override;

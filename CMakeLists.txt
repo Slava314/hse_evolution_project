@@ -21,6 +21,14 @@ add_executable(${PROJECT_NAME}
         source/player.cpp
         source/window.cpp)
 
+set (resources "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+set (resources_target "${CMAKE_CURRENT_BINARY_DIR}/resources")
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${resources} ${resources_target}
+        COMMENT "symbolic link resources folder from ${resources} => ${resources_target}"
+)
+
 include_directories(include)
 
 target_link_libraries(evolution_project sfml-graphics sfml-audio)
