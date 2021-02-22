@@ -62,6 +62,9 @@ void Button::deactivate() {
     color.a = 150;
     shape.setOutlineColor(color);
 }
+void Button::draw(sf::RenderWindow &window) {
+    window.draw(shape);
+}
 
 sf::Text const &Text_Button::get_text() {
     return text;
@@ -109,14 +112,19 @@ void Text_Button::deactivate() {
 void Text_Button::set_text_color(sf::Color color) {
     text.setFillColor(color);
 }
-void Text_Button::set_text(const std::wstring &line) {
-    text.setString(line);
+
+void Text_Button::set_text(const std::wstring &line, sf::Font const &font) {
+    text = sf::Text(line, font);
 }
 
-void Text_Button::set_text(const std::string &line) {
-    text.setString(line);
+void Text_Button::set_text(const std::string &line, sf::Font const &font) {
+    text = sf::Text(line, font);
 }
 
 void Text_Button::set_font(sf::Font const &font) {
     text.setFont(font);
+}
+void Text_Button::draw(sf::RenderWindow &window) {
+    window.draw(shape);
+    window.draw(text);
 }

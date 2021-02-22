@@ -24,6 +24,7 @@ public:
     virtual void set_scale(sf::Vector2f scale);
     virtual void activate();
     virtual void deactivate();
+    virtual void draw(sf::RenderWindow &window);
 
     sf::Vector2f get_size();
     sf::Vector2f const &get_position();
@@ -55,9 +56,10 @@ public:
     void set_scale(sf::Vector2f scale) override;
     void activate() override;
     void deactivate() override;
-    void set_text(const std::wstring &line);
-    void set_text(const std::string &line);
+    void set_text(const std::wstring &line, sf::Font const &font);
+    void set_text(const std::string &line, sf::Font const &font);
     void set_font(sf::Font const &font);
+    void draw(sf::RenderWindow &window) override;
 
     sf::Text const &get_text();
 

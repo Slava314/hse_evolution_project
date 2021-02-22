@@ -18,8 +18,8 @@ add_executable(${PROJECT_NAME}
         source/board.cpp
         source/deck.cpp
         source/game.cpp
-        source/player.cpp)
-
+        source/player.cpp
+        source/window.cpp)
 
 include_directories(include)
 

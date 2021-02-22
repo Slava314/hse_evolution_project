@@ -53,9 +53,9 @@ void Game::prepare_game() {
     constexpr int N = 3;
     std::vector<std::pair<Properties, int>> cards_info(N);
     // временное решение по генерации, пока нет настроек
-    cards_info[0] = {ЖИРОВОЙ_ЗАПАС, 8};
-    cards_info[1] = {БОЛЬШОЕ, 8};
-    cards_info[2] = {ТОПОТУН, 8};
+    cards_info[0] = {FAT_TISSUE, 8};
+    cards_info[1] = {BIG , 8};
+    cards_info[2] = {STOMPER, 8};
     deck.generate_deck(cards_info);
 
     font.loadFromFile("../times.ttf");
@@ -71,8 +71,7 @@ void Game::prepare_game() {
 
     end_turn.set_size({150, 40});
     end_turn.set_color(sf::Color(55, 55, 55));
-    end_turn.set_text("End turn");
-    end_turn.set_font(font);
+    end_turn.set_text("End turn", font);
 
     end_turn.set_position(
         {(WINDOW_WIDTH - CARD_WIDTH) / 2.0 + 50, (WINDOW_HEIGHT - CARD_HEIGHT) / 2.0 - 75});
@@ -169,7 +168,7 @@ void Game::handle_event(sf::Event event) {
         if (place_for_new_animal.is_clicked(
                 sf::Mouse::getPosition(game_window))) {  // use card as animal
             player_cards_buttons.erase(std::next(player_cards_buttons.begin(), selected_card));
-            players[0].use_card_as_animal(selected_card);
+            //players[0].use_card_as_animal(selected_card);
             selected_card = -1;
             set_cards_position();
             add_animal_shape();
@@ -190,7 +189,7 @@ void Game::handle_event(sf::Event event) {
                     set_cards_position();
                     set_animals_position(false);
                     player_animals_shapes[i].set_text(
-                        L"свойства: " + std::to_wstring(1));  // TODO ask for number of properties
+                        L"свойства: " + std::to_wstring(1), font);  // TODO ask for number of properties
                     for (auto &player_cards_button : player_cards_buttons) {
                         player_cards_button.activate();
                     }
