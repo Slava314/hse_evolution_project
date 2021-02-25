@@ -18,7 +18,7 @@ public:
 
     void handle_events(Game_Window &window) const override;
 
-    void init_game(Game_Window& window) const;
+    void start_development_phase(Game_Window& window) const;
 
     void cards_delivery(Game_Window& window) const;
 

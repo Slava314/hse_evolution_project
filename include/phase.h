@@ -24,11 +24,12 @@ public:
     //void place_card_on_board(Card &card);
     void set_next_phase();
     bool is_running_first_time() const;
+    void set_start_of_phase(bool start);
     ~Development_Phase() override = default;
 
 private:
     Game &game;
-
+    bool start_of_phase = true;
 };
 
 class Feeding_Phase : public Phase {

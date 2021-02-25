@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "constants.h"
 
-std::unique_ptr<Phase> Game::get_phase() const {
-    return std::unique_ptr<Phase>();
+std::unique_ptr<Phase> const &Game::get_phase() const {
+    return phase;
 }
 void Game::cards_delivery() {
     deck.cards_delivery(players);
@@ -22,4 +22,10 @@ void Game::start_game() {
     cards_info[1] = {BIG , 8};
     cards_info[2] = {STOMPER, 8};
     deck.generate_deck(cards_info);
+}
+void Game::set_phase(std::unique_ptr<Phase> new_phase) {
+    phase.swap(new_phase);
+}
+std::vector<Player> const &Game::get_players() {
+    return players;
 }

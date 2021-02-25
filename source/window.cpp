@@ -1,6 +1,7 @@
 #include "window.h"
 #include <cassert>
 #include "view.h"
+#include "player.h"
 std::unique_ptr<Window> Start_Window::handle_events() {
     while (window.isOpen()) {
         sf::Event event{};
@@ -49,9 +50,9 @@ std::unique_ptr<Window> Game_Window::handle_events() {
             }
 
             // chat.get_view()->handle_events(window);
-            auto phase = game.get_phase();
-            if (phase) {
-                phase->get_view()->handle_events(*this);
+            //auto phase = game.get_phase();
+            if (game.get_phase()) {
+                game.get_phase()->get_view()->handle_events(*this);
             } else {
                 break;
             }
@@ -114,4 +115,23 @@ void Game_Window::make_deck_shape() {
     deck_text.setPosition(
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
+}
+void Game_Window::add_cards() {
+    for (int i = player_cards_buttons.size(); i < game.get_players()[0].size_cards_owning_in_hands(); ++i) {
+        player_cards_buttons.emplace_back(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
+        player_cards_buttons[i].set_color(CARD_COLOR);
+        player_cards_buttons[i].set_outline_thickness(5);
+        player_cards_buttons[i].set_outline_color(CARD_OUTLINE_COLOR);
+    }
+    set_cards_position();
+    make_deck_shape();
+}
+void Game_Window::set_cards_position() {
+    unsigned int left_point_cards = (WINDOW_WIDTH - CARD_WIDTH * player_cards_buttons.size() -
+        free_space * (player_cards_buttons.size() - 1)) /
+        2;
+    for (int i = 0; i < player_cards_buttons.size(); ++i) {
+        player_cards_buttons[i].set_position(sf::Vector2f(
+            left_point_cards + (free_space + CARD_WIDTH) * i, WINDOW_HEIGHT - CARD_HEIGHT - 50));
+    }
 }

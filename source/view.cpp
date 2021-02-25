@@ -3,12 +3,13 @@
 #include "cards.h"
 #include "phase.h"
 
-void Development_Phase_View::init_game(Game_Window &window) const {
+void Development_Phase_View::start_development_phase(Game_Window &window) const {
     cards_delivery(window);
+    phase.set_start_of_phase(false);
 }
 void Development_Phase_View::cards_delivery(Game_Window &window) const{
     phase.cards_delivery();
-    //window.draw_cards_in_hand();
+    window.add_cards();
 }
 void Development_Phase_View::place_card(Card &card, Game_Window &window) {
 //    phase.place_card_on_board(card);
@@ -16,7 +17,7 @@ void Development_Phase_View::place_card(Card &card, Game_Window &window) {
 }
 void Development_Phase_View::handle_events(Game_Window &window) const{
     if (phase.is_running_first_time()) {
-        init_game(window);
+        start_development_phase(window);
     }
 //    while (auto event = window.poll_event()) {
 //        if (<что-то что приводит к разадче карт>) {

@@ -15,10 +15,11 @@ public:
     }
     void start_game();
     std::size_t get_deck_size();
-    std::unique_ptr<Phase> get_phase() const;
+    std::unique_ptr<Phase> const &get_phase() const;
+    void set_phase(std::unique_ptr<Phase> new_phase);
+    std::vector<Player> const& get_players();
 
     void cards_delivery();
-
 
 private:
     std::unique_ptr<Phase> phase;
