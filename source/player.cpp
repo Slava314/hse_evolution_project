@@ -35,9 +35,9 @@ bool Player::can_lay_out_as_animal() const {
     return (!cards_in_hands.empty() or !chose_to_end_phase);
 }
 
-std::vector<std::unique_ptr<Card>> const &Player::get_cards() const {
-    return cards_in_hands;
-}
+//std::vector<std::unique_ptr<Card>> const &Player::get_cards() const {
+//    return cards_in_hands;
+//}
 
 void Player::add_card(std::unique_ptr<Card> &card) {
     cards_in_hands.emplace_back(std::move(card));

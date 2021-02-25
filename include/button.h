@@ -11,7 +11,7 @@ public:
     bool is_active = true;
 
     Button() = default;
-    explicit Button(sf::Vector2f shape) : shape(shape) {
+    explicit Button(sf::Vector2f shape_) : shape(shape_) {
     }
     virtual ~Button() {
     }
