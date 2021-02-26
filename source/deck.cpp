@@ -8,13 +8,13 @@ void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
         while (card.second--) {
             switch (card.first) {
                 case FAT_TISSUE:
-                    deck_of_cards.push_back(std::make_unique<FatTissue>(FatTissue(card.first)));
+                    deck_of_cards.push_back(std::make_shared<FatTissue>(FatTissue(card.first)));
                     break;
                 case BIG:
-                    deck_of_cards.push_back(std::make_unique<Big>(Big(card.first)));
+                    deck_of_cards.push_back(std::make_shared<Big>(Big(card.first)));
                     break;
                 case STOMPER:
-                    deck_of_cards.push_back(std::make_unique<Stomper>(Stomper(card.first)));
+                    deck_of_cards.push_back(std::make_shared<Stomper>(Stomper(card.first)));
                     break;
                 default:
                     continue;
@@ -38,12 +38,15 @@ int need_card(Player const &player) {
     }
 }
 
-void Deck::cards_delivery(std::vector<Player> &players) {
-    for (auto &player : players) {
-        auto need = need_card(player);
+std::vector<std::vector<std::shared_ptr<Card>>> Deck::cards_delivery(std::vector<Player> &players) {
+    std::vector<std::vector<std::shared_ptr<Card>>> new_cards(players.size());
+    for (std::size_t i = 0; i < players.size(); i++) {
+        auto need = need_card(players[i]);
         while (need--) {
-            player.add_card(deck_of_cards.back());
+            players[i].add_card(deck_of_cards.back());
+            new_cards[i].push_back(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
     }
+    return new_cards;
 }

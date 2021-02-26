@@ -52,7 +52,7 @@ std::unique_ptr<Window> Game_Window::handle_events() {
             // chat.get_view()->handle_events(window);
             //auto phase = game.get_phase();
             if (game.get_phase()) {
-                game.get_phase()->get_view()->handle_events(*this);
+                game.get_phase()->get_view()->handle_events(*this, event);
             } else {
                 break;
             }
@@ -116,12 +116,13 @@ void Game_Window::make_deck_shape() {
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
 }
-void Game_Window::add_cards() {
-    for (int i = player_cards_buttons.size(); i < game.get_players()[0].size_cards_owning_in_hands(); ++i) {
+void Game_Window::add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards) {
+    for (int i = 0; i < new_cards[cur_player].size(); ++i) {
         player_cards_buttons.emplace_back(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
-        player_cards_buttons[i].set_color(CARD_COLOR);
-        player_cards_buttons[i].set_outline_thickness(5);
-        player_cards_buttons[i].set_outline_color(CARD_OUTLINE_COLOR);
+        player_cards_buttons.back().set_color(CARD_COLOR);
+        player_cards_buttons.back().set_outline_thickness(5);
+        player_cards_buttons.back().set_outline_color(CARD_OUTLINE_COLOR);
+        player_cards_buttons.back().set_object(new_cards[cur_player][i]);
     }
     set_cards_position();
     make_deck_shape();
@@ -133,5 +134,71 @@ void Game_Window::set_cards_position() {
     for (int i = 0; i < player_cards_buttons.size(); ++i) {
         player_cards_buttons[i].set_position(sf::Vector2f(
             left_point_cards + (free_space + CARD_WIDTH) * i, WINDOW_HEIGHT - CARD_HEIGHT - 50));
+    }
+}
+void Game_Window::add_animal_shape(std::shared_ptr<Animal> new_animal) {
+    player_animals_shapes.emplace_back(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT), L"свойства: 0", font);
+    player_animals_shapes.back().set_color(CARD_COLOR);
+    player_animals_shapes.back().set_outline_thickness(5);
+    player_animals_shapes.back().set_outline_color(CARD_OUTLINE_COLOR);
+    player_animals_shapes.back().set_text_size(22);
+    player_animals_shapes.back().is_active = false;
+    player_animals_shapes.back().set_object(new_animal);
+}
+void Game_Window::set_animals_position(bool with_new_place) {
+    int extra = with_new_place;
+    int left_point_animals = (WINDOW_WIDTH - CARD_WIDTH * (player_animals_shapes.size() + extra) -
+        free_space * (player_animals_shapes.size() - 1 + extra)) /
+        2;
+    for (int j = 0; j < player_animals_shapes.size(); ++j) {
+        player_animals_shapes[j].set_position(sf::Vector2f(
+            left_point_animals + (free_space + CARD_WIDTH) * j, WINDOW_HEIGHT - CARD_HEIGHT - 300));
+    }
+    if (with_new_place) {
+        place_for_new_animal.set_position(sf::Vector2f(
+            left_point_animals + (free_space + CARD_WIDTH) * player_animals_shapes.size(),
+            WINDOW_HEIGHT - CARD_HEIGHT - 300));
+    }
+}
+void Game_Window::delete_animal_shape() {
+
+}
+sf::RenderWindow &Game_Window::get_window(){
+    return window;
+}
+int Game_Window::check_cards() {
+    for (int i = 0; i < player_cards_buttons.size(); ++i) {  // choose card
+        if (player_cards_buttons[i].is_clicked(sf::Mouse::getPosition(window)) &&
+            player_cards_buttons[i].is_active) {
+            if(selected_card == -1){
+                selected_card = i;
+            } else{
+                selected_card = -1;
+            }
+            return i;
+        }
+    }
+    return -1;
+}
+void Game_Window::click_card(int i) {
+    if (selected_card == i) {
+        for (int j = 0; j < player_cards_buttons.size(); ++j) {
+            if (i != j) {
+                player_cards_buttons[j].deactivate();
+            }
+        }
+        for (auto &player_animal_button : player_animals_shapes) {
+            player_animal_button.is_active = true;
+        }
+        set_animals_position(true);
+    } else {
+        //                    player_cards_buttons[i].deactivate();
+        for (auto &player_cards_button : player_cards_buttons) {
+            player_cards_button.activate();
+        }
+        for (auto &player_animal_button : player_animals_shapes) {
+            player_animal_button.is_active = false;
+        }
+        set_animals_position(false);
     }
 }

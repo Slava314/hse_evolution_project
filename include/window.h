@@ -47,11 +47,19 @@ public:
     }
 
     std::unique_ptr<Window> handle_events() override;
-    void add_cards();
+    void add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards);
     void set_cards_position();
     void init_window();
     void make_deck_shape();
+    void add_animal_shape(std::shared_ptr<Animal> new_animal);
+    void set_animals_position(bool with_new_place);
+    void delete_animal_shape();
+    sf::RenderWindow &get_window();
     ~Game_Window() override = default;
+
+    int check_cards();
+
+    void click_card(int i);
 
 private:
     void draw() override;
@@ -60,11 +68,12 @@ private:
 
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
-    std::vector<Button> player_cards_buttons;
-    std::vector<Text_Button> player_animals_shapes;
+    std::vector<Card_Button> player_cards_buttons;
+    std::vector<Animal_Button> player_animals_shapes;
     int selected_card = -1;
     Button place_for_new_animal;
     Text_Button end_turn;
+    int cur_player = 0;
 };
 
 #endif  // EVOLUTION_PROJECT__WINDOW_H_

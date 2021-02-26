@@ -1,5 +1,6 @@
 #include "button.h"
 #include <SFML/Graphics.hpp>
+#include <utility>
 
 void Button::set_color(sf::Color const &color) {
     shape.setFillColor(color);
@@ -127,4 +128,12 @@ void Text_Button::set_font(sf::Font const &font) {
 void Text_Button::draw(sf::RenderWindow &window) {
     window.draw(shape);
     window.draw(text);
+}
+
+void Animal_Button::set_object(std::shared_ptr<Animal> obj) {
+    object = std::move(obj);
+}
+
+void Card_Button::set_object(std::shared_ptr<Card> obj) {
+    object = std::move(obj);
 }

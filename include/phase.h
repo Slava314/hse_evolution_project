@@ -2,6 +2,9 @@
 #define EVOLUTION_PROJECT_SOURCE_PHASE_H_
 
 #include <memory>
+#include <vector>
+#include "animal.h"
+#include "cards.h"
 #include "game_fwd.h"
 #include "view_fwd.h"
 
@@ -20,11 +23,12 @@ public:
 
     std::unique_ptr<View> get_view() override;
 
-    void cards_delivery();
+    std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery();
     //void place_card_on_board(Card &card);
     void set_next_phase();
     bool is_running_first_time() const;
     void set_start_of_phase(bool start);
+    void add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
     ~Development_Phase() override = default;
 
 private:

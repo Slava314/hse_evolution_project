@@ -3,8 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
+#include "animal.h"
+#include "cards.h"
 
 class Button {
 public:
@@ -39,6 +42,8 @@ protected:
 class Text_Button : public Button {
 public:
     Text_Button() = default;
+    explicit Text_Button(sf::Vector2f shape_) : Button(shape_) {
+    }
     explicit Text_Button(sf::Vector2f shape_, sf::Text text_)
         : Button(shape_), text(std::move(text_)) {
     }
@@ -63,8 +68,48 @@ public:
 
     sf::Text const &get_text();
 
-private:
+protected:
     sf::Text text;
+};
+
+class Card_Button : public Text_Button {
+public:
+    explicit Card_Button(sf::Vector2f shape_) : Text_Button(shape_) {
+    }
+    explicit Card_Button(sf::Vector2f shape_, sf::Text text_)
+    : Text_Button(shape_, std::move(text_)){
+    }
+    explicit Card_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
+    : Text_Button(shape_, line, font) {
+    }
+    explicit Card_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
+    : Text_Button(shape_, line, font) {
+    }
+
+    void set_object(std::shared_ptr<Card> obj);
+
+private:
+    std::shared_ptr<Card> object;
+};
+
+class Animal_Button : public Text_Button {
+public:
+    explicit Animal_Button(sf::Vector2f shape_) : Text_Button(shape_) {
+    }
+    explicit Animal_Button(sf::Vector2f shape_, sf::Text text_)
+    : Text_Button(shape_, std::move(text_)){
+    }
+    explicit Animal_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
+    : Text_Button(shape_, line, font) {
+    }
+    explicit Animal_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
+    : Text_Button(shape_, line, font) {
+    }
+
+    void set_object(std::shared_ptr<Animal> obj);
+
+private:
+    std::shared_ptr<Animal> object;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H
