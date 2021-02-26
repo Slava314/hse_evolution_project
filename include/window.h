@@ -61,6 +61,10 @@ public:
 
     void click_card(int i);
 
+    bool check_new_animal();
+
+    std::shared_ptr<Card> play_animal(std::shared_ptr<Animal> shared_ptr);
+
 private:
     void draw() override;
     Game game;

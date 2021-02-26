@@ -133,7 +133,13 @@ void Text_Button::draw(sf::RenderWindow &window) {
 void Animal_Button::set_object(std::shared_ptr<Animal> obj) {
     object = std::move(obj);
 }
+std::shared_ptr<Animal> Animal_Button::get_object() {
+    return object;
+}
 
 void Card_Button::set_object(std::shared_ptr<Card> obj) {
     object = std::move(obj);
+}
+std::shared_ptr<Card> Card_Button::get_object() {
+    return object;
 }

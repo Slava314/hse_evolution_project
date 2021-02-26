@@ -13,8 +13,8 @@ void Development_Phase_View::cards_delivery(Game_Window &window) const {
 }
 void Development_Phase_View::add_animal(Game_Window &window) const {
     auto new_animal = std::make_shared<Animal>();
-    // auto card = window.play_animal(new_animal);
-    // phase.add_animal(card, new_animal);
+    auto card = window.play_animal(new_animal);
+    phase.add_animal(card, new_animal);
 }
 void Development_Phase_View::handle_events(Game_Window &window, sf::Event event) const {
     if (phase.is_running_first_time()) {
@@ -30,9 +30,9 @@ void Development_Phase_View::handle_events(Game_Window &window, sf::Event event)
         if (clicked_card != -1) {
             window.click_card(clicked_card);
         }
-        //            if (window.check_new_animal()) {
-        //                add_animal( window);
-        //            }
+        if (window.check_new_animal()) {
+            add_animal(window);
+        }
     }
     //    while (auto event = window.poll_event()) {
     //        if (<что-то что приводит к разадче карт>) {

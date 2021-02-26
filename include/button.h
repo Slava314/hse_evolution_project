@@ -87,6 +87,7 @@ public:
     }
 
     void set_object(std::shared_ptr<Card> obj);
+    std::shared_ptr<Card> get_object();
 
 private:
     std::shared_ptr<Card> object;
@@ -107,6 +108,7 @@ public:
     }
 
     void set_object(std::shared_ptr<Animal> obj);
+    std::shared_ptr<Animal> get_object();
 
 private:
     std::shared_ptr<Animal> object;
