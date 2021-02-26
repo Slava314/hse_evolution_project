@@ -19,7 +19,7 @@ void Game::start_game() {
     std::vector<std::pair<Properties, int>> cards_info(N);
     // временное решение по генерации, пока нет настроек
     cards_info[0] = {FAT_TISSUE, 8};
-    cards_info[1] = {BIG , 8};
+    cards_info[1] = {BIG, 8};
     cards_info[2] = {STOMPER, 8};
     deck.generate_deck(cards_info);
 }

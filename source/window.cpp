@@ -224,3 +224,39 @@ std::shared_ptr<Card> Game_Window::play_animal(std::shared_ptr<Animal> animal) {
     }
     return card;
 }
+
+bool Game_Window::check_end_turn() {
+    return end_turn.is_clicked(sf::Mouse::getPosition(window)) && end_turn.is_active;
+}
+int Game_Window::check_animals() {
+    for (int i = 0; i < player_animals_shapes.size(); ++i) {  // use card as property
+        if (player_animals_shapes[i].is_clicked(sf::Mouse::getPosition(window)) &&
+            player_animals_shapes[i].is_active) {
+            return i;
+        }
+    }
+    return -1;
+}
+void Game_Window::add_property_to_animal(int i) {
+    if (selected_card != -1) {
+        player_cards_buttons.erase(std::next(player_cards_buttons.begin(), selected_card));
+        selected_card = -1;
+        set_cards_position();
+        // set_animals_position(false);
+        player_animals_shapes[i].set_text(L"свойства: " + std::to_wstring(1),
+                                          font);  // TODO ask for number of properties
+        player_animals_shapes[i].set_text_size(22);
+        for (auto &player_animal_button : player_animals_shapes) {
+            player_animal_button.is_active = false;
+        }
+        set_animals_position(false);
+        place_for_new_animal.deactivate();
+
+        for (auto &player_cards_button : player_cards_buttons) {
+            player_cards_button.activate();
+        }
+    }
+}
+int Game_Window::get_selected_card() const {
+    return selected_card;
+}

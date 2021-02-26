@@ -42,7 +42,7 @@ public:
                       sf::Style::Titlebar | sf::Style::Close);
         font.loadFromFile("resources/t.ttf");
 
-        game.start_game(); //важен порядок этих двух строчек, потом возможно надо будет исправить
+        game.start_game();  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
     }
 
@@ -53,6 +53,7 @@ public:
     void make_deck_shape();
     void add_animal_shape(std::shared_ptr<Animal> new_animal);
     void set_animals_position(bool with_new_place);
+    int get_selected_card() const;
     void delete_animal_shape();
     sf::RenderWindow &get_window();
     ~Game_Window() override = default;
@@ -64,6 +65,12 @@ public:
     bool check_new_animal();
 
     std::shared_ptr<Card> play_animal(std::shared_ptr<Animal> shared_ptr);
+
+    bool check_end_turn();
+
+    int check_animals();
+
+    void add_property_to_animal(int i);
 
 private:
     void draw() override;

@@ -9,7 +9,7 @@ void Development_Phase::set_next_phase() {
 std::vector<std::vector<std::shared_ptr<Card>>> Development_Phase::cards_delivery() {
     return game.cards_delivery();
 }
-bool Development_Phase::is_running_first_time() const{
+bool Development_Phase::is_running_first_time() const {
     return start_of_phase;
 }
 void Development_Phase::set_start_of_phase(bool start) {
@@ -22,5 +22,5 @@ std::unique_ptr<View> Feeding_Phase::get_view() {
     return std::make_unique<Feeding_Phase_View>(*this);
 }
 void Feeding_Phase::set_next_phase() {
-       game.set_phase(std::make_unique<Development_Phase>(game));
+    game.set_phase(std::make_unique<Development_Phase>(game));
 }

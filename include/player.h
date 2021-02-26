@@ -19,7 +19,7 @@ public:
     void put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
     void use_card_as_property(int which_card, int to_which_card);
 
-      std::vector<std::unique_ptr<Card>> get_cards{};
+    std::vector<std::unique_ptr<Card>> get_cards{};
 
     bool can_lay_out_as_animal() const;
 
