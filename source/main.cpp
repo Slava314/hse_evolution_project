@@ -1,9 +1,17 @@
 #include <SFML/Graphics.hpp>
+#include <cmrc/cmrc.hpp>
+#include <sstream>
 #include <vector>
 #include "button.h"
-#include <vector>
+CMRC_DECLARE(resources);
 
 int main() {
+
+    auto fs = cmrc::resources::get_filesystem();
+    auto file = fs.open("resources/times.ttf");
+    std::string str(file.begin(), file.end());
+
+
     constexpr int WINDOW_WIDTH = 1800;
     constexpr int WINDOW_HEIGHT = 1000;
 
@@ -12,7 +20,7 @@ int main() {
     start_window.setPosition({50, 50});
 
     sf::Font font;
-    font.loadFromFile("../times.ttf");
+    font.loadFromMemory(str.data(), str.size());
 
     Text_Button start_button(sf::Vector2f(200, 40), "Start", font);
     start_button.set_color(sf::Color(55, 55, 55));
