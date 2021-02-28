@@ -8,7 +8,7 @@ std::unique_ptr<Phase> const &Game::get_phase() const {
 std::vector<std::vector<std::shared_ptr<Card>>> Game::cards_delivery() {
     return deck.cards_delivery(players);
 }
-std::size_t Game::get_deck_size() {
+std::size_t Game::get_deck_size() const {
     return deck.get_deck_size();
 }
 void Game::start_game() {
@@ -26,9 +26,13 @@ void Game::start_game() {
 void Game::set_phase(std::unique_ptr<Phase> new_phase) {
     phase.swap(new_phase);
 }
-std::vector<Player> const &Game::get_players() {
+std::vector<Player> const &Game::get_players() const {
     return players;
 }
-void Game::add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal) {
-    players[0].put_card_as_animal(card, new_animal);
+void Game::add_animal(const std::shared_ptr<Card> &card,
+                      const std::shared_ptr<Animal> &new_animal) {
+    players[current_player].put_card_as_animal(card, new_animal);
+}
+std::size_t Game::get_current_player() const {
+    return current_player;
 }

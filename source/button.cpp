@@ -2,25 +2,25 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
-void Button::set_color(sf::Color const &color) {
+void Button::set_color(const sf::Color &color) {
     shape.setFillColor(color);
 }
 
-sf::RectangleShape const &Button::get_shape() {
+sf::RectangleShape const &Button::get_shape() const {
     return shape;
 }
 
-void Button::set_position(sf::Vector2f const &position) {
+void Button::set_position(const sf::Vector2f &position) {
     shape.setPosition(position);
 }
 
-bool Button::is_clicked(sf::Vector2i const &mouse_position) {
+bool Button::is_clicked(const sf::Vector2i &mouse_position) const {
     auto bounds = shape.getGlobalBounds();
     return (mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width &&
             mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height);
 }
 
-void Button::set_size(sf::Vector2f const &size) {
+void Button::set_size(const sf::Vector2f &size) {
     shape.setSize(size);
 }
 
@@ -32,20 +32,20 @@ void Button::set_outline_thickness(float thickness) {
     shape.setOutlineThickness(thickness);
 }
 
-sf::Vector2f const &Button::get_position() {
+sf::Vector2f const &Button::get_position() const {
     return shape.getPosition();
 }
 
-sf::Vector2f Button::get_size() {
+sf::Vector2f const &Button::get_size() const {
     return shape.getSize();
 }
 
-void Button::set_scale(sf::Vector2f scale) {
+void Button::set_scale(const sf::Vector2f &scale) {
     shape.setScale(scale);
 }
 
 void Button::activate() {
-    is_active = true;
+    is_active_ = true;
     sf::Color color = shape.getFillColor();
     color.a = 255;
     shape.setFillColor(color);
@@ -55,7 +55,7 @@ void Button::activate() {
 }
 
 void Button::deactivate() {
-    is_active = false;
+    is_active_ = false;
     sf::Color color = shape.getFillColor();
     color.a = 150;
     shape.setFillColor(color);
@@ -63,34 +63,40 @@ void Button::deactivate() {
     color.a = 150;
     shape.setOutlineColor(color);
 }
-void Button::draw(sf::RenderWindow &window) {
+void Button::draw(sf::RenderWindow &window) const {
     window.draw(shape);
 }
+bool Button::is_active() const {
+    return is_active_;
+}
+void Button::set_active(bool value) {
+    is_active_ = value;
+}
 
-sf::Text const &Text_Button::get_text() {
+sf::Text const &TextButton::get_text() const {
     return text;
 }
 
-void Text_Button::set_position(const sf::Vector2f &position_) {
+void TextButton::set_position(const sf::Vector2f &position_) {
     Button::set_position(position_);
     text.setPosition(
         shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0f,
         shape.getPosition().y);
 }
 
-void Text_Button::set_text_size(int size) {
+void TextButton::set_text_size(int size) {
     text.setCharacterSize(size);
     text.setPosition(
         shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0f,
         shape.getPosition().y);
 }
 
-void Text_Button::set_scale(sf::Vector2f scale) {
+void TextButton::set_scale(const sf::Vector2f &scale) {
     Button::set_scale(scale);
     text.setScale(scale);
 }
 
-void Text_Button::activate() {
+void TextButton::activate() {
     Button::activate();
     sf::Color color = text.getFillColor();
     color.a = 255;
@@ -100,7 +106,7 @@ void Text_Button::activate() {
     text.setFillColor(color);
 }
 
-void Text_Button::deactivate() {
+void TextButton::deactivate() {
     Button::deactivate();
     sf::Color color = text.getFillColor();
     color.a = 150;
@@ -110,36 +116,36 @@ void Text_Button::deactivate() {
     text.setFillColor(color);
 }
 
-void Text_Button::set_text_color(sf::Color color) {
+void TextButton::set_text_color(const sf::Color &color) {
     text.setFillColor(color);
 }
 
-void Text_Button::set_text(const std::wstring &line, sf::Font const &font) {
+void TextButton::set_text(const std::wstring &line, const sf::Font &font) {
     text = sf::Text(line, font);
 }
 
-void Text_Button::set_text(const std::string &line, sf::Font const &font) {
+void TextButton::set_text(const std::string &line, const sf::Font &font) {
     text = sf::Text(line, font);
 }
 
-void Text_Button::set_font(sf::Font const &font) {
+void TextButton::set_font(const sf::Font &font) {
     text.setFont(font);
 }
-void Text_Button::draw(sf::RenderWindow &window) {
+void TextButton::draw(sf::RenderWindow &window) const {
     window.draw(shape);
     window.draw(text);
 }
 
-void Animal_Button::set_object(std::shared_ptr<Animal> obj) {
-    object = std::move(obj);
+void AnimalButton::set_object(const std::shared_ptr<Animal> &obj) {
+    object = obj;
 }
-std::shared_ptr<Animal> Animal_Button::get_object() {
+std::shared_ptr<Animal> const &AnimalButton::get_object() const {
     return object;
 }
 
-void Card_Button::set_object(std::shared_ptr<Card> obj) {
-    object = std::move(obj);
+void CardButton::set_object(const std::shared_ptr<Card> &obj) {
+    object = obj;
 }
-std::shared_ptr<Card> Card_Button::get_object() {
+std::shared_ptr<Card> const &CardButton::get_object() const {
     return object;
 }

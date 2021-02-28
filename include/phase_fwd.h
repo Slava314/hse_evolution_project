@@ -3,8 +3,8 @@
 
 class Phase;
 
-class Development_Phase;
+class DevelopmentPhase;
 
-class Feeding_Phase;
+class FeedingPhase;
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PHASE_FWD_H_

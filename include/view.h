@@ -6,42 +6,42 @@
 
 class View {
 public:
-    virtual void handle_events(Game_Window &window, sf::Event) const = 0;
+    virtual void handle_event(GameWindow &window, const sf::Event &event) const = 0;
     virtual ~View() = default;
 };
 
-class Development_Phase_View : public View {
+class DevelopmentPhaseView : public View {
 public:
-    explicit Development_Phase_View(Development_Phase &phase_) : phase(phase_) {
+    explicit DevelopmentPhaseView(DevelopmentPhase &phase_) : phase(phase_) {
     }
 
-    void handle_events(Game_Window &window, sf::Event event) const override;
+    void handle_event(GameWindow &window, const sf::Event &event) const override;
 
-    void start_development_phase(Game_Window &window) const;
+    void start_development_phase(GameWindow &window) const;
 
-    void cards_delivery(Game_Window &window) const;
+    void cards_delivery(GameWindow &window) const;
 
-    void add_animal(Game_Window &window) const;
+    void add_animal(GameWindow &window) const;
 
-    void add_property(int selected_animal, Game_Window &window) const;
+    void add_property(int selected_animal, GameWindow &window) const;
 
-    ~Development_Phase_View() override = default;
+    ~DevelopmentPhaseView() override = default;
 
 private:
-    Development_Phase &phase;
+    DevelopmentPhase &phase;
 };
 
-class Feeding_Phase_View : public View {
+class FeedingPhaseView : public View {
 public:
-    explicit Feeding_Phase_View(Feeding_Phase &phase_) : phase(phase_) {
+    explicit FeedingPhaseView(FeedingPhase &phase_) : phase(phase_) {
     }
 
-    void handle_events(Game_Window &window, sf::Event) const override;
+    void handle_event(GameWindow &window, const sf::Event &event) const override;
 
-    ~Feeding_Phase_View() override = default;
+    ~FeedingPhaseView() override = default;
 
 private:
-    Feeding_Phase &phase;
+    FeedingPhase &phase;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_VIEW_H_

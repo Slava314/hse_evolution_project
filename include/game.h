@@ -9,16 +9,16 @@
 
 class Game {
 public:
-    // Game() = default;
     Game() {
-        phase = std::make_unique<Development_Phase>(*this);
+        phase = std::make_unique<DevelopmentPhase>(*this);
     }
     void start_game();
-    std::size_t get_deck_size();
+    std::size_t get_deck_size() const;
     std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
-    std::vector<Player> const &get_players();
-    void add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
+    std::vector<Player> const &get_players() const;
+    void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
+    std::size_t get_current_player() const;
 
     std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery();
 
@@ -27,6 +27,7 @@ private:
     Board board;
     std::vector<Player> players;
     Deck deck;
+    std::size_t current_player = 0;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

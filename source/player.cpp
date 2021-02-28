@@ -14,7 +14,7 @@ void Player::put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Anim
     //добавляется новая карта животного у игрока, чистая, без свойств
     animals_on_board.push_back(new_animal);
     //удаляется в руках, это ок, тк храним структуры
-    for (int i = 0; i < cards_in_hands.size(); ++i) {
+    for (std::size_t i = 0; i < cards_in_hands.size(); ++i) {
         if(cards_in_hands[i] == card){
             cards_in_hands.erase(cards_in_hands.begin() + i);
         }
