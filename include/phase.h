@@ -18,13 +18,13 @@ class Feeding_Phase;
 
 class Development_Phase : public Phase {
 public:
-    //Development_Phase() = default;
+    // Development_Phase() = default;
     explicit Development_Phase(Game &game_) : game(game_){};
 
     std::unique_ptr<View> get_view() override;
 
     std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery();
-    //void place_card_on_board(Card &card);
+    // void place_card_on_board(Card &card);
     void set_next_phase();
     bool is_running_first_time() const;
     void set_start_of_phase(bool start);
@@ -38,17 +38,24 @@ private:
 
 class Feeding_Phase : public Phase {
 public:
-    //Feeding_Phase() = default;
-    explicit Feeding_Phase(Game &game_) : game(game_){};
+    explicit Feeding_Phase(Game &game_);
 
     std::unique_ptr<View> get_view() override;
 
     void set_next_phase();
-    bool is_running_first_time()const;
     ~Feeding_Phase() override = default;
+    void feed_animal(std::shared_ptr<Animal> animal);
+    void decrease_food_balance();
+    bool is_end_of_phase() const;
+    void kill_animals();
 
 private:
+    static constexpr size_t MIN_FOOD_BALANCE = 10;
+    static constexpr size_t MAX_FOOD_BALANCE = 3;
+    static size_t define_food_balance();
+
     Game &game;
+    size_t food_balance;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_PHASE_H_

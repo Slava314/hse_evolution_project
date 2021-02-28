@@ -34,7 +34,7 @@ int need_card(Player const &player) {
     if (player.size_cards_owning_in_hands() == 0) {
         return 6;
     } else {
-        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_count() +1);
+        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_on_board().size() +1);
     }
 }
 

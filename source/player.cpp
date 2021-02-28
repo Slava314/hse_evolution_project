@@ -1,11 +1,11 @@
 #include "player.h"
 #include <cassert>
-int Player::size_cards_owning_in_hands() const {
+size_t Player::size_cards_owning_in_hands() const {
     return cards_in_hands.size();
 }
 
-int Player::get_animals_count() const {
-    return animals_on_board.size();
+const std::vector<std::shared_ptr<Animal>> & Player::get_animals_on_board() const {
+    return animals_on_board;
 }
 
 void Player::put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal) {
@@ -46,4 +46,13 @@ bool Player::can_lay_out_as_animal() const {
 
 void Player::add_card(std::shared_ptr<Card> card) {
     cards_in_hands.push_back(card);
+}
+void Player::handle_animal_death(const std::shared_ptr<Animal> &animal) {
+    for (size_t i = 0; i < animals_on_board.size(); ++i) {
+        if (animal == animals_on_board[i]) {
+            animals_on_board.erase(animals_on_board.begin() + i);
+            return;
+        }
+    }
+    throw std::invalid_argument("PLAYER HAS NO SUCH ANIMAL");
 }

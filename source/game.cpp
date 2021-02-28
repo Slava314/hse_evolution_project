@@ -26,9 +26,12 @@ void Game::start_game() {
 void Game::set_phase(std::unique_ptr<Phase> new_phase) {
     phase.swap(new_phase);
 }
-std::vector<Player> const &Game::get_players() {
+std::vector<Player> &Game::get_players() {
     return players;
 }
 void Game::add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal) {
     players[0].put_card_as_animal(card, new_animal);
+}
+Board &Game::get_board() {
+    return board;
 }
