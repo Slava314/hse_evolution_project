@@ -1,18 +1,18 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_CARDS_H_
 #define EVOLUTION_PROJECT_INCLUDE_CARDS_H_
 
-#include "properties.h"
-
 #include <iostream>
+#include "properties.h"
 struct Card {
     Properties property = DEFAULT;
     int extra_food = 0;
-    Card(Properties prop) : property(prop){}
+    Card(Properties prop) : property(prop) {
+    }
+
 protected:
     explicit Card(Properties i, int food) : property(i), extra_food(food) {
     }
 };
-
 
 struct FatTissue : Card {
     explicit FatTissue(Properties &prop) : Card(prop, 0) {
