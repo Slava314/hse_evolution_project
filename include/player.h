@@ -3,17 +3,13 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include "animal.h"
 #include "cards.h"
 
 class Player {
-    std::string name;
-    [[maybe_unused]] bool chose_to_end_phase = false;
-
-    std::vector<std::unique_ptr<Card>> cards_in_hands;
-    std::vector<Animal> animals_on_board;
-
 public:
+    explicit Player(std::string name_) : name(std::move(name_)){}
     int size_cards_owning_in_hands() const;
     int get_animals_count() const;
     void put_card_as_animal(int which_card);
@@ -26,6 +22,15 @@ public:
     void add_card(std::unique_ptr<Card> &card);
 
     [[nodiscard]] std::vector<std::unique_ptr<Card>> const &get_cards() const;
-};
+    std::string get_name();
+private:
+    std::string name;
+    [[maybe_unused]] bool chose_to_end_phase = false;
+
+    std::vector<std::unique_ptr<Card>> cards_in_hands;
+    std::vector<Animal> animals_on_board;
+    void erase_card_from_hand(int which_card);
+
+    };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

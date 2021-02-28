@@ -47,3 +47,7 @@ void Deck::cards_delivery(std::vector<Player> &players) {
         }
     }
 }
+
+std::vector<std::unique_ptr<Card>> &Deck::get_deck() {
+    return deck_of_cards;
+}

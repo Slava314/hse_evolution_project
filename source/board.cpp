@@ -16,7 +16,14 @@
 //    return player.animals_on_board;
 //}
 
-void Board::use_card_as_animal(){
-//тут тогда нужно использовать карту как у игрока
-//и добавить ее же в вектор в Board
+void Board::use_card_as_animal(int player_index){
+    lying_cards[player_index].push_back(std::make_unique<Animal>(Animal()));
 }
+
+//void Board::get_player_index(Player &needed_player){
+//    for (auto &player : lying_cards) {
+//        if(player == needed_player.get_name()){
+//
+//        }
+//    }
+//}
