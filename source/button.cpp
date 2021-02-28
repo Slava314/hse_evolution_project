@@ -17,7 +17,7 @@ void Button::set_position(const sf::Vector2f &position) {
 bool Button::is_clicked(const sf::Vector2i &mouse_position) const {
     auto bounds = shape.getGlobalBounds();
     return (mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width &&
-            mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height);
+            mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height) && is_active_;
 }
 
 void Button::set_size(const sf::Vector2f &size) {

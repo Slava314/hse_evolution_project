@@ -74,7 +74,7 @@ private:
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     std::vector<CardButton> player_cards_buttons;
-    std::vector<AnimalButton> player_animals_shapes;
+    std::vector<AnimalButton> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
     TextButton end_turn;
