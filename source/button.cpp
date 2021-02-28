@@ -1,5 +1,6 @@
 #include "button.h"
 #include <SFML/Graphics.hpp>
+#include <utility>
 
 void Button::set_color(sf::Color const &color) {
     shape.setFillColor(color);
@@ -44,7 +45,7 @@ void Button::set_scale(sf::Vector2f scale) {
 }
 
 void Button::activate() {
-    is_active = 1;
+    is_active = true;
     sf::Color color = shape.getFillColor();
     color.a = 255;
     shape.setFillColor(color);
@@ -54,13 +55,16 @@ void Button::activate() {
 }
 
 void Button::deactivate() {
-    is_active = 0;
+    is_active = false;
     sf::Color color = shape.getFillColor();
     color.a = 150;
     shape.setFillColor(color);
     color = shape.getOutlineColor();
     color.a = 150;
     shape.setOutlineColor(color);
+}
+void Button::draw(sf::RenderWindow &window) {
+    window.draw(shape);
 }
 
 sf::Text const &Text_Button::get_text() {
@@ -70,14 +74,14 @@ sf::Text const &Text_Button::get_text() {
 void Text_Button::set_position(const sf::Vector2f &position_) {
     Button::set_position(position_);
     text.setPosition(
-        shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0,
+        shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0f,
         shape.getPosition().y);
 }
 
 void Text_Button::set_text_size(int size) {
     text.setCharacterSize(size);
     text.setPosition(
-        shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0,
+        shape.getPosition().x + (shape.getSize().x - text.getGlobalBounds().width) / 2.0f,
         shape.getPosition().y);
 }
 
@@ -108,4 +112,34 @@ void Text_Button::deactivate() {
 
 void Text_Button::set_text_color(sf::Color color) {
     text.setFillColor(color);
+}
+
+void Text_Button::set_text(const std::wstring &line, sf::Font const &font) {
+    text = sf::Text(line, font);
+}
+
+void Text_Button::set_text(const std::string &line, sf::Font const &font) {
+    text = sf::Text(line, font);
+}
+
+void Text_Button::set_font(sf::Font const &font) {
+    text.setFont(font);
+}
+void Text_Button::draw(sf::RenderWindow &window) {
+    window.draw(shape);
+    window.draw(text);
+}
+
+void Animal_Button::set_object(std::shared_ptr<Animal> obj) {
+    object = std::move(obj);
+}
+std::shared_ptr<Animal> Animal_Button::get_object() {
+    return object;
+}
+
+void Card_Button::set_object(std::shared_ptr<Card> obj) {
+    object = std::move(obj);
+}
+std::shared_ptr<Card> Card_Button::get_object() {
+    return object;
 }

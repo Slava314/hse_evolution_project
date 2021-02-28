@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "properties.h"
-
 struct Card {
 public:
     Properties property = DEFAULT;

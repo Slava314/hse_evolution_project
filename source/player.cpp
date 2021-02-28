@@ -12,11 +12,11 @@ void Player::erase_card_from_hand(int which_card){
     cards_in_hands.erase(cards_in_hands.begin() + which_card);
 }
 
-void Player::put_card_as_animal(int which_card) {
+void Player::put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal) {
     //карта добавляется к себе в массив и также в вектор указателей доски
 
     //добавляется новая карта животного у игрока, чистая, без свойств
-    animals_on_board.emplace_back(Animal());
+    animals_on_board.push_back(new_animal);
     //удаляется в руках, это ок, тк храним структуры
     erase_card_from_hand(which_card);
 }
@@ -32,6 +32,12 @@ void Player::use_card_as_property(int which_card, int to_which_card) {
     cards_in_hands[which_card].reset(nullptr);
     assert(cards_in_hands[which_card].get() == nullptr);
     erase_card_from_hand(which_card);
+
+    for (int i = 0; i < cards_in_hands.size(); ++i) {
+        if(cards_in_hands[i] == card){
+            cards_in_hands.erase(cards_in_hands.begin() + i);
+        }
+    }
 }
 
 bool Player::can_lay_out_as_animal() const {
@@ -39,12 +45,12 @@ bool Player::can_lay_out_as_animal() const {
     return (!cards_in_hands.empty() or !chose_to_end_phase);
 }
 
-std::vector<std::unique_ptr<Card>> const &Player::get_cards() const {
-    return cards_in_hands;
-}
+//std::vector<std::unique_ptr<Card>> const &Player::get_cards() const {
+//    return cards_in_hands;
+//}
 
-void Player::add_card(std::unique_ptr<Card> &card) {
-    cards_in_hands.emplace_back(std::move(card));
+void Player::add_card(std::shared_ptr<Card> card) {
+    cards_in_hands.push_back(card);
 }
 
 std::string Player::get_name() {
