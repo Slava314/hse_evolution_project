@@ -8,7 +8,8 @@ void DevelopmentPhaseView::start_development_phase(GameWindow &window) const {
     phase.set_start_of_phase(false);
 }
 void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
-    window.add_cards(phase.cards_delivery());
+    phase.cards_delivery();
+    window.add_cards();
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
     auto new_animal = std::make_shared<Animal>();
@@ -16,9 +17,10 @@ void DevelopmentPhaseView::add_animal(GameWindow &window) const {
     phase.add_animal(card, new_animal);
 }
 
-void DevelopmentPhaseView::add_property(int selected_animal, GameWindow &window) const {
+void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_animal,
+                                        GameWindow &window) const {
+    phase.add_property_to_animal(window.get_selected_card(), selected_animal);
     window.add_property_to_animal(selected_animal);
-    // TODO add property in logic
 }
 
 void DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
@@ -31,7 +33,7 @@ void DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &eve
             phase.set_next_phase();
             return;
         }
-        if (auto clicked_card = window.check_cards(); clicked_card != -1) {
+        if (const auto &clicked_card = window.get_clicked_card(); clicked_card != nullptr) {
             window.click_card(clicked_card);
             return;
         }
@@ -39,7 +41,7 @@ void DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &eve
             add_animal(window);
             return;
         }
-        if (auto clicked_animal = window.check_animals(); clicked_animal != -1) {
+        if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
             add_property(clicked_animal, window);
             return;
         }

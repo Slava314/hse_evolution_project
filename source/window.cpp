@@ -65,14 +65,14 @@ std::unique_ptr<Window> GameWindow::handle_events() {
 void GameWindow::draw() {
     window.draw(deck_shape);
     window.draw(deck_text);
-    for (auto card : player_cards_buttons) {
+    for (const auto &card : player_cards_buttons) {
         card.draw(window);
     }
-    for (auto animal : player_animals_shapes) {
+    for (const auto &animal : player_animals_shapes) {
         animal.draw(window);
     }
 
-    if (selected_card != -1) {
+    if (selected_card != nullptr) {
         place_for_new_animal.draw(window);
     }
 
@@ -112,14 +112,23 @@ void GameWindow::make_deck_shape() {
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
 }
-void GameWindow::add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards) {
-    for (auto &i : new_cards[cur_player]) {
-        CardButton new_button(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
-        new_button.set_color(CARD_COLOR);
-        new_button.set_outline_thickness(5);
-        new_button.set_outline_color(CARD_OUTLINE_COLOR);
-        new_button.set_object(i);
-        player_cards_buttons.push_back(new_button);
+void GameWindow::add_cards() {
+    auto cards = game.get_players()[cur_player].get_cards();
+    for (const auto &card : cards) {
+        bool exist = false;
+        for (const auto &player_cards_button : player_cards_buttons) {
+            if (card == player_cards_button.get_object()) {
+                exist = true;
+            }
+        }
+        if (!exist) {
+            CardButton new_button(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
+            new_button.set_color(CARD_COLOR);
+            new_button.set_outline_thickness(5);
+            new_button.set_outline_color(CARD_OUTLINE_COLOR);
+            new_button.set_object(card);
+            player_cards_buttons.push_back(new_button);
+        }
     }
     set_cards_position();
     make_deck_shape();
@@ -166,26 +175,25 @@ void GameWindow::delete_animal_shape() {
 sf::RenderWindow &GameWindow::get_window() {
     return window;
 }
-int GameWindow::check_cards() {
-    for (std::size_t i = 0; i < player_cards_buttons.size(); ++i) {  // choose card
-        // TODO rewrite selected card with ptr and add range_based for
-        if (player_cards_buttons[i].is_clicked(sf::Mouse::getPosition(window)) &&
-            player_cards_buttons[i].is_active()) {
-            if (selected_card == -1) {
-                selected_card = i;
+std::shared_ptr<Card> GameWindow::get_clicked_card() {
+    for (auto &player_cards_button : player_cards_buttons) {
+        if (player_cards_button.is_clicked(sf::Mouse::getPosition(window)) &&
+            player_cards_button.is_active()) {
+            if (!selected_card) {
+                selected_card = player_cards_button.get_object();
             } else {
-                selected_card = -1;
+                selected_card = nullptr;
             }
-            return i;
+            return player_cards_button.get_object();
         }
     }
-    return -1;
+    return nullptr;
 }
-void GameWindow::click_card(int i) {
-    if (selected_card == i) {
-        for (int j = 0; j < int(player_cards_buttons.size()); ++j) {
-            if (i != j) {
-                player_cards_buttons[j].deactivate();
+void GameWindow::click_card(const std::shared_ptr<Card> &card) {
+    if (selected_card == card) {
+        for (auto &player_cards_button : player_cards_buttons) {
+            if (card != player_cards_button.get_object()) {
+                player_cards_button.deactivate();
             }
         }
         for (auto &player_animal_button : player_animals_shapes) {
@@ -194,7 +202,6 @@ void GameWindow::click_card(int i) {
         set_animals_position(true);
         place_for_new_animal.activate();
     } else {
-        //                    player_cards_buttons[i].deactivate();
         for (auto &player_cards_button : player_cards_buttons) {
             player_cards_button.activate();
         }
@@ -212,10 +219,13 @@ bool GameWindow::check_new_animal() {
 }
 
 std::shared_ptr<Card> GameWindow::play_animal(const std::shared_ptr<Animal> &animal) {
-    // players[0].use_card_as_animal(selected_card);
-    auto card = player_cards_buttons[selected_card].get_object();
-    player_cards_buttons.erase(std::next(player_cards_buttons.begin(), selected_card));
-    selected_card = -1;
+    auto card = selected_card;
+    for (std::size_t i = 0; i < player_cards_buttons.size(); ++i) {
+        if (player_cards_buttons[i].get_object() == selected_card) {
+            player_cards_buttons.erase(std::next(player_cards_buttons.begin(), i));
+        }
+    }
+    selected_card = nullptr;
     place_for_new_animal.deactivate();
     set_cards_position();
     add_animal_shape(animal);
@@ -229,24 +239,31 @@ std::shared_ptr<Card> GameWindow::play_animal(const std::shared_ptr<Animal> &ani
 bool GameWindow::check_end_turn() {
     return end_turn.is_clicked(sf::Mouse::getPosition(window)) && end_turn.is_active();
 }
-int GameWindow::check_animals() {
-    for (std::size_t i = 0; i < player_animals_shapes.size(); ++i) {  // use card as property
-        if (player_animals_shapes[i].is_clicked(sf::Mouse::getPosition(window)) &&
-            player_animals_shapes[i].is_active()) {
-            return i;  // TODO range-based and return shared_ptr
+std::shared_ptr<Animal> GameWindow::check_animals() {
+    for (auto &player_animals_shape : player_animals_shapes) {
+        if (player_animals_shape.is_clicked(sf::Mouse::getPosition(window)) &&
+            player_animals_shape.is_active()) {
+            return player_animals_shape.get_object();
         }
     }
-    return -1;
+    return nullptr;
 }
-void GameWindow::add_property_to_animal(std::size_t i) {
-    if (selected_card != -1) {
-        player_cards_buttons.erase(std::next(player_cards_buttons.begin(), selected_card));
-        selected_card = -1;
+void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &new_animal) {
+    if (selected_card != nullptr) {
+        for (std::size_t i = 0; i < player_cards_buttons.size(); ++i) {
+            if (player_cards_buttons[i].get_object() == selected_card) {
+                player_cards_buttons.erase(std::next(player_cards_buttons.begin(), i));
+            }
+        }
+        selected_card = nullptr;
         set_cards_position();
-        // set_animals_position(false);
-        player_animals_shapes[i].set_text(L"свойства: " + std::to_wstring(1),
-                                          font);  // TODO ask for number of properties
-        player_animals_shapes[i].set_text_size(22);
+        for (auto &player_animals_shape : player_animals_shapes) {
+            if (player_animals_shape.get_object() == new_animal) {
+                player_animals_shape.set_text(L"свойства: " + std::to_wstring(1),
+                                              font);  // TODO ask for number of properties
+                player_animals_shape.set_text_size(22);
+            }
+        }
         for (auto &player_animal_button : player_animals_shapes) {
             player_animal_button.set_active(false);
         }
@@ -258,6 +275,6 @@ void GameWindow::add_property_to_animal(std::size_t i) {
         }
     }
 }
-int GameWindow::get_selected_card() const {
+std::shared_ptr<Card> const &GameWindow::get_selected_card() const {
     return selected_card;
 }

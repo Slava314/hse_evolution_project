@@ -1,12 +1,11 @@
 #include "game.h"
-#include <SFML/Graphics.hpp>
 #include "constants.h"
 
 std::unique_ptr<Phase> const &Game::get_phase() const {
     return phase;
 }
-std::vector<std::vector<std::shared_ptr<Card>>> Game::cards_delivery() {
-    return deck.cards_delivery(players);
+void Game::cards_delivery() {
+    deck.cards_delivery(players);
 }
 std::size_t Game::get_deck_size() const {
     return deck.get_deck_size();
@@ -35,4 +34,8 @@ void Game::add_animal(const std::shared_ptr<Card> &card,
 }
 std::size_t Game::get_current_player() const {
     return current_player;
+}
+void Game::add_property_to_animal(const std::shared_ptr<Card> &card,
+                                  const std::shared_ptr<Animal> &animal) {
+    // TODO
 }

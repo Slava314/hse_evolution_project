@@ -20,7 +20,10 @@ public:
     void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
     std::size_t get_current_player() const;
 
-    std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery();
+    void cards_delivery();
+
+    void add_property_to_animal(const std::shared_ptr<Card> &card,
+                                const std::shared_ptr<Animal> &animal);
 
 private:
     std::unique_ptr<Phase> phase;

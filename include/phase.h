@@ -20,17 +20,22 @@ public:
 
     std::unique_ptr<View> get_view() override;
 
-    std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery();
+    void cards_delivery();
     // void place_card_on_board(Card &card);
     void set_next_phase();
     bool is_running_first_time() const;
     void set_start_of_phase(bool start);
-    void add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
+    void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
+    std::shared_ptr<Card> const &get_selected_card() const;
     ~DevelopmentPhase() override = default;
+
+    void add_property_to_animal(const std::shared_ptr<Card> &card,
+                                const std::shared_ptr<Animal> &animal);
 
 private:
     Game &game;
     bool start_of_phase = true;
+    std::shared_ptr<Card> selected_card = nullptr;
 };
 
 class FeedingPhase : public Phase {

@@ -1,6 +1,6 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_CONSTANTS_H_
 #define EVOLUTION_PROJECT_INCLUDE_CONSTANTS_H_
-
+#include <SFML/Graphics/Color.hpp>
 constexpr unsigned int WINDOW_WIDTH = 1800;
 constexpr unsigned int WINDOW_HEIGHT = 1000;
 constexpr unsigned int CARD_WIDTH = 120;

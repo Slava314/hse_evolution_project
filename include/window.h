@@ -47,30 +47,24 @@ public:
     }
 
     std::unique_ptr<Window> handle_events() override;
-    void add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards);
+    void add_cards();
     void set_cards_position();
     void init_window();
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal);
     void set_animals_position(bool with_new_place);
-    int get_selected_card() const;
     void delete_animal_shape();
     sf::RenderWindow &get_window();
-    ~GameWindow() override = default;
-
-    int check_cards();
-
-    void click_card(int i);
-
+    std::shared_ptr<Card> get_clicked_card();
+    void click_card(const std::shared_ptr<Card> &card);
     bool check_new_animal();
-
     std::shared_ptr<Card> play_animal(const std::shared_ptr<Animal> &shared_ptr);
-
     bool check_end_turn();
+    std::shared_ptr<Animal> check_animals();
+    void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
+    std::shared_ptr<Card> const &get_selected_card() const;
 
-    int check_animals();
-
-    void add_property_to_animal(std::size_t i);
+    ~GameWindow() override = default;
 
 private:
     void draw() override;
@@ -81,7 +75,7 @@ private:
     sf::Text deck_text;
     std::vector<CardButton> player_cards_buttons;
     std::vector<AnimalButton> player_animals_shapes;
-    int selected_card = -1;
+    std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
     TextButton end_turn;
     int cur_player = 0;

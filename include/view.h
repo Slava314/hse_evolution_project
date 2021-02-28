@@ -23,7 +23,7 @@ public:
 
     void add_animal(GameWindow &window) const;
 
-    void add_property(int selected_animal, GameWindow &window) const;
+    void add_property(const std::shared_ptr<Animal> &selected_animal, GameWindow &window) const;
 
     ~DevelopmentPhaseView() override = default;
 
