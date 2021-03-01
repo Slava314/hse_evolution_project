@@ -7,10 +7,12 @@ void Development_Phase_View::start_development_phase(Game_Window &window) const 
     cards_delivery(window);
     phase.set_start_of_phase(false);
 }
+
 void Development_Phase_View::cards_delivery(Game_Window &window) const {
-    auto t = phase.cards_delivery();
-    window.add_cards(t);
+    phase.cards_delivery();
+    window.add_cards();
 }
+
 void Development_Phase_View::add_animal(Game_Window &window) const {
     auto new_animal = std::make_shared<Animal>();
     auto card = window.play_animal(new_animal);

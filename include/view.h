@@ -12,7 +12,7 @@ public:
 
 class Development_Phase_View : public View {
 public:
-    explicit Development_Phase_View(Development_Phase &phase_) : phase(phase_) {
+    explicit Development_Phase_View(DevelopmentPhase &phase_) : phase(phase_) {
     }
 
     void handle_events(Game_Window &window, sf::Event event) const override;
@@ -28,12 +28,12 @@ public:
     ~Development_Phase_View() override = default;
 
 private:
-    Development_Phase &phase;
+    DevelopmentPhase &phase;
 };
 
 class Feeding_Phase_View : public View {
 public:
-    explicit Feeding_Phase_View(Feeding_Phase &phase_) : phase(phase_) {
+    explicit Feeding_Phase_View(FeedingPhase &phase_) : phase(phase_) {
     }
 
     void handle_events(Game_Window &window, sf::Event) const override;
@@ -41,7 +41,7 @@ public:
     ~Feeding_Phase_View() override = default;
 
 private:
-    Feeding_Phase &phase;
+    FeedingPhase &phase;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_VIEW_H_

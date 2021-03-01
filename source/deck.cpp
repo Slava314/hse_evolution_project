@@ -2,18 +2,19 @@
 #include <algorithm>
 #include <random>
 #include <vector>
+#include "properties.h"
 
-void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
+void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info) {
     for (auto card : cards_info) {
         while (card.second--) {
             switch (card.first) {
-                case FAT_TISSUE:
+                case Properties::FAT_TISSUE:
                     deck_of_cards.push_back(std::make_shared<FatTissue>(FatTissue(card.first)));
                     break;
-                case BIG:
+                case Properties::BIG:
                     deck_of_cards.push_back(std::make_shared<Big>(Big(card.first)));
                     break;
-                case STOMPER:
+                case Properties::STOMPER:
                     deck_of_cards.push_back(std::make_shared<Stomper>(Stomper(card.first)));
                     break;
                 default:
@@ -34,23 +35,16 @@ int need_card(Player const &player) {
     if (player.size_cards_owning_in_hands() == 0) {
         return 6;
     } else {
-        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_count() +1);
+        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_count() + 1);
     }
 }
 
-std::vector<std::vector<std::shared_ptr<Card>>> Deck::cards_delivery(std::vector<Player> &players) {
-    std::vector<std::vector<std::shared_ptr<Card>>> new_cards(players.size());
+void Deck::cards_delivery(std::vector<Player> &players) {
     for (std::size_t i = 0; i < players.size(); i++) {
         auto need = need_card(players[i]);
         while (need--) {
-            players[i].add_card(deck_of_cards.back());
-            new_cards[i].push_back(deck_of_cards.back());
+            players[i].add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
     }
-    return new_cards;
-}
-
-std::vector<std::unique_ptr<Card>> &Deck::get_deck() {
-    return deck_of_cards;
 }

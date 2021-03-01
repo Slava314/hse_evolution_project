@@ -6,22 +6,23 @@
 #include "player.h"
 
 class Board {
-    //TODO - generator for food - for Emily
-    int feeding_units = 0;  //кол-во еды в кормовой базе
-    //std::vector<std::vector<std::unique_ptr<Animal>>> lying_cards;
-
 public:
-    //он точно должени принимать стурктуру игрока, а не номер, например, в векторе всех игроков?
-    std::vector<Animal> get_players_animals(Player player);
-    void get_player_index(Player &player);
-    void use_card_as_animal(int player_index);
+    std::vector<std::shared_ptr<Animal>> get_players_animals(std::size_t index);
+    std::size_t get_players_animals_size(std::size_t index);
+    std::size_t lying_cards_size();
 
-        // TODO добавляем еды - Emily
+    void put_card_as_animal(const std::shared_ptr<Animal> &);
+
+    void use_card_as_property(std::pair<Properties, int> adding,
+                              const std::shared_ptr<Animal> &to_which_card);
+
+    std::size_t count_animals_properties(std::size_t position,
+                                         const std::shared_ptr<Animal> &animal);
+    void resize_lying_cards(std::size_t counter);
 
 private:
-    //TODO - generator for food - for Emily
-    int feeding_units = 0;  //кол-во еды в кормовой базе
-    std::vector<std::vector<std::unique_ptr<Animal>>> lying_cards;
+    int feeding_units = 0;
+    using PLayersAnimals = std::vector<std::shared_ptr<Animal>>;
+    std::vector<PLayersAnimals> lying_cards;
 };
-
 #endif  // EVOLUTION_PROJECT_INCLUDE_BOARD_H_

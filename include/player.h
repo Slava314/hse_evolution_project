@@ -3,32 +3,32 @@
 
 #include <memory>
 #include <string>
-#include <utility>
 #include "animal.h"
 #include "cards.h"
 
 class Player {
 public:
-    explicit Player(std::string name_) : name(std::move(name_)){}
+    using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
+
     int size_cards_owning_in_hands() const;
     int get_animals_count() const;
-    void put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
-    void use_card_as_property(int which_card, int to_which_card);
 
-    std::vector<std::unique_ptr<Card>> get_cards{};
+    void add_card_in_hands(const std::shared_ptr<Card> &card);
 
-    bool can_lay_out_as_animal() const;
+    [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
+    std::pair<Properties, int> get_card_information(const std::shared_ptr<Card> &card);
+    void update_animals_on_board(BoardAnimals const &animals);
 
-    void add_card(std::shared_ptr<Card> card);
+    [[nodiscard]] std::string get_name() const;
+    void set_name(std::string name_);
 
-    [[nodiscard]] std::vector<std::unique_ptr<Card>> const &get_cards() const;
-    std::string get_name();
 private:
-    std::string name;
-    [[maybe_unused]] bool chose_to_end_phase = false;
+    void erase_card_from_hand(const std::shared_ptr<Card> &which_card);
 
-    std::vector<std::unique_ptr<Card>> cards_in_hands;
-    std::vector<Animal> animals_on_board;
-    void erase_card_from_hand(int which_card);
+    std::vector<std::shared_ptr<Card>> cards_in_hands;
+    std::vector<std::shared_ptr<Animal>> animals_on_board;
+    std::string name;
+    bool chose_to_end_phase = false;
 };
+
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

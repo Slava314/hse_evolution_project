@@ -47,7 +47,7 @@ public:
     }
 
     std::unique_ptr<Window> handle_events() override;
-    void add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards);
+    void add_cards();
     void set_cards_position();
     void init_window();
     void make_deck_shape();

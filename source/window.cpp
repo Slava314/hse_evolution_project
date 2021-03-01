@@ -117,17 +117,30 @@ void Game_Window::make_deck_shape() {
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
 }
-void Game_Window::add_cards(std::vector<std::vector<std::shared_ptr<Card>>> new_cards) {
-    for (int i = 0; i < new_cards[cur_player].size(); ++i) {
-        player_cards_buttons.emplace_back(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
-        player_cards_buttons.back().set_color(CARD_COLOR);
-        player_cards_buttons.back().set_outline_thickness(5);
-        player_cards_buttons.back().set_outline_color(CARD_OUTLINE_COLOR);
-        player_cards_buttons.back().set_object(new_cards[cur_player][i]);
+
+void Game_Window::add_cards() {
+    auto cards = game.get_players()[cur_player].get_cards_in_hands();
+    for (const auto &card : cards) {
+        bool exist = false;
+        for (auto &player_cards_button : player_cards_buttons) {
+            if (card == player_cards_button.get_object()) {
+                exist = true;
+            }
+        }
+        if (!exist) {
+            Card_Button new_button(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
+            new_button.set_color(CARD_COLOR);
+            new_button.set_outline_thickness(5);
+            new_button.set_outline_color(CARD_OUTLINE_COLOR);
+            new_button.set_object(card);
+            player_cards_buttons.push_back(new_button);
+        }
     }
     set_cards_position();
     make_deck_shape();
 }
+
+
 void Game_Window::set_cards_position() {
     unsigned int left_point_cards = (WINDOW_WIDTH - CARD_WIDTH * player_cards_buttons.size() -
                                      free_space * (player_cards_buttons.size() - 1)) /
