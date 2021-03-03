@@ -19,11 +19,11 @@ public:
     void put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
     void use_card_as_property(int which_card, int to_which_card);
 
-    std::vector<std::unique_ptr<Card>> get_cards{};
+    std::vector<std::shared_ptr<Card>> const &get_cards() const;
 
     bool can_lay_out_as_animal() const;
 
-    void add_card(std::shared_ptr<Card> card);
+    void add_card(const std::shared_ptr<Card> &card);
 
     //[[nodiscard]] std::vector<std::unique_ptr<Card>> const &get_cards() const;
 };

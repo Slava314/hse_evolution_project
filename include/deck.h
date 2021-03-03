@@ -13,7 +13,7 @@ class Deck {
 public:
     void generate_deck(std::vector<std::pair<Properties, int>> &cards_info);
     [[nodiscard]] int get_deck_size() const;
-    std::vector<std::vector<std::shared_ptr<Card>>> cards_delivery(std::vector<Player> &players);
+    void cards_delivery(std::vector<Player> &players);
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_DECK_H_

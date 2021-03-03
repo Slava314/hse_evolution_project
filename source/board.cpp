@@ -12,11 +12,11 @@
 
 #include "board.h"
 
-//std::vector<Animal> Board::get_players_animals(Player player) {
+// std::vector<Animal> Board::get_players_animals(Player player) {
 //    return player.animals_on_board;
 //}
 
-void Board::use_card_as_animal(){
-//тут тогда нужно использовать карту как у игрока
-//и добавить ее же в вектор в Board
+void Board::use_card_as_animal() {
+    //тут тогда нужно использовать карту как у игрока
+    //и добавить ее же в вектор в Board
 }

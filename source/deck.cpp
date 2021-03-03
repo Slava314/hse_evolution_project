@@ -34,19 +34,16 @@ int need_card(Player const &player) {
     if (player.size_cards_owning_in_hands() == 0) {
         return 6;
     } else {
-        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_count() +1);
+        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_count() + 1);
     }
 }
 
-std::vector<std::vector<std::shared_ptr<Card>>> Deck::cards_delivery(std::vector<Player> &players) {
-    std::vector<std::vector<std::shared_ptr<Card>>> new_cards(players.size());
-    for (std::size_t i = 0; i < players.size(); i++) {
-        auto need = need_card(players[i]);
+void Deck::cards_delivery(std::vector<Player> &players) {
+    for (auto &player : players) {
+        auto need = need_card(player);
         while (need--) {
-            players[i].add_card(deck_of_cards.back());
-            new_cards[i].push_back(deck_of_cards.back());
+            player.add_card(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
     }
-    return new_cards;
 }
