@@ -4,19 +4,21 @@
 #include <vector>
 #include <unordered_set>
 #include "properties.h"
-class Feeding_Phase;
+#include "phase_fwd.h"
+
 class Animal {
 public:
-    [[nodiscard]] std::unordered_multiset<Properties> GetProperties() const;
-    void UseProperty(Properties properties, Feeding_Phase &);
+    using Prop = Properties::_enumerated;
+    [[nodiscard]] std::unordered_multiset<Prop> get_properties() const;
+    static void UseProperty(Properties properties, FeedingPhase &);
     void increase_owning_food();
-    bool is_hungry() const;
-
+    void increase_food_needed(std::size_t how_much);
+    [[nodiscard]] bool is_hungry() const;
     Animal() = default;
 
 private:
     int food_needed = 1;
     int owning_food = 0;
-    std::unordered_multiset<Properties> animals_properties{};
+    std::unordered_multiset<Prop> animals_properties{};
 };
 #endif  // EVOLUTION_PROJECT_ANIMAL_H

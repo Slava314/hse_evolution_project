@@ -8,7 +8,7 @@
 #include "properties.h"
 
 class Deck {
-    std::vector<std::shared_ptr<Card>> deck_of_cards;  //*указатели на карты
+    std::vector<std::shared_ptr<Card>> deck_of_cards;
 
 public:
     void generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info);

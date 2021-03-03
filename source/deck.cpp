@@ -32,10 +32,10 @@ int Deck::get_deck_size() const {
 }
 
 int need_card(Player const &player) {
-    if (player.size_cards_owning_in_hands() == 0) {
+    if (player.get_cards_in_hands().size() == 0) {
         return 6;
     } else {
-        return std::max(6 - player.size_cards_owning_in_hands(), player.get_animals_on_board().size() +1);
+        return std::max(6 - player.get_cards_in_hands().size(), player.get_animals_on_board().size() +1);
     }
 }
 

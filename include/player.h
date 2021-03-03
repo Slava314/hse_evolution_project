@@ -8,28 +8,33 @@
 
 class Player {
 public:
+    /// i will do it
+    //    explicit Player(const std::string &name_) : name(name_){
+    //        cards_in_hands.resize(0);
+    //        animals_on_board.resize(0);
+    //    }
+
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
+    using Prop = Properties::_enumerated;
 
-    int get_animals_count() const;
-    std::size_t size_cards_owning_in_hands() const;
-
-    const std::vector<std::shared_ptr<Animal>> & get_animals_on_board() const;
-    void put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
-    void use_card_as_property(int which_card, int to_which_card);
+    [[nodiscard]] std::string &get_name();
 
     void add_card_in_hands(const std::shared_ptr<Card> &card);
+    void put_card_as_animal(const std::shared_ptr<Card> &which_card,
+                            const std::shared_ptr<Animal> &animal);
+    void use_card_as_property(const std::shared_ptr<Card> &which_card,
+                              const std::shared_ptr<Animal> &to_which_card);
 
+    void kill_animal(const std::shared_ptr<Animal> &animal);
+
+    std::pair<Prop, int> get_card_information(const std::shared_ptr<Card> &card);
+    [[nodiscard]] const std::vector<std::shared_ptr<Animal>> &get_animals_on_board() const;
     [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
-    std::pair<Properties, int> get_card_information(const std::shared_ptr<Card> &card);
-    void update_animals_on_board(BoardAnimals const &animals);
-
-    [[nodiscard]] std::string get_name() const;
-    void set_name(std::string name_);
+    size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
 private:
-    void erase_card_from_hand(const std::shared_ptr<Card> &which_card);
-    void add_card(std::shared_ptr<Card> card);
-    void handle_animal_death(std::shared_ptr<Animal> const & animal);
+    void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
+    void handle_animal_death(std::shared_ptr<Animal> const &animal);
 
     std::vector<std::shared_ptr<Card>> cards_in_hands;
     std::vector<std::shared_ptr<Animal>> animals_on_board;

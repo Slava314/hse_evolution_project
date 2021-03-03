@@ -22,13 +22,13 @@ public:
 
     std::unique_ptr<View> get_view() override;
 
-    void cards_delivery();
-
-    void set_next_phase();
     bool is_running_first_time() const;
+    void set_next_phase();
     void set_start_of_phase(bool start);
-    void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
-    void give_new_property_to_animal(const std::shared_ptr<Card> &card,
+
+    void cards_delivery();
+    void add_animal(std::shared_ptr<Card> &card, std::shared_ptr<Animal> &new_animal);
+    void give_property_to_animal(const std::shared_ptr<Card> &card,
                                      const std::shared_ptr<Animal> &new_animal);
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
@@ -43,17 +43,18 @@ class FeedingPhase : public Phase {
 public:
     explicit FeedingPhase(Game &game_) : game(game_){};
 
-
     std::unique_ptr<View> get_view() override;
 
     void set_next_phase();
     bool is_running_first_time() const;
+    [[nodiscard]] bool is_end_of_phase() const;
+
+    void feed_animal(const std::shared_ptr<Animal> &animal);
+    void decrease_food_balance();
+    void kill_animals();
 
     ~FeedingPhase() override = default;
-    void feed_animal(std::shared_ptr<Animal> animal);
-    void decrease_food_balance();
-    bool is_end_of_phase() const;
-    void kill_animals();
+
 
 private:
     static constexpr size_t MIN_FOOD_BALANCE = 10;
@@ -61,7 +62,7 @@ private:
     static size_t define_food_balance();
 
     Game &game;
-    size_t food_balance;
+    size_t food_balance = 0;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_PHASE_H_
