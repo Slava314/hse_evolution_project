@@ -10,8 +10,12 @@ class Player {
 public:
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
 
-    int size_cards_owning_in_hands() const;
     int get_animals_count() const;
+    std::size_t size_cards_owning_in_hands() const;
+
+    const std::vector<std::shared_ptr<Animal>> & get_animals_on_board() const;
+    void put_card_as_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
+    void use_card_as_property(int which_card, int to_which_card);
 
     void add_card_in_hands(const std::shared_ptr<Card> &card);
 
@@ -24,6 +28,8 @@ public:
 
 private:
     void erase_card_from_hand(const std::shared_ptr<Card> &which_card);
+    void add_card(std::shared_ptr<Card> card);
+    void handle_animal_death(std::shared_ptr<Animal> const & animal);
 
     std::vector<std::shared_ptr<Card>> cards_in_hands;
     std::vector<std::shared_ptr<Animal>> animals_on_board;

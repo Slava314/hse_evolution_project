@@ -16,7 +16,10 @@ public:
     std::size_t get_deck_size();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
-    std::vector<Player> const &get_players();
+
+    std::vector<Player> &get_players();
+    Board &get_board();
+    void add_animal(std::shared_ptr<Card> card, std::shared_ptr<Animal> new_animal);
 
     // do not take into account different players
     void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);

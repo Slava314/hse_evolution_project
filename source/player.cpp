@@ -2,12 +2,13 @@
 #include <cassert>
 #include <utility>
 
-int Player::size_cards_owning_in_hands() const {
+
+size_t Player::size_cards_owning_in_hands() const {
     return cards_in_hands.size();
 }
 
-int Player::get_animals_count() const {
-    return animals_on_board.size();
+const std::vector<std::shared_ptr<Animal>> & Player::get_animals_on_board() const {
+    return animals_on_board;
 }
 
 void Player::erase_card_from_hand(const std::shared_ptr<Card> &which_card) {
@@ -51,4 +52,13 @@ void Player::update_animals_on_board(Player::BoardAnimals const &animals) {
 
 void Player::set_name(std::string name_) {
     name = std::move(name_);
+}
+void Player::handle_animal_death(const std::shared_ptr<Animal> &animal) {
+    for (size_t i = 0; i < animals_on_board.size(); ++i) {
+        if (animal == animals_on_board[i]) {
+            animals_on_board.erase(animals_on_board.begin() + i);
+            return;
+        }
+    }
+    throw std::invalid_argument("PLAYER HAS NO SUCH ANIMAL");
 }

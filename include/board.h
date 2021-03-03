@@ -12,6 +12,12 @@ public:
     std::size_t lying_cards_size();
 
     void put_card_as_animal(const std::shared_ptr<Animal> &);
+//    std::vector<std::vector<std::unique_ptr<Animal>>> lying_cards;
+
+public:
+    //он точно должени принимать стурктуру игрока, а не номер, например, в векторе всех игроков?
+    std::vector<Animal> get_players_animals(Player player);
+    void use_card_as_animal();
 
     void use_card_as_property(std::pair<Properties, int> adding,
                               const std::shared_ptr<Animal> &to_which_card);

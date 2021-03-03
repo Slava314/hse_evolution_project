@@ -29,7 +29,7 @@ void Game::set_phase(std::unique_ptr<Phase> new_phase) {
     phase.swap(new_phase);
 }
 
-std::vector<Player> const &Game::get_players() {
+std::vector<Player> &Game::get_players() {
     return players;
 }
 
@@ -76,4 +76,8 @@ void Game::update_every_player_animals() {
 void Game::resize_all_data(std::size_t counter) {
     players.resize(counter);
     board.resize_lying_cards(counter);
+}
+
+Board &Game::get_board() {
+    return board;
 }
