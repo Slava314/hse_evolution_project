@@ -15,21 +15,23 @@ find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
 include_directories(include)
 
-include(CMakeRC.cmake)
+#include(CMakeRC.cmake)
 
-cmrc_add_resource_library(resources resources/times.ttf)
+#cmrc_add_resource_library(resources resources/times.ttf)
 
 add_executable(${PROJECT_NAME}
-        source/main.cpp
         source/button.cpp
         source/animal.cpp
-        source/board.cpp
         source/deck.cpp
         source/game.cpp
         source/player.cpp
         source/window.cpp
         source/view.cpp
-        source/phase.cpp)
+        source/experimenting.cpp
+        source/main.cpp
+        source/development_phase.cpp
+        source/feeding_phase.cpp
+        source/cards.cpp)
 
 include_directories(include)
 
