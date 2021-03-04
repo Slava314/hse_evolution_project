@@ -2,37 +2,40 @@
 #define EVOLUTION_PROJECT_INCLUDE_CARDS_H_
 
 #include "properties.h"
-struct Card {
+class Card {
 public:
-    Properties property = Properties::DEFAULT;
+    Properties pr;
+    Properties::_enumerated property = Properties::DEFAULT;
     int extra_food = 0;
     // this one only for default case, to create a fake card to deliver cards to players
-    explicit Card(Properties prop) : property(prop) {
+    explicit Card(Properties prop) : property(prop._value), pr(prop) {
     }
 
-    std::pair<Properties, int> get_info();
+    std::pair<Properties::_enumerated, int> get_info();
+    Card() = default;
+    ~Card() = default;
 
 protected:
-    explicit Card(Properties prop, int food) : property(prop), extra_food(food) {
+    explicit Card(Properties prop, int food) : property(prop._value), extra_food(food), pr(prop) {
     }
 };
 
 struct FatTissue : Card {
 public:
-    explicit FatTissue(Properties &prop) : Card(prop, 0) {
-        [[maybe_unused]] bool is_it_full = false;
+
+    explicit FatTissue(const Properties &prop) : Card(prop, 0) {
     }
 };
 
 struct Big : Card {
 public:
-    explicit Big(Properties &prop) : Card(prop, 1) {
+    explicit Big(const Properties &prop) : Card(prop, 1) {
     }
 };
 
 struct Stomper : Card {
 public:
-    explicit Stomper(Properties &prop) : Card(prop, 0) {
+    explicit Stomper(const Properties &prop) : Card(prop, 0) {
     }
 };
 

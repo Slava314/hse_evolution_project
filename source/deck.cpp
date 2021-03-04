@@ -7,18 +7,18 @@
 void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info) {
     for (auto card : cards_info) {
         while (card.second--) {
+            Properties pr(static_cast<Properties::_enumerated>(0));
             switch (card.first) {
                 case Properties::FAT_TISSUE:
-                    deck_of_cards.push_back(std::make_shared<FatTissue>(
-                        FatTissue(reinterpret_cast<Properties &>(card.first))));
+                    deck_of_cards.push_back(
+                        std::make_shared<FatTissue>(Properties(Properties::FAT_TISSUE)));
                     break;
                 case Properties::BIG:
-                    deck_of_cards.push_back(
-                        std::make_shared<Big>(Big(reinterpret_cast<Properties &>(card.first))));
+                    deck_of_cards.push_back(std::make_shared<Big>(Properties(Properties::BIG)));
                     break;
                 case Properties::STOMPER:
-                    deck_of_cards.push_back(std::make_shared<Stomper>(
-                        Stomper(reinterpret_cast<Properties &>(card.first))));
+                    deck_of_cards.push_back(
+                        std::make_shared<Stomper>(Properties(Properties::STOMPER)));
                     break;
                 default:
                     continue;
@@ -35,7 +35,7 @@ int Deck::get_deck_size() const {
 }
 
 int need_card(Player const &player) {
-    if (player.get_cards_in_hands().size() == 0) {
+    if (player.get_cards_in_hands().empty()) {
         return 6;
     } else {
         return std::max(6 - player.get_cards_in_hands().size(),
@@ -44,11 +44,14 @@ int need_card(Player const &player) {
 }
 
 void Deck::cards_delivery(std::vector<Player> &players) {
-    for (std::size_t i = 0; i < players.size(); i++) {
-        auto need = need_card(players[i]);
+    for (auto &player : players) {
+        auto need = need_card(player);
         while (need--) {
-            players[i].add_card_in_hands(deck_of_cards.back());
+            player.add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
     }
+}
+std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
+    return deck_of_cards;
 }

@@ -14,8 +14,6 @@ public:
     virtual ~Phase() = default;
 };
 
-class FeedingPhase;
-
 class DevelopmentPhase : public Phase {
 public:
     explicit DevelopmentPhase(Game &game_) : game(game_){};
@@ -29,7 +27,8 @@ public:
     void cards_delivery();
     void add_animal(std::shared_ptr<Card> &card, std::shared_ptr<Animal> &new_animal);
     void give_property_to_animal(const std::shared_ptr<Card> &card,
-                                     const std::shared_ptr<Animal> &new_animal);
+                                 const std::shared_ptr<Animal> &new_animal);
+
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     ~DevelopmentPhase() override = default;
@@ -54,7 +53,6 @@ public:
     void kill_animals();
 
     ~FeedingPhase() override = default;
-
 
 private:
     static constexpr size_t MIN_FOOD_BALANCE = 10;
