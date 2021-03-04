@@ -43,4 +43,4 @@ add_custom_command(
         COMMENT "symbolic link resources folder from ${resources} => ${resources_target}"
 )
 
-target_link_libraries(evolution_project sfml-graphics sfml-audio)
+#target_link_libraries(evolution_project sfml-graphics sfml-audio)
