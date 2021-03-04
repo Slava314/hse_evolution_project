@@ -37,3 +37,8 @@ jobs:
           - flags: -fsanitize=undefined
             run-prefix: valgrind --quiet --leak-check=full --error-exitcode=123
           - flags: -fsanitize=undefined -fsanitize=address
+  steps:
+    - uses: actions/checkout@v2
+    - run: cmake --version
+    - run: cmake . -DCMAKE_CXX_COMPILER="${{matrix.compiler.command}}" -DCMAKE_CXX_FLAGS="${{matrix.compiler.flags}} ${{matrix.sanitize.flags}}"
+    - run: make
