@@ -21,8 +21,23 @@ jobs:
       - uses: actions/checkout@v2
       - run: clang-tidy --version
       - run: clang-tidy $(find . -path '*/CMakeFiles/*' -prune -or \( -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' \) -print)
+  compile-run:
+    runs-on: Ubuntu-20.04
+    timeout-minutes: 3
+    strategy:
+      matrix:
+        compiler:
+          - command: g++-10
+          - command: clang++-10
+            flags: -stdlib=libstdc++
+          - command: clang++-10
+            flags: -stdlib=libc++
+        sanitize:
+          - flags: -fsanitize=undefined
+            run-prefix: valgrind --quiet --leak-check=full --error-exitcode=123
+          - flags: -fsanitize=undefined -fsanitize=address
   steps:
     - uses: actions/checkout@v2
     - run: cmake --version
-    - run: cmake .
+    - run: cmake . -DCMAKE_CXX_COMPILER="${{matrix.compiler.command}}" -DCMAKE_CXX_FLAGS="${{matrix.compiler.flags}} ${{matrix.sanitize.flags}}"
     - run: make

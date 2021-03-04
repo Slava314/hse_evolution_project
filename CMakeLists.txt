@@ -34,6 +34,7 @@ add_executable(${PROJECT_NAME}
         source/cards.cpp)
 
 include_directories(include)
+find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
 set(SFML_STATIC_LIBRARIES TRUE)
 set (resources "${CMAKE_SOURCE_DIR}/resources")
