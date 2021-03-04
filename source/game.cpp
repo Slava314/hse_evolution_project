@@ -19,8 +19,7 @@ void Game::start_game() {
     // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
     std::vector<std::pair<Properties::_enumerated, int>> cards_info(N);
-    Properties pr = Properties::DEFAULT;
-    cards_info[0] = {pr, 8};
+    cards_info[0] = {Properties::FAT_TISSUE, 8};
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};
     deck.generate_deck(cards_info);

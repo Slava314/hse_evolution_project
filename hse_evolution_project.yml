@@ -1,0 +1,39 @@
+name: evolutin_game
+on:
+  push:
+    branches:
+      - 'development_phase'
+      - 'new_feeding_phase'
+      - 'base_feeding_phase'
+      - 'add_sfml'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-format --version
+      - run: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+  clang-tidy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-tidy --version
+      - run: clang-tidy $(find . -path '*/CMakeFiles/*' -prune -or \( -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' \) -print)
+  compile-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    strategy:
+      matrix:
+        compiler:
+          - command: g++-10
+          - command: clang++-10
+            flags: -stdlib=libstdc++
+          - command: clang++-10
+            flags: -stdlib=libc++
+        sanitize:
+          - flags: -fsanitize=undefined
+            run-prefix: valgrind --quiet --leak-check=full --error-exitcode=123
+          - flags: -fsanitize=undefined -fsanitize=address

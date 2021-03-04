@@ -4,6 +4,7 @@
 #include "properties.h"
 class Card {
 public:
+    //this is weird
     Properties pr;
     Properties::_enumerated property = Properties::DEFAULT;
     int extra_food = 0;
@@ -22,7 +23,6 @@ protected:
 
 struct FatTissue : Card {
 public:
-
     explicit FatTissue(const Properties &prop) : Card(prop, 0) {
     }
 };

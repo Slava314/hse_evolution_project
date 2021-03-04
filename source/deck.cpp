@@ -7,7 +7,6 @@
 void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info) {
     for (auto card : cards_info) {
         while (card.second--) {
-            Properties pr(static_cast<Properties::_enumerated>(0));
             switch (card.first) {
                 case Properties::FAT_TISSUE:
                     deck_of_cards.push_back(
