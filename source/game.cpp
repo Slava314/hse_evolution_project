@@ -14,7 +14,8 @@ void Game::start_game() {
     // TODO set number of players
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
-    players.resize(1);
+//    players.resize(1);
+    players.emplace_back("shershen0_first_player");
     // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
     std::vector<std::pair<Properties::_enumerated, int>> cards_info(N);

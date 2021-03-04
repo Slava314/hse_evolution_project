@@ -3,16 +3,17 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include "animal.h"
 #include "cards.h"
 
 class Player {
 public:
     /// i will do it
-    //    explicit Player(const std::string &name_) : name(name_){
-    //        cards_in_hands.resize(0);
-    //        animals_on_board.resize(0);
-    //    }
+    explicit Player(std::string name_) : name(std::move(name_)) {
+        cards_in_hands.resize(0);
+        animals_on_board.resize(0);
+    }
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
     using Prop = Properties::_enumerated;
@@ -27,7 +28,7 @@ public:
 
     void kill_animal(const std::shared_ptr<Animal> &animal);
 
-    std::pair<Prop, int> get_card_information(const std::shared_ptr<Card> &card);
+    std::pair<Prop, int> get_card_info(const std::shared_ptr<Card> &card);
     [[nodiscard]] const std::vector<std::shared_ptr<Animal>> &get_animals_on_board() const;
     [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);

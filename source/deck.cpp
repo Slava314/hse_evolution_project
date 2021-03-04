@@ -9,13 +9,16 @@ void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &c
         while (card.second--) {
             switch (card.first) {
                 case Properties::FAT_TISSUE:
-                    deck_of_cards.push_back(std::make_shared<FatTissue>(FatTissue(card.first)));
+                    deck_of_cards.push_back(std::make_shared<FatTissue>(
+                        FatTissue(reinterpret_cast<Properties &>(card.first))));
                     break;
                 case Properties::BIG:
-                    deck_of_cards.push_back(std::make_shared<Big>(Big(card.first)));
+                    deck_of_cards.push_back(
+                        std::make_shared<Big>(Big(reinterpret_cast<Properties &>(card.first))));
                     break;
                 case Properties::STOMPER:
-                    deck_of_cards.push_back(std::make_shared<Stomper>(Stomper(card.first)));
+                    deck_of_cards.push_back(std::make_shared<Stomper>(
+                        Stomper(reinterpret_cast<Properties &>(card.first))));
                     break;
                 default:
                     continue;
@@ -35,7 +38,8 @@ int need_card(Player const &player) {
     if (player.get_cards_in_hands().size() == 0) {
         return 6;
     } else {
-        return std::max(6 - player.get_cards_in_hands().size(), player.get_animals_on_board().size() +1);
+        return std::max(6 - player.get_cards_in_hands().size(),
+                        player.get_animals_on_board().size() + 1);
     }
 }
 

@@ -31,7 +31,7 @@ std::vector<std::shared_ptr<Card>> const &Player::get_cards_in_hands() const {
 
 void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
                                   const std::shared_ptr<Animal> &to_which_card) {
-    std::pair<Prop, int> adding = get_card_information(which_card);
+    std::pair<Prop, int> adding = get_card_info(which_card);
     assert(which_card.get() != nullptr);
     assert(to_which_card.get() != nullptr);
     try {
@@ -59,7 +59,7 @@ void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
     erase_card_from_hands(which_card);
 }
 
-std::pair<Player::Prop, int> Player::get_card_information(
+std::pair<Player::Prop, int> Player::get_card_info(
     const std::shared_ptr<Card> &looking_card) {
     try {
         for (const auto &card : cards_in_hands) {
