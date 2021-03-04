@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
 include_directories(include)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
+set(SFML_DIR "SFML-2.5.1-macos-clang/include/SFML")
 set(SFML_STATIC_LIBRARIES TRUE)
 set (resources "${CMAKE_SOURCE_DIR}/resources")
 set (resources_target "${CMAKE_CURRENT_BINARY_DIR}/resources")
