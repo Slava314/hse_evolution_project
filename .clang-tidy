@@ -32,7 +32,6 @@ Checks: "-*,
         -readability-named-parameter,
         -modernize-use-emplace,
         -cppcoreguidelines-pro-bounds-pointer-arithmetic"
-WarningsAsErrors: "*"
 ExtraArgs:
   - "-std=c++17"
 ExtraArgsBefore:

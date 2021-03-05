@@ -13,7 +13,7 @@ public:
     }
 
     std::pair<Properties::_enumerated, int> get_info();
-    Card() = default;
+//    Card() = default;
     ~Card() = default;
 
 protected:

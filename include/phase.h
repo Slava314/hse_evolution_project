@@ -51,6 +51,7 @@ public:
     void feed_animal(const std::shared_ptr<Animal> &animal);
     void decrease_food_balance();
     void kill_animals();
+    size_t get_food_balance() const;
 
     ~FeedingPhase() override = default;
 

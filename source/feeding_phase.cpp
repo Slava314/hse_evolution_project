@@ -43,3 +43,7 @@ void FeedingPhase::kill_animals() {
         }
     }
 }
+
+size_t FeedingPhase::get_food_balance() const {
+    return food_balance;
+}
