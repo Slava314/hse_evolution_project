@@ -1,0 +1,31 @@
+name: evolutin_game
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-format --version
+      - run: for file in $(find . -iname '*.cpp' -or -iname '*.h'); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+  clang-tidy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-tidy --version
+      - run: clang-tidy $(find . -path '*/CMakeFiles/*' -prune -or \( -iname '*.cpp' -or -iname '*.h'\) -print)
+  steps:
+    - uses: actions/checkout@v2
+      #    - name: Install SFML
+    - run: sudo apt-get update
+    - run: sudo  apt-get build-dep libsfml
+      #    - name: Setup headless environment
+    - run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    - run: cmake --version
+    - run: cmake .
+    - run: make
