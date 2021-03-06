@@ -22,7 +22,7 @@ public:
     std::vector<PlayerCards> get_players_cards_in_hands();
     std::vector<std::shared_ptr<Card>> get_deck_cards();
     Deck &get_deck();
-
+    
     size_t get_deck_size();
 
 private:
