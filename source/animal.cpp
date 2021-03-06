@@ -38,3 +38,6 @@ int Animal::get_food_needed() const {
 int Animal::get_owning_food() const {
     return owning_food;
 }
+void Animal::increase_food_needed(std::size_t how_much) {
+    food_needed += how_much;
+}

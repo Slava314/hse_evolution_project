@@ -6,8 +6,12 @@
 std::unique_ptr<View> FeedingPhase::get_view() {
     return std::make_unique<FeedingPhaseView>(*this);
 }
+
 void FeedingPhase::set_next_phase() {
     game.set_phase(std::make_unique<DevelopmentPhase>(game));
+}
+
+FeedingPhase::FeedingPhase(Game &game_) : game(game_), food_balance(define_food_balance()) {
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -17,7 +21,7 @@ size_t FeedingPhase::define_food_balance() {
     return distrib(gen);
 }
 
-void FeedingPhase::feed_animal(const std::shared_ptr<Animal> &animal) {
+void FeedingPhase::feed_animal(std::shared_ptr<Animal> animal) {
     assert(animal != nullptr);
     decrease_food_balance();
     animal->increase_owning_food();
@@ -30,6 +34,7 @@ void FeedingPhase::decrease_food_balance() {
         --food_balance;
     }
 }
+
 bool FeedingPhase::is_end_of_phase() const {
     return food_balance == 0;
 }
@@ -38,7 +43,7 @@ void FeedingPhase::kill_animals() {
     for (auto &player : game.get_players()) {
         for (auto &animal : player.get_animals_on_board()) {
             if (animal->is_hungry()) {
-                player.kill_animal(animal);
+                player.handle_animal_death(animal);
             }
         }
     }

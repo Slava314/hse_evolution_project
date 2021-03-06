@@ -40,23 +40,24 @@ private:
 
 class FeedingPhase : public Phase {
 public:
-    explicit FeedingPhase(Game &game_) : game(game_){};
-
+    FeedingPhase(Game &game_);
     std::unique_ptr<View> get_view() override;
 
     void set_next_phase();
     [[nodiscard]] bool is_end_of_phase() const;
 
-    void feed_animal(const std::shared_ptr<Animal> &animal);
-    void decrease_food_balance();
     void kill_animals();
+
+    void decrease_food_balance();
     size_t get_food_balance() const;
+    void feed_animal(std::shared_ptr<Animal> animal);
 
     ~FeedingPhase() override = default;
 
+
 private:
-    static constexpr size_t MIN_FOOD_BALANCE = 10;
-    static constexpr size_t MAX_FOOD_BALANCE = 3;
+    static constexpr size_t MIN_FOOD_BALANCE = 3;
+    static constexpr size_t MAX_FOOD_BALANCE = 10;
     static size_t define_food_balance();
 
     Game &game;
