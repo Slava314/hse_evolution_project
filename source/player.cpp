@@ -75,12 +75,15 @@ std::pair<Player::Prop, int> Player::get_card_info(
 }
 
 void Player::kill_animal(const std::shared_ptr<Animal> &animal) {
+    assert(animal.get() != nullptr);
     handle_animal_death(animal);
 }
 
 void Player::handle_animal_death(const std::shared_ptr<Animal> &animal) {
     for (size_t i = 0; i < animals_on_board.size(); ++i) {
-        if (animal == animals_on_board[i]) {
+        if (animal.get() == animals_on_board[i].get()) {
+            animals_on_board[i].reset();
+            //animal.reset(); //why this does not work?
             animals_on_board.erase(animals_on_board.begin() + i);
             return;
         }
@@ -96,7 +99,7 @@ size_t Player::count_animal_properties(const std::shared_ptr<Animal> &animal) {
             }
         }
     } catch (...) {
-        throw std::logic_error("DID NOt FIND ANIMAL ON thE BOARD");
+        throw std::logic_error("DID NOT FIND ANIMAL ON THE BOARD");
     }
     return 1;
 }
