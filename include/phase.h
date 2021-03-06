@@ -57,7 +57,7 @@ public:
 private:
     static constexpr size_t MIN_FOOD_BALANCE = 10;
     static constexpr size_t MAX_FOOD_BALANCE = 3;
-    static size_t define_food_balance();
+    size_t define_food_balance();
 
     Game &game;
     size_t food_balance = 0;
