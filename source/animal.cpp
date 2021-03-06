@@ -32,6 +32,9 @@ void Animal::increase_owning_food() {
 bool Animal::is_hungry() const {
     return owning_food < food_needed;
 }
-void Animal::increase_food_needed(std::size_t how_much) {
-    food_needed += how_much;
+int Animal::get_food_needed() const {
+    return food_needed;
+}
+int Animal::get_owning_food() const {
+    return owning_food;
 }
