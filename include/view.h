@@ -16,13 +16,11 @@ public:
     }
 
     void handle_event(GameWindow &window, const sf::Event &event) const override;
-
     void start_development_phase(GameWindow &window) const;
 
     void cards_delivery(GameWindow &window) const;
 
     void add_animal(GameWindow &window) const;
-
     void add_property(const std::shared_ptr<Animal> &selected_animal, GameWindow &window) const;
 
     ~DevelopmentPhaseView() override = default;

@@ -7,6 +7,7 @@ void DevelopmentPhaseView::start_development_phase(GameWindow &window) const {
     cards_delivery(window);
     phase.set_start_of_phase(false);
 }
+
 void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
     phase.cards_delivery();
     window.add_cards();
@@ -19,7 +20,6 @@ void DevelopmentPhaseView::add_animal(GameWindow &window) const {
 
 void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_animal,
                                         GameWindow &window) const {
-    phase.add_property_to_animal(window.get_selected_card(), selected_animal);
     window.add_property_to_animal(selected_animal);
 }
 

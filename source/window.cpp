@@ -135,11 +135,12 @@ void GameWindow::make_deck_shape() {
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
 }
+
 void GameWindow::add_cards() {
-    auto cards = game.get_players()[cur_player].get_cards();
+    auto cards = game.get_players()[cur_player].get_cards_in_hands();
     for (const auto &card : cards) {
         bool exist = false;
-        for (const auto &player_cards_button : player_cards_buttons) {
+        for (auto &player_cards_button : player_cards_buttons) {
             if (card == player_cards_button.get_object()) {
                 exist = true;
             }
@@ -156,6 +157,7 @@ void GameWindow::add_cards() {
     set_cards_position();
     make_deck_shape();
 }
+
 void GameWindow::set_cards_position() {
     std::size_t left_point_cards = (WINDOW_WIDTH - CARD_WIDTH * player_cards_buttons.size() -
                                     FREE_SPACE * (player_cards_buttons.size() - 1)) /

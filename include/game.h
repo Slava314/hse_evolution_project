@@ -2,35 +2,33 @@
 #define EVOLUTION_PROJECT_INCLUDE_GAME_H_
 #include <memory>
 #include <vector>
-#include "board.h"
 #include "deck.h"
 #include "phase.h"
 #include "player.h"
 
 class Game {
 public:
+    using PlayerCards = std::vector<std::shared_ptr<Card>>;
+
     Game() {
         phase = std::make_unique<DevelopmentPhase>(*this);
     }
+
     void start_game();
-    std::size_t get_deck_size() const;
-    std::unique_ptr<Phase> const &get_phase() const;
+    [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
-    std::vector<Player> const &get_players() const;
-    void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
-    std::size_t get_current_player() const;
 
-    void cards_delivery();
+    std::vector<Player> &get_players();
+    std::vector<PlayerCards> get_players_cards_in_hands();
+    std::vector<std::shared_ptr<Card>> get_deck_cards();
+    Deck &get_deck();
 
-    void add_property_to_animal(const std::shared_ptr<Card> &card,
-                                const std::shared_ptr<Animal> &animal);
+    size_t get_deck_size();
 
 private:
     std::unique_ptr<Phase> phase;
-    Board board;
     std::vector<Player> players;
     Deck deck;
-    std::size_t current_player = 0;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

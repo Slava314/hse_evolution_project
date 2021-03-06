@@ -1,41 +1,50 @@
 #include "game.h"
-#include "constants.h"
+#include <SFML/Graphics.hpp>
+#include <utility>
 
 std::unique_ptr<Phase> const &Game::get_phase() const {
     return phase;
 }
-void Game::cards_delivery() {
-    deck.cards_delivery(players);
-}
-std::size_t Game::get_deck_size() const {
+
+size_t Game::get_deck_size() {
     return deck.get_deck_size();
 }
+
 void Game::start_game() {
     // TODO set number of players
-    players.resize(1);
 
+    // TODO - get count of players as a parametr. From GUI? or lobby?
+    //    players.resize(1);
+    players.emplace_back("shershen0_first_player");
+    // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
-    std::vector<std::pair<Properties, int>> cards_info(N);
-    // временное решение по генерации, пока нет настроек
-    cards_info[0] = {FAT_TISSUE, 8};
-    cards_info[1] = {BIG, 8};
-    cards_info[2] = {STOMPER, 8};
+    std::vector<std::pair<Properties::_enumerated, int>> cards_info(N);
+    cards_info[0] = {Properties::FAT_TISSUE, 8};
+    cards_info[1] = {Properties::BIG, 8};
+    cards_info[2] = {Properties::STOMPER, 8};
     deck.generate_deck(cards_info);
 }
+
 void Game::set_phase(std::unique_ptr<Phase> new_phase) {
     phase.swap(new_phase);
 }
-std::vector<Player> const &Game::get_players() const {
+
+std::vector<Player> &Game::get_players() {
     return players;
 }
-void Game::add_animal(const std::shared_ptr<Card> &card,
-                      const std::shared_ptr<Animal> &new_animal) {
-    players[current_player].put_card_as_animal(card, new_animal);
+
+std::vector<Game::PlayerCards> Game::get_players_cards_in_hands() {
+    std::vector<Game::PlayerCards> tmp(players.size());
+    for (auto pl : players) {
+        tmp.push_back(pl.get_cards_in_hands());
+    }
+    return tmp;
 }
-std::size_t Game::get_current_player() const {
-    return current_player;
+
+std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
+    return deck.get_deck_cards();
 }
-void Game::add_property_to_animal(const std::shared_ptr<Card> &card,
-                                  const std::shared_ptr<Animal> &animal) {
-    // TODO
+
+Deck &Game::get_deck() {
+    return deck;
 }
