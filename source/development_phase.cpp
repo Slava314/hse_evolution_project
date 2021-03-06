@@ -3,7 +3,7 @@
 #include "view.h"
 
 std::unique_ptr<View> DevelopmentPhase::get_view() {
-    return std::make_unique<Development_Phase_View>(*this);
+    return std::make_unique<DevelopmentPhaseView>(*this);
 }
 
 void DevelopmentPhase::set_next_phase() {

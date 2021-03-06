@@ -45,7 +45,6 @@ public:
     std::unique_ptr<View> get_view() override;
 
     void set_next_phase();
-    bool is_running_first_time() const;
     [[nodiscard]] bool is_end_of_phase() const;
 
     void feed_animal(const std::shared_ptr<Animal> &animal);

@@ -43,7 +43,7 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
                     to_which_card->get_properties().insert(adding.first);
                     to_which_card->increase_food_needed(adding.second);
                 }  // else{} - throw like an exeption for GUI - to look for another animal or
-                   // another card with property
+                // another card with property
             }
         }
     } catch (...) {

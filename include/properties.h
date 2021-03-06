@@ -1,9 +1,9 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 
-//
-//Source of this code - https://github.com/aantron/better-enums
-//
+///
+///Source of this code - https://github.com/aantron/better-enums
+///
 
 #include <cstddef>
 #include <cstring>

@@ -4,7 +4,7 @@
 #include "view.h"
 
 std::unique_ptr<View> FeedingPhase::get_view() {
-    return std::make_unique<Feeding_Phase_View>(*this);
+    return std::make_unique<FeedingPhaseView>(*this);
 }
 void FeedingPhase::set_next_phase() {
     game.set_phase(std::make_unique<DevelopmentPhase>(game));

@@ -9,7 +9,6 @@
 
 class Player {
 public:
-    /// i will do it
     explicit Player(std::string name_) : name(std::move(name_)) {
         cards_in_hands.resize(0);
         animals_on_board.resize(0);
