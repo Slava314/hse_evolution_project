@@ -13,7 +13,10 @@ public:
     static void UseProperty(Properties properties, FeedingPhase &);
     void increase_owning_food();
     void increase_food_needed(std::size_t how_much);
-    [[nodiscard]] bool is_hungry() const;
+    bool is_hungry() const;
+    int get_food_needed() const;
+    int get_owning_food() const;
+
     Animal() = default;
 
 private:
