@@ -1,6 +1,7 @@
 #include "player.h"
 #include <cassert>
 #include <utility>
+#include <stdexcept>
 
 std::string &Player::get_name() {
     return name;
@@ -81,9 +82,7 @@ void Player::kill_animal(const std::shared_ptr<Animal> &animal) {
 
 void Player::handle_animal_death(const std::shared_ptr<Animal> &animal) {
     for (size_t i = 0; i < animals_on_board.size(); ++i) {
-        if (animal.get() == animals_on_board[i].get()) {
-            animals_on_board[i].reset();
-            //animal.reset(); //why this does not work?
+        if (animal == animals_on_board[i]) {
             animals_on_board.erase(animals_on_board.begin() + i);
             return;
         }

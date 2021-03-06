@@ -1,5 +1,6 @@
-#include "phase_fwd.h"
+#include <cassert>
 #include "phase.h"
+#include "phase_fwd.h"
 #include "player.h"
 #include "view.h"
 
@@ -41,9 +42,12 @@ bool FeedingPhase::is_end_of_phase() const {
 
 void FeedingPhase::kill_animals() {
     for (auto &player : game.get_players()) {
-        for (auto &animal : player.get_animals_on_board()) {
-            if (animal->is_hungry()) {
-                player.handle_animal_death(animal);
+        for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
+            if (player.get_animals_on_board()[i]->is_hungry()) {
+                player.handle_animal_death(player.get_animals_on_board()[i]);
+                i--;
+            } else {
+                player.get_animals_on_board()[i]->set_owning_food(0);
             }
         }
     }
@@ -51,4 +55,10 @@ void FeedingPhase::kill_animals() {
 
 size_t FeedingPhase::get_food_balance() const {
     return food_balance;
+}
+bool FeedingPhase::is_running_first_time() const {
+    return start_of_phase;
+}
+void FeedingPhase::set_start_of_phase(bool start) {
+    start_of_phase = start;
 }

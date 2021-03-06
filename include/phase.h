@@ -25,10 +25,9 @@ public:
     void set_start_of_phase(bool start);
 
     void cards_delivery();
-    void add_animal(std::shared_ptr<Card> &card, std::shared_ptr<Animal> &new_animal);
+    void add_animal(const std::shared_ptr<Card> &card, std::shared_ptr<Animal> &new_animal);
     void give_property_to_animal(const std::shared_ptr<Card> &card,
                                  const std::shared_ptr<Animal> &new_animal);
-
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     ~DevelopmentPhase() override = default;
@@ -44,6 +43,8 @@ public:
     std::unique_ptr<View> get_view() override;
 
     void set_next_phase();
+    bool is_running_first_time() const;
+    void set_start_of_phase(bool start);
     [[nodiscard]] bool is_end_of_phase() const;
 
     void kill_animals();
@@ -62,6 +63,7 @@ private:
 
     Game &game;
     size_t food_balance = 0;
+    bool start_of_phase = true;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_PHASE_H_

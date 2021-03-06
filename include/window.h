@@ -53,7 +53,7 @@ public:
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal);
     void set_animals_position(bool with_new_place);
-    void delete_animal_shape();
+    void kill_animals();
     sf::RenderWindow &get_window();
     std::shared_ptr<Card> get_clicked_card();
     void click_card(const std::shared_ptr<Card> &card);
@@ -63,8 +63,17 @@ public:
     std::shared_ptr<Animal> check_animals();
     void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
     std::shared_ptr<Card> const &get_selected_card() const;
+    bool const &get_food_clicked() const;
+
+    void make_food();
 
     ~GameWindow() override = default;
+
+    bool check_food();
+
+    void click_food();
+
+    void feed_animal(const std::shared_ptr<Animal> &animal);
 
 private:
     void draw() override;
@@ -79,6 +88,8 @@ private:
     Button place_for_new_animal;
     TextButton end_turn;
     int cur_player = 0;
+    TextButton food;
+    bool food_clicked = false;
 };
 
 #endif  // EVOLUTION_PROJECT__WINDOW_H_

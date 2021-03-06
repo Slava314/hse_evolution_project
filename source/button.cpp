@@ -103,7 +103,7 @@ void TextButton::activate() {
     text.setFillColor(color);
     color = text.getOutlineColor();
     color.a = 255;
-    text.setFillColor(color);
+    text.setOutlineColor(color);
 }
 
 void TextButton::deactivate() {
@@ -113,7 +113,7 @@ void TextButton::deactivate() {
     text.setFillColor(color);
     color = text.getOutlineColor();
     color.a = 150;
-    text.setFillColor(color);
+    text.setOutlineColor(color);
 }
 
 void TextButton::set_text_color(const sf::Color &color) {

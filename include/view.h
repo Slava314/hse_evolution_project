@@ -40,6 +40,8 @@ public:
 
 private:
     FeedingPhase &phase;
+    void start_feeding_phase(GameWindow &window) const;
+    void feed_animal(const std::shared_ptr<Animal> &animal, GameWindow &window) const;
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_VIEW_H_

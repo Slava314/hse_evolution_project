@@ -14,12 +14,13 @@ void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
     auto new_animal = std::make_shared<Animal>();
-    auto card = window.play_animal(new_animal);
-    phase.add_animal(card, new_animal);
+    phase.add_animal(window.get_selected_card(), new_animal);
+    window.play_animal(new_animal);
 }
 
 void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_animal,
                                         GameWindow &window) const {
+    phase.give_property_to_animal(window.get_selected_card(), selected_animal);
     window.add_property_to_animal(selected_animal);
 }
 
@@ -48,5 +49,35 @@ void DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &eve
     }
 }
 void FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
-    window.get_window().close();
+    if (phase.is_running_first_time()) {
+        start_feeding_phase(window);
+    }
+    if (event.type == sf::Event::MouseButtonPressed &&
+        event.mouseButton.button == sf::Mouse::Left) {
+        if (window.check_end_turn()) {
+            phase.kill_animals();
+            window.kill_animals();
+            phase.set_next_phase();
+            return;
+        }
+        if (window.check_food()) {
+            window.click_food();
+            return;
+        }
+        if (window.get_food_clicked()) {
+            if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
+                feed_animal(clicked_animal, window);
+                return;
+            }
+        }
+    }
+}
+void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
+    window.make_food();
+    phase.set_start_of_phase(false);
+}
+void FeedingPhaseView::feed_animal(const std::shared_ptr<Animal> &animal,
+                                   GameWindow &window) const {
+    phase.feed_animal(animal);
+    window.feed_animal(animal);
 }

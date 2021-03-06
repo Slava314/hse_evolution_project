@@ -1,6 +1,7 @@
 #include "phase.h"
 #include "player.h"
 #include "view.h"
+#include <cassert>
 
 std::unique_ptr<View> DevelopmentPhase::get_view() {
     return std::make_unique<DevelopmentPhaseView>(*this);
@@ -32,7 +33,7 @@ std::vector<std::vector<std::shared_ptr<Card>>> DevelopmentPhase::get_cards() {
     return game.get_players_cards_in_hands();
 }
 
-void DevelopmentPhase::add_animal(std::shared_ptr<Card> &card,
+void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                                   std::shared_ptr<Animal> &new_animal) {
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
