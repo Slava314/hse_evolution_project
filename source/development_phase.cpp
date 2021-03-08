@@ -1,7 +1,7 @@
+#include <cassert>
 #include "phase.h"
 #include "player.h"
 #include "view.h"
-#include <cassert>
 
 std::unique_ptr<View> DevelopmentPhase::get_view() {
     return std::make_unique<DevelopmentPhaseView>(*this);
@@ -38,4 +38,24 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
     game.get_players()[0].put_card_as_animal(card, new_animal);
+}
+void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
+    //TODO check auto end turn
+    int ans = get_view()->handle_event(window, event);
+    if(ans != 0){
+        if (ans == 2) {
+            end_turn[cur_player] = 1;
+            sum += 1;
+            if (sum == game.get_players().size()) {
+                set_next_phase();
+                return;
+            }
+        }
+        while (end_turn[cur_player] == 1) {
+            cur_player = (cur_player + 1) % game.get_players().size();
+        }
+    }
+}
+DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player(0) {
+    end_turn.resize(1, 0);
 }

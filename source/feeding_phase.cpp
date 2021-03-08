@@ -12,7 +12,9 @@ void FeedingPhase::set_next_phase() {
     game.set_phase(std::make_unique<DevelopmentPhase>(game));
 }
 
-FeedingPhase::FeedingPhase(Game &game_) : game(game_), food_balance(define_food_balance()) {
+FeedingPhase::FeedingPhase(Game &game_)
+    : game(game_), food_balance(define_food_balance()), cur_player(0) {
+    end_turn.resize(1, 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -61,4 +63,23 @@ bool FeedingPhase::is_running_first_time() const {
 }
 void FeedingPhase::set_start_of_phase(bool start) {
     start_of_phase = start;
+}
+void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
+    //TODO check auto end turn
+    int ans = get_view()->handle_event(window, event);
+    if (ans != 0) {
+        if (ans == 2) {
+            end_turn[cur_player] = 1;
+            sum += 1;
+            if (sum == game.get_players().size()) {
+                kill_animals();
+                window.kill_animals();
+                set_next_phase();
+                return;
+            }
+        }
+        while (end_turn[cur_player] == 1) {
+            cur_player = (cur_player + 1) % game.get_players().size();
+        }
+    }
 }

@@ -6,7 +6,7 @@
 
 class View {
 public:
-    virtual void handle_event(GameWindow &window, const sf::Event &event) const = 0;
+    virtual int handle_event(GameWindow &window, const sf::Event &event) const = 0;
     virtual ~View() = default;
 };
 
@@ -15,7 +15,7 @@ public:
     explicit DevelopmentPhaseView(DevelopmentPhase &phase_) : phase(phase_) {
     }
 
-    void handle_event(GameWindow &window, const sf::Event &event) const override;
+    int handle_event(GameWindow &window, const sf::Event &event) const override;
     void start_development_phase(GameWindow &window) const;
 
     void cards_delivery(GameWindow &window) const;
@@ -34,7 +34,7 @@ public:
     explicit FeedingPhaseView(FeedingPhase &phase_) : phase(phase_) {
     }
 
-    void handle_event(GameWindow &window, const sf::Event &event) const override;
+    int handle_event(GameWindow &window, const sf::Event &event) const override;
 
     ~FeedingPhaseView() override = default;
 

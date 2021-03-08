@@ -24,53 +24,52 @@ void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_
     window.add_property_to_animal(selected_animal);
 }
 
-void DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
+int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
     if (phase.is_running_first_time()) {
         start_development_phase(window);
     }
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
-            phase.set_next_phase();
-            return;
+            return 2;
         }
         if (const auto &clicked_card = window.get_clicked_card(); clicked_card != nullptr) {
             window.click_card(clicked_card);
-            return;
+            return 0;
         }
         if (window.check_new_animal()) {
             add_animal(window);
-            return;
+            return 1;
         }
         if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
             add_property(clicked_animal, window);
-            return;
+            return 1;
         }
     }
+    return 0;
 }
-void FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
+
+int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
     if (phase.is_running_first_time()) {
         start_feeding_phase(window);
     }
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
-            phase.kill_animals();
-            window.kill_animals();
-            phase.set_next_phase();
-            return;
+            return 2;
         }
         if (window.check_food()) {
             window.click_food();
-            return;
+            return 0;
         }
         if (window.get_food_clicked()) {
             if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
                 feed_animal(clicked_animal, window);
-                return;
+                return 1;
             }
         }
     }
+    return 0;
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();

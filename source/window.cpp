@@ -72,7 +72,7 @@ std::unique_ptr<Window> GameWindow::handle_events() {
                 return nullptr;
             }
             if (game.get_phase()) {
-                game.get_phase()->get_view()->handle_event(*this, event);
+                game.get_phase()->run_phase(*this, event);
             } else {
                 break;
             }
