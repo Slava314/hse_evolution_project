@@ -2,6 +2,7 @@
 #include <cassert>
 #include "player.h"
 #include "view.h"
+#include "properties.h"
 
 namespace {
 int find_in_animal_buttons(const std::shared_ptr<Animal> &animal,
@@ -153,6 +154,9 @@ void GameWindow::add_cards() {
             new_button.set_outline_thickness(5);
             new_button.set_outline_color(CARD_OUTLINE_COLOR);
             new_button.set_object(card);
+            Properties a = card->get_info().first;
+            new_button.set_text(a._to_string(), font);
+            new_button.set_text_size(20);
             player_cards_buttons.push_back(new_button);
         }
     }
