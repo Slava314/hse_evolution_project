@@ -51,7 +51,7 @@ public:
     void set_cards_position();
     void init_window();
     void make_deck_shape();
-    void add_animal_shape(const std::shared_ptr<Animal> &new_animal);
+    void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
     void set_animals_position(bool with_new_place);
     void kill_animals();
     sf::RenderWindow &get_window();
@@ -75,6 +75,8 @@ public:
 
     void feed_animal(const std::shared_ptr<Animal> &animal);
 
+    void change_player();
+
 private:
     void draw() override;
     Game game;
@@ -83,11 +85,10 @@ private:
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     std::vector<CardButton> player_cards_buttons;
-    std::vector<AnimalButton> player_animals_buttons;
+    std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
     TextButton end_turn;
-    int cur_player = 0;
     TextButton food;
     bool food_clicked = false;
 };

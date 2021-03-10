@@ -15,8 +15,9 @@ void Game::start_game() {
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
     //    players.resize(1);
-    players.emplace_back("shershen0_first_player");
-    // временное решение по генерации, пока нет настроек и больше карт
+    players.emplace_back("first player");
+    players.emplace_back("second player");
+  // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
     std::vector<std::pair<Properties::_enumerated, int>> cards_info(N);
     cards_info[0] = {Properties::FAT_TISSUE, 8};
@@ -47,4 +48,7 @@ std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
 
 Deck &Game::get_deck() {
     return deck;
+}
+std::size_t Game::get_cur_player() const{
+    return phase->get_cur_player();
 }

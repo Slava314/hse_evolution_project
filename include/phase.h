@@ -13,6 +13,7 @@
 class Phase {
 public:
     virtual std::unique_ptr<View> get_view() = 0;
+    virtual std::size_t get_cur_player() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual ~Phase() = default;
 };
@@ -22,6 +23,7 @@ public:
     explicit DevelopmentPhase(Game &game_);
 
     std::unique_ptr<View> get_view() override;
+    std::size_t get_cur_player() const override;
 
     bool is_running_first_time() const;
     void set_next_phase();
@@ -48,6 +50,7 @@ class FeedingPhase : public Phase {
 public:
     FeedingPhase(Game &game_);
     std::unique_ptr<View> get_view() override;
+    std::size_t get_cur_player() const override;
 
     void set_next_phase();
     bool is_running_first_time() const;

@@ -14,7 +14,7 @@ void FeedingPhase::set_next_phase() {
 
 FeedingPhase::FeedingPhase(Game &game_)
     : game(game_), food_balance(define_food_balance()), cur_player(0) {
-    end_turn.resize(1, 0);
+    end_turn.resize(2, 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -78,8 +78,13 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
                 return;
             }
         }
+        cur_player = (cur_player + 1) % game.get_players().size();
         while (end_turn[cur_player] == 1) {
             cur_player = (cur_player + 1) % game.get_players().size();
         }
+        window.change_player();
     }
+}
+std::size_t FeedingPhase::get_cur_player() const {
+    return cur_player;
 }

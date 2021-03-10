@@ -104,6 +104,6 @@ struct ignore_assign {
 
 
 ENUM(Properties, DEFAULT = 0, FAT_TISSUE, BIG, STOMPER);
-ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН);
+//ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН);
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
