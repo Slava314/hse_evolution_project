@@ -3,7 +3,7 @@
 #include "game.h"
 #include "phase.h"
 
-Animal::Animal(Player owner_) : owner(owner_) {
+Animal::Animal(Player &owner_) : owner(owner_) {
 }
 Player Animal::get_owner() const {
     return owner;

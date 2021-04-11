@@ -24,7 +24,7 @@ public:
 
     std::unique_ptr<View> get_view() override;
     std::size_t get_cur_player_index() const override;
-    Player get_cur_player();
+    Player& get_cur_player();
 
     bool is_running_first_time() const;
     void set_next_phase();

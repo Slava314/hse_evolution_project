@@ -64,6 +64,6 @@ DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player_index(
 std::size_t DevelopmentPhase::get_cur_player_index() const {
     return cur_player_index;
 }
-Player DevelopmentPhase::get_cur_player() {
+Player& DevelopmentPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }

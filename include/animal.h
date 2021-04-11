@@ -5,8 +5,8 @@
 #include <vector>
 #include "phase_fwd.h"
 #include "properties.h"
-#include "player.h"
 
+class Player;
 class Animal {
 public:
     using Prop = Properties::_enumerated;
@@ -20,14 +20,14 @@ public:
     bool could_be_attacked(std::shared_ptr<Animal> attacker);
     Player get_owner() const;
 
-    Animal(Player owner_);
+    Animal(Player &owner_);
 
     void set_owning_food(int new_food);
 
 private:
     int food_needed = 1;
     int owning_food = 0;
-    Player owner;
+    Player& owner;
     std::unordered_multiset<Prop> animals_properties{};
 };
 #endif  // EVOLUTION_PROJECT_ANIMAL_H
