@@ -13,7 +13,7 @@
 class Phase {
 public:
     virtual std::unique_ptr<View> get_view() = 0;
-    virtual std::size_t get_cur_player() const = 0;
+    virtual std::size_t get_cur_player_index() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual ~Phase() = default;
 };
@@ -23,7 +23,8 @@ public:
     explicit DevelopmentPhase(Game &game_);
 
     std::unique_ptr<View> get_view() override;
-    std::size_t get_cur_player() const override;
+    std::size_t get_cur_player_index() const override;
+    Player get_cur_player();
 
     bool is_running_first_time() const;
     void set_next_phase();
@@ -40,7 +41,7 @@ public:
 
 private:
     Game &game;
-    int cur_player;
+    int cur_player_index;
     std::vector<int> end_turn;
     int sum = 0;
     bool start_of_phase = true;
@@ -50,7 +51,7 @@ class FeedingPhase : public Phase {
 public:
     FeedingPhase(Game &game_);
     std::unique_ptr<View> get_view() override;
-    std::size_t get_cur_player() const override;
+    std::size_t get_cur_player_index() const override;
 
     void set_next_phase();
     bool is_running_first_time() const;
@@ -70,13 +71,14 @@ private:
     static constexpr size_t MIN_FOOD_BALANCE = 3;
     static constexpr size_t MAX_FOOD_BALANCE = 10;
     static size_t define_food_balance();
-    int cur_player;
+    int cur_player_index;
     std::vector<int> end_turn;
     int sum = 0;
 
     Game &game;
     size_t food_balance = 0;
     bool start_of_phase = true;
+    void attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim);
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_PHASE_H_

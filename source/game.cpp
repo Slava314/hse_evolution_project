@@ -49,6 +49,6 @@ std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
 Deck &Game::get_deck() {
     return deck;
 }
-std::size_t Game::get_cur_player() const{
-    return phase->get_cur_player();
+std::size_t Game::get_cur_player_index() const{
+    return phase->get_cur_player_index();
 }
