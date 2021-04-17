@@ -84,13 +84,18 @@ private:
 class AnimalButton : public TextButton {
 public:
     explicit AnimalButton(const sf::Vector2f &shape_) : TextButton(shape_) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
     explicit AnimalButton(const sf::Vector2f &shape_, sf::Text text_)
         : TextButton(shape_, std::move(text_)) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
 
     void set_object(const std::shared_ptr<Animal> &obj);
+    void set_position(const sf::Vector2f &position_) override;
+    void draw(sf::RenderWindow &window) const override;
     std::shared_ptr<Animal> const &get_object() const;
+    std::shared_ptr<Button> property_button;
 
 private:
     std::shared_ptr<Animal> object;

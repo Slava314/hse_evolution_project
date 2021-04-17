@@ -64,6 +64,8 @@ public:
     void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
     std::shared_ptr<Card> const &get_selected_card() const;
     bool const &get_food_clicked() const;
+    std::shared_ptr<AnimalButton> get_clicked_property_animal();
+    void show_properties(std::shared_ptr<AnimalButton> animal_button);
 
     void make_food();
 
@@ -77,6 +79,8 @@ public:
 
     void change_player();
 
+    TextButton end_turn;
+
 private:
     void draw() override;
     Game game;
@@ -88,7 +92,7 @@ private:
     std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
-    TextButton end_turn;
+    // TextButton end_turn;
     TextButton food;
     bool food_clicked = false;
 };

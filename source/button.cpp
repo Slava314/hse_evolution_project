@@ -142,6 +142,14 @@ void AnimalButton::set_object(const std::shared_ptr<Animal> &obj) {
 std::shared_ptr<Animal> const &AnimalButton::get_object() const {
     return object;
 }
+void AnimalButton::set_position(const sf::Vector2f &position_) {
+    TextButton::set_position(position_);
+    property_button->set_position(position_);
+}
+void AnimalButton::draw(sf::RenderWindow &window) const {
+    TextButton::draw(window);
+    property_button->draw(window);
+}
 
 void CardButton::set_object(const std::shared_ptr<Card> &obj) {
     object = obj;
