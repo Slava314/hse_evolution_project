@@ -1,9 +1,8 @@
-#include "window.h"
 #include <cassert>
-#include <thread>
 #include "player.h"
 #include "properties.h"
 #include "view.h"
+#include "window.h"
 
 namespace {
 int find_in_animal_buttons(const std::shared_ptr<Animal> &animal,
@@ -26,44 +25,6 @@ int find_in_card_buttons(const std::shared_ptr<Card> &card,
     return -1;
 }
 }  // namespace
-
-std::unique_ptr<Window> StartWindow::handle_events() {
-    while (window.isOpen()) {
-        sf::Event event{};
-        if (window.waitEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    return nullptr;
-                case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            window.close();
-                            return std::make_unique<GameWindow>();
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        window.clear();
-        draw();
-        window.display();
-    }
-    assert(false);
-}
-
-void StartWindow::init_window() {
-    start_button = TextButton(sf::Vector2f(200, 40), sf::Text("Start", font));
-    start_button.set_color(sf::Color(55, 55, 55));
-    start_button.set_position(
-        sf::Vector2f((window.getSize().x - start_button.get_shape().getSize().x) / 2.0,
-                     (window.getSize().y - start_button.get_shape().getSize().y) / 2.0));
-}
-void StartWindow::draw() {
-    start_button.draw(window);
-}
 
 std::unique_ptr<Window> GameWindow::handle_events() {
     int count = 0;
@@ -431,7 +392,7 @@ std::shared_ptr<AnimalButton> GameWindow::get_clicked_property_animal() {
 }
 void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button) {
     auto properties = animal_button->get_object()->get_properties();
-    if(properties.size() > 0){
+    if (properties.size() > 0) {
         window.setActive(false);
         sf::RenderWindow property_window;
         property_window.create(sf::VideoMode(200, 300), "property_window",

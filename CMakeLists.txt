@@ -25,12 +25,13 @@ add_executable(${PROJECT_NAME}
         source/deck.cpp
         source/game.cpp
         source/player.cpp
-        source/window.cpp
+        source/game_window.cpp
         source/view.cpp
         source/main.cpp
         source/development_phase.cpp
         source/feeding_phase.cpp
-        source/cards.cpp)
+        source/cards.cpp
+        source/start_windows.cpp)
 
 include_directories(include)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
