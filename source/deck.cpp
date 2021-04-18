@@ -34,11 +34,14 @@ int Deck::get_deck_size() const {
 }
 
 int need_card(Player const &player) {
-    if (player.get_cards_in_hands().empty()) {
+    if (player.get_animals_on_board().empty() and player.get_cards_in_hands().empty()) {
         return 6;
     } else {
-        return std::max(6 - player.get_cards_in_hands().size(),
-                        player.get_animals_on_board().size() + 1);
+        if (player.get_animals_on_board().size() + player.get_cards_in_hands().size() + 1 > 6) {
+            return std::max(static_cast<unsigned long>(0), 6 - player.get_cards_in_hands().size());
+        } else {
+            return player.get_animals_on_board().size() + 1;
+        }
     }
 }
 

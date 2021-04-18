@@ -1,3 +1,4 @@
+#include <cassert>
 #include "phase.h"
 #include "player.h"
 #include "view.h"
@@ -25,16 +26,41 @@ void DevelopmentPhase::give_property_to_animal(const std::shared_ptr<Card> &card
                                                const std::shared_ptr<Animal> &new_animal) {
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
-    game.get_players()[0].use_card_as_property(card, new_animal);
+    game.get_players()[cur_player].use_card_as_property(card, new_animal);
 }
 
 std::vector<std::vector<std::shared_ptr<Card>>> DevelopmentPhase::get_cards() {
     return game.get_players_cards_in_hands();
 }
 
-void DevelopmentPhase::add_animal(std::shared_ptr<Card> &card,
+void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                                   std::shared_ptr<Animal> &new_animal) {
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
-    game.get_players()[0].put_card_as_animal(card, new_animal);
+    game.get_players()[cur_player].put_card_as_animal(card, new_animal);
+}
+void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
+    //TODO check auto end turn
+    int ans = get_view()->handle_event(window, event);
+    if(ans != 0){
+        if (ans == 2) {
+            end_turn[cur_player] = 1;
+            sum += 1;
+            if (sum == game.get_players().size()) {
+                set_next_phase();
+                return;
+            }
+        }
+        cur_player = (cur_player + 1) % game.get_players().size();
+        while (end_turn[cur_player] == 1) {
+            cur_player = (cur_player + 1) % game.get_players().size();
+        }
+        window.change_player();
+    }
+}
+DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player(0) {
+    end_turn.resize(2, 0);
+}
+std::size_t DevelopmentPhase::get_cur_player() const {
+    return cur_player;
 }
