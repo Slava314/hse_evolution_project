@@ -18,7 +18,7 @@ void Game::start_game() {
     players.emplace_back("shershen0_first_player");
     // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
-    std::vector<std::pair<Properties::_enumerated, int>> cards_info(N);
+    std::vector<std::pair<Properties, int>> cards_info(N);
     cards_info[0] = {Properties::FAT_TISSUE, 8};
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};

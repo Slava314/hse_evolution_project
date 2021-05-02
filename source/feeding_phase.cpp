@@ -42,6 +42,17 @@ void FeedingPhase::kill_animals() {
             }
         }
     }
+
+//    for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
+//        if (player.get_animals_on_board()[i]->is_hungry()) {
+//            player.handle_animal_death(player.get_animals_on_board()[i]);
+//            i--;
+//        }else{
+//            player.get_animals_on_board()[i]->set_owning_food(0);
+//        }
+//    }
+    
+
 }
 
 size_t FeedingPhase::get_food_balance() const {

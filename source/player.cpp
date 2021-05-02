@@ -71,7 +71,7 @@ std::pair<Player::Prop, int> Player::get_card_info(
     } catch (...) {
         throw std::logic_error("DID NOT FIND CARD IN HANDS");
     }
-    return {Properties(static_cast<Properties::_enumerated>(0)), -1};
+    return {Properties(static_cast<Properties>(0)), -1};
 }
 
 void Player::kill_animal(const std::shared_ptr<Animal> &animal) {

@@ -4,7 +4,7 @@
 #include <vector>
 #include "properties.h"
 
-void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info) {
+void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
     for (auto card : cards_info) {
         while (card.second--) {
             switch (card.first) {

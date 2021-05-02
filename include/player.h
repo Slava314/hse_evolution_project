@@ -6,6 +6,7 @@
 #include <utility>
 #include "animal.h"
 #include "cards.h"
+#include "properties.h"
 
 class Player {
 public:
@@ -16,7 +17,7 @@ public:
     }
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
-    using Prop = Properties::_enumerated;
+    using Prop = Properties;
 
     [[nodiscard]] std::string &get_name();
 
