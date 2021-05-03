@@ -1,4 +1,6 @@
-#pragma once
+#ifndef EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_
+#define EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_
+
 #include <string>
 
 struct Settings{
@@ -7,3 +9,5 @@ struct Settings{
     int size_of_deck;
     double time_of_move;
 };
+
+#endif  // EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_
