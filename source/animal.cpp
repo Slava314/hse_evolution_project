@@ -1,9 +1,9 @@
 #include "animal.h"
+#include <stdexcept>
 #include "game.h"
 #include "phase.h"
-#include <stdexcept>
 
-std::unordered_multiset<Animal::Prop> &Animal::get_properties(){
+std::unordered_multiset<Animal::Prop> &Animal::get_properties() {
     return animals_properties;
 }
 

@@ -1,7 +1,7 @@
 #include "player.h"
 #include <cassert>
-#include <utility>
 #include <stdexcept>
+#include <utility>
 
 std::string &Player::get_name() {
     return name;
@@ -60,8 +60,7 @@ void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
     erase_card_from_hands(which_card);
 }
 
-std::pair<Player::Prop, int> Player::get_card_info(
-    const std::shared_ptr<Card> &looking_card) {
+std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {
     try {
         for (const auto &card : cards_in_hands) {
             if (card.get() == looking_card.get()) {

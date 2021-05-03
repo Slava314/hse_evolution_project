@@ -2,7 +2,7 @@
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 
 ///
-///Source of this code - https://github.com/aantron/better-enums
+/// Source of this code - https://github.com/aantron/better-enums
 ///
 
 #include <cstddef>
@@ -102,8 +102,7 @@ struct ignore_assign {
         }                                                                              \
     };
 
-
 ENUM(Properties, DEFAULT = 0, FAT_TISSUE, BIG, STOMPER);
-//ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН);
+// ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН);
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_

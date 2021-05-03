@@ -20,6 +20,7 @@ public:
     Animal() = default;
 
     void set_owning_food(int new_food);
+
 private:
     int food_needed = 1;
     int owning_food = 0;

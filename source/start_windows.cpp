@@ -21,9 +21,7 @@ std::unique_ptr<Window> StartWindow::handle_events() {
                     break;
             }
         }
-        window.clear();
         draw();
-        window.display();
     }
     assert(false);
 }
@@ -36,5 +34,7 @@ void StartWindow::init_window() {
                      (window.getSize().y - start_button.get_shape().getSize().y) / 2.0));
 }
 void StartWindow::draw() {
+    window.clear();
     start_button.draw(window);
+    window.display();
 }

@@ -33,6 +33,7 @@ public:
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
+
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
 

@@ -4,7 +4,7 @@
 #include "properties.h"
 class Card {
 public:
-    //this is weird
+    // this is weird
     Properties pr;
     Properties::_enumerated property = Properties::DEFAULT;
     int extra_food = 0;
@@ -13,7 +13,7 @@ public:
     }
 
     std::pair<Properties::_enumerated, int> get_info();
-//    Card() = default;
+    //    Card() = default;
     ~Card() = default;
 
 protected:
