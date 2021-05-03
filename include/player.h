@@ -33,11 +33,9 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
-<<<<<<< HEAD
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
-=======
+
     int uniq_id; //server will identify player with this id
->>>>>>> origin/development_phase
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
 

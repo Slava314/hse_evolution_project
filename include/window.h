@@ -4,6 +4,7 @@
 #include "button.h"
 #include "constants.h"
 #include "game.h"
+#include "TextField.h"
 
 class Window {
 public:
@@ -153,6 +154,7 @@ public:
     ~JoinGameWindow() override = default;
 
 private:
+    TextField text_field;
 
     void init_window();
     void draw() override;

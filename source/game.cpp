@@ -2,15 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
-Game::Game(struct Settings settings_) {
+Game::Game(Settings settings_) : settings(settings_) {
     phase = std::make_unique<DevelopmentPhase>(*this);
-    settings = settings_;
 }
 
 Game::Game() {
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
-
 
 std::unique_ptr<Phase> const &Game::get_phase() const {
     return phase;
@@ -33,7 +31,8 @@ void Game::start_game() {
     //TODO - ask server about players count and get stream of messages about their names and position
 //    int total_players = get_all_players();
     int i = 0;
-    players.emplace_back("shershen0_first_player", i);
+    players.emplace_back("shershen0_first_player", 0);
+    players.emplace_back("shershen0_second_player", 1);
     // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
     std::vector<std::pair<Properties, int>> cards_info(N);

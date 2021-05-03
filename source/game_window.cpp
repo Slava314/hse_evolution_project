@@ -123,7 +123,7 @@ void GameWindow::add_cards() {
             new_button.set_outline_color(CARD_OUTLINE_COLOR);
             new_button.set_object(card);
             Properties prop = card->get_info().first;
-            new_button.set_text(prop._to_string(), font);
+            new_button.set_text(get_name(prop), font);
             new_button.set_text_size(20);
             player_cards_buttons.push_back(new_button);
         }
@@ -422,7 +422,7 @@ void PropertyWindow::init_window(std::shared_ptr<AnimalButton> animal_button) {
         new_prop.set_position(sf::Vector2f(0, (count - 1) * 50));
         new_prop.set_size({200, 50});
         new_prop.set_color(sf::Color::Black);
-        new_prop.set_text(std::to_string(count) + ") " + prop._to_string(), font);
+        new_prop.set_text(std::to_string(count) + ") " + get_name(prop), font);
         new_prop.set_text_size(18);
         //        if (able_to_use) {
         //            if(){ //check ability to use from game and current player
