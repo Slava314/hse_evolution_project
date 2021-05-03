@@ -1,5 +1,5 @@
-#ifndef EVOLUTION_PROJECT__WINDOW_H_
-#define EVOLUTION_PROJECT__WINDOW_H_
+#ifndef EVOLUTION_PROJECT_WINDOW_H_
+#define EVOLUTION_PROJECT_WINDOW_H_
 #include <SFML/Graphics.hpp>
 #include "button.h"
 #include "constants.h"
@@ -119,4 +119,61 @@ private:
     void draw() override;
 };
 
-#endif  // EVOLUTION_PROJECT__WINDOW_H_
+class StartChoiceWindow : public Window {
+public:
+    StartChoiceWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choice_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        font.loadFromFile("resources/t.ttf");
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~StartChoiceWindow() override = default;
+
+private:
+    TextButton default_button;
+    TextButton join_game_button;
+    TextButton make_game_button;
+
+    void init_window();
+    void draw() override;
+};
+
+class JoinGameWindow : public Window {
+public:
+    JoinGameWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        font.loadFromFile("resources/t.ttf");
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~JoinGameWindow() override = default;
+
+private:
+
+    void init_window();
+    void draw() override;
+};
+
+class MakeGameWindow : public Window {
+public:
+    MakeGameWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        font.loadFromFile("resources/t.ttf");
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~MakeGameWindow() override = default;
+
+private:
+
+    void init_window();
+    void draw() override;
+};
+
+#endif  // EVOLUTION_PROJECT_WINDOW_H_
