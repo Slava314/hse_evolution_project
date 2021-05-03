@@ -8,8 +8,8 @@
 
 class Animal {
 public:
-    using Prop = Properties::_enumerated;
-    [[nodiscard]] std::unordered_multiset<Prop> &get_properties();
+    using Prop = Properties;
+    [[nodiscard]] std::unordered_multiset<Prop> get_properties() const;
     static void UseProperty(Properties properties, FeedingPhase &);
     void increase_owning_food();
     void increase_food_needed(std::size_t how_much);

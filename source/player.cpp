@@ -3,8 +3,17 @@
 #include <utility>
 #include <stdexcept>
 
+Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
+    cards_in_hands.resize(0);
+    animals_on_board.resize(0);
+}
+
 std::string &Player::get_name() {
     return name;
+}
+
+void Player::set_name(std::string name_)  {
+    name = name_;
 }
 
 const std::vector<std::shared_ptr<Animal>> &Player::get_animals_on_board() const {
@@ -72,7 +81,7 @@ std::pair<Player::Prop, int> Player::get_card_info(
     } catch (...) {
         throw std::logic_error("DID NOT FIND CARD IN HANDS");
     }
-    return {Properties(static_cast<Properties::_enumerated>(0)), -1};
+    return {Properties(static_cast<Properties>(0)), -1};
 }
 
 void Player::kill_animal(const std::shared_ptr<Animal> &animal) {

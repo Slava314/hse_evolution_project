@@ -5,14 +5,14 @@
 #include "deck.h"
 #include "phase.h"
 #include "player.h"
+#include "settings.h"
 
 class Game {
 public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
-    Game() {
-        phase = std::make_unique<DevelopmentPhase>(*this);
-    }
+    Game(struct Settings settings_);
+    Game();
 
     void start_game();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
@@ -30,6 +30,7 @@ private:
     std::unique_ptr<Phase> phase;
     std::vector<Player> players;
     Deck deck;
+    Settings settings;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_
