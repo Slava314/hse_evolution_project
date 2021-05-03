@@ -101,4 +101,14 @@ private:
     std::shared_ptr<Animal> object;
 };
 
+class PropertyButton : public TextButton {
+public:
+    PropertyButton(Properties prop_) : TextButton(), prop(prop_) {
+    }
+    Properties get_property();
+
+private:
+    Properties prop;
+};
+
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H

@@ -40,9 +40,9 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     game.get_players()[cur_player].put_card_as_animal(card, new_animal);
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
-    //TODO check auto end turn
+    // TODO check auto end turn
     int ans = get_view()->handle_event(window, event);
-    if(ans != 0){
+    if (ans != 0) {
         if (ans == 2) {
             end_turn[cur_player] = 1;
             sum += 1;

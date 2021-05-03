@@ -42,14 +42,13 @@ std::unique_ptr<Window> GameWindow::handle_events() {
             }
         }
 
-        window.clear();
         draw();
-        window.display();
     }
     assert(false);
 }
 
 void GameWindow::draw() {
+    window.clear();
     window.draw(sf::Text(game.get_players()[game.get_cur_player()].get_name(), font));
     window.draw(deck_shape);
     window.draw(deck_text);
@@ -70,6 +69,7 @@ void GameWindow::draw() {
     }
 
     end_turn.draw(window);
+    window.display();
 }
 
 void GameWindow::init_window() {
@@ -390,33 +390,73 @@ std::shared_ptr<AnimalButton> GameWindow::get_clicked_property_animal() {
     }
     return nullptr;
 }
-void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button) {
-    auto properties = animal_button->get_object()->get_properties();
-    if (properties.size() > 0) {
+void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase) {
+    if (animal_button->get_object()->get_properties().size() > 0) {
         window.setActive(false);
-        sf::RenderWindow property_window;
-        property_window.create(sf::VideoMode(200, 300), "property_window",
-                               sf::Style::Titlebar | sf::Style::Close);
-        property_window.setPosition({200, 200});
-        std::string str = "";
-        int count = 0;
-        for (Properties prop : properties) {
-            count++;
-            str += std::to_string(count) + ") " + prop._to_string() + "\n";
-        }
-        sf::Text prop_text(str, font);
-        prop_text.setCharacterSize(18);
-        while (property_window.isOpen()) {
-            sf::Event event{};
-            if (property_window.waitEvent(event)) {
-                if (event.type == sf::Event::Closed) {
-                    property_window.close();
-                    window.setActive(true);
-                }
-            }
-            property_window.clear();
-            property_window.draw(prop_text);
-            property_window.display();
+        PropertyWindow property_window(phase);
+        property_window.init_window(animal_button);
+        Properties use_prop = property_window.handle_properties();
+        window.setActive(true);
+        if (use_prop != Properties::DEFAULT) {
+            use_property(animal_button, use_prop);
         }
     }
+}
+void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
+}
+
+void PropertyWindow::draw() {
+    window.clear();
+    for (auto button : properties) {
+        button.draw(window);
+    }
+    window.display();
+}
+
+void PropertyWindow::init_window(std::shared_ptr<AnimalButton> animal_button) {
+    auto property_list = animal_button->get_object()->get_properties();
+    int count = 0;
+    for (Properties prop : property_list) {
+        count++;
+        PropertyButton new_prop(prop);
+        new_prop.set_position(sf::Vector2f(0, (count - 1) * 50));
+        new_prop.set_size({200, 50});
+        new_prop.set_color(sf::Color::Black);
+        new_prop.set_text(std::to_string(count) + ") " + prop._to_string(), font);
+        new_prop.set_text_size(18);
+        //        if (able_to_use) {
+        //            if(){ //check ability to use from game and current player
+        //            new_prop.set_text_color(sf::Color::Green);
+        //            }
+        //        }
+        new_prop.set_active(false);
+        properties.push_back(new_prop);
+    }
+}
+
+Properties PropertyWindow::handle_properties() {
+    while (window.isOpen()) {
+        sf::Event event{};
+        if (window.waitEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            if (able_to_use) {
+                if (event.type == sf::Event::MouseButtonPressed &&
+                    event.mouseButton.button == sf::Mouse::Left) {
+                    for (auto &button : properties) {
+                        if (button.is_clicked(sf::Mouse::getPosition(window))) {
+                            window.close();
+                            return button.get_property();
+                        }
+                    }
+                }
+            }
+        }
+        draw();
+    }
+    return Properties::DEFAULT;
+}
+std::unique_ptr<Window> PropertyWindow::handle_events() {
+    return std::unique_ptr<Window>();
 }

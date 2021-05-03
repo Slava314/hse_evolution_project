@@ -1,7 +1,5 @@
 #include "view.h"
-#include <cassert>
 #include <thread>
-#include "cards.h"
 #include "phase.h"
 #include "window.h"
 
@@ -37,7 +35,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
         }
         if (const auto &clicked_property_animal = window.get_clicked_property_animal();
             clicked_property_animal != nullptr) {
-            window.show_properties(clicked_property_animal);
+            window.show_properties(clicked_property_animal, false);
             return 0;
         }
         if (const auto &clicked_card = window.get_clicked_card(); clicked_card != nullptr) {
@@ -64,6 +62,11 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
             return 2;
+        }
+        if (const auto &clicked_property_animal = window.get_clicked_property_animal();
+            clicked_property_animal != nullptr) {
+            window.show_properties(clicked_property_animal, true);
+            return 0;
         }
         if (window.check_food()) {
             window.click_food();

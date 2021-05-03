@@ -1,6 +1,5 @@
 #include <cassert>
 #include "phase.h"
-#include "phase_fwd.h"
 #include "player.h"
 #include "view.h"
 
@@ -65,7 +64,7 @@ void FeedingPhase::set_start_of_phase(bool start) {
     start_of_phase = start;
 }
 void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
-    //TODO check auto end turn
+    // TODO check auto end turn
     int ans = get_view()->handle_event(window, event);
     if (ans != 0) {
         if (ans == 2) {

@@ -157,3 +157,6 @@ void CardButton::set_object(const std::shared_ptr<Card> &obj) {
 std::shared_ptr<Card> const &CardButton::get_object() const {
     return object;
 }
+Properties PropertyButton::get_property() {
+    return prop;
+}
