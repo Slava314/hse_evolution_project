@@ -1,4 +1,4 @@
-#include "TextField.h"
+#include "text_field.h"
 const std::string TextField::get_text() const {
     return text;
 }
@@ -7,18 +7,21 @@ void TextField::set_position(sf::Vector2f coordinates) {
     rect.setPosition(coordinates);
 }
 
-bool TextField::is_clicked(const sf::Vector2i &mouse_position) const  {
+bool TextField::is_clicked(const sf::Vector2i &mouse_position) const {
     auto bounds = rect.getGlobalBounds();
     return (mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width &&
-        mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height);
+            mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height);
 }
 
 void TextField::set_focus(bool focus) {
     has_focus = focus;
-    if (focus){
+    if (focus) {
+        if (first_click) {
+            text = "";
+            first_click = false;
+        }
         rect.setOutlineColor(sf::Color::Blue);
-    }
-    else{
+    } else {
         rect.setOutlineColor(sf::Color(127, 127, 127));
     }
 }

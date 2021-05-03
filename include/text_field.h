@@ -7,11 +7,14 @@
 #include <string>
 #include <utility>
 
-class TextField : public sf::Transformable{
+class TextField : public sf::Transformable {
 public:
     TextField() = default;
-    TextField(std::size_t maxChars)
-        : size(maxChars), rect(sf::Vector2f(14 * size, 26)), has_focus(false) {
+    TextField(std::size_t maxChars, std::string str)
+        : size(maxChars),
+          rect(sf::Vector2f(14 * size, 26)),
+          has_focus(false),
+          text(std::move(str)) {
         font.loadFromFile("resources/t.ttf");
         rect.setOutlineThickness(2);
         rect.setFillColor(sf::Color::White);
@@ -33,6 +36,7 @@ private:
     std::string text;
     sf::RectangleShape rect;
     bool has_focus;
+    bool first_click = true;
 };
 
 #endif  // EVOLUTION_PROJECT_TEXTFIELD_H_

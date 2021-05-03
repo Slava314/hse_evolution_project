@@ -1,7 +1,7 @@
 #include <window.h>
 #include <cassert>
 #include <memory>
-#include "TextField.h"
+#include "text_field.h"
 std::unique_ptr<Window> StartWindow::handle_events() {
     while (window.isOpen()) {
         sf::Event event{};
@@ -113,15 +113,26 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                     return nullptr;
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button == sf::Mouse::Left) {
-                        if (text_field.is_clicked(sf::Mouse::getPosition(window))) {
-                            text_field.set_focus(true);
+                        if (room_field.is_clicked(sf::Mouse::getPosition(window))) {
+                            room_field.set_focus(true);
                         } else {
-                            text_field.set_focus(false);
+                            room_field.set_focus(false);
+                        }
+                        if (name_field.is_clicked(sf::Mouse::getPosition(window))) {
+                            name_field.set_focus(true);
+                        } else {
+                            name_field.set_focus(false);
+                        }
+                        if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
+                            if (room_field.get_text() != "" && name_field.get_text() != "") {
+                                // TODO join server?
+                            }
                         }
                     }
                     break;
                 case sf::Event::TextEntered:
-                    text_field.handle_input(event);
+                    room_field.handle_input(event);
+                    name_field.handle_input(event);
                     break;
                 default:
                     break;
@@ -129,22 +140,39 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
         }
         draw();
     }
-    assert(false);
 }
+
 void JoinGameWindow::init_window() {
-    text_field = TextField(20);
-    text_field.set_position(sf::Vector2f((window.getSize().x - text_field.get_shape().getSize().x) / 2.0,
-                                         (window.getSize().y - text_field.get_shape().getSize().y) / 2.0));
+    room_field = TextField(20, "Enter room name:");
+    room_field.set_position(
+        sf::Vector2f((window.getSize().x - 2 * room_field.get_shape().getSize().x) / 2.0 - 20,
+                     (window.getSize().y - room_field.get_shape().getSize().y) / 2.0));
+    name_field = TextField(20, "Enter your name:");
+    name_field.set_position(
+        sf::Vector2f((window.getSize().x - 2 * name_field.get_shape().getSize().x) / 2.0 +
+                         name_field.get_shape().getSize().x + 20,
+                     (window.getSize().y - room_field.get_shape().getSize().y) / 2.0));
+    join_button = TextButton(sf::Vector2f(200, 40), sf::Text("Join", font));
+    join_button.set_color(sf::Color(55, 55, 55));
+    join_button.set_position(
+        sf::Vector2f((window.getSize().x - join_button.get_shape().getSize().x) / 2.0,
+                     (window.getSize().y - join_button.get_shape().getSize().y) / 2.0 + 100));
 }
+
 void JoinGameWindow::draw() {
     window.clear();
-    text_field.draw(window);
+    room_field.draw(window);
+    name_field.draw(window);
+    join_button.draw(window);
     window.display();
 }
+
 std::unique_ptr<Window> MakeGameWindow::handle_events() {
     return std::unique_ptr<Window>();
 }
+
 void MakeGameWindow::init_window() {
 }
+
 void MakeGameWindow::draw() {
 }
