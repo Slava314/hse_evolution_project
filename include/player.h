@@ -11,15 +11,13 @@
 class Player {
 public:
     /// i will do it
-    explicit Player(std::string name_) : name(std::move(name_)) {
-        cards_in_hands.resize(0);
-        animals_on_board.resize(0);
-    }
+    explicit Player(std::string name_, int id_);
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
     using Prop = Properties;
 
     [[nodiscard]] std::string &get_name();
+    void set_name(std::string name_);
 
     void add_card_in_hands(const std::shared_ptr<Card> &card);
     void put_card_as_animal(const std::shared_ptr<Card> &which_card,
@@ -34,6 +32,7 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
+    int uniq_id; //server will identify player with this id
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
