@@ -175,6 +175,13 @@ public:
     ~MakeGameWindow() override = default;
 
 private:
+    TextField room_field;
+    TextField name_field;
+    TextField number_of_cards_field;
+    TextField number_of_players_field;
+    TextField seconds_for_turn_field;
+    TextButton start_button;
+
     void init_window();
     void draw() override;
 };

@@ -4,11 +4,12 @@ const std::string TextField::get_text() const {
 }
 
 void TextField::set_position(sf::Vector2f coordinates) {
-    rect.setPosition(coordinates);
+    shape.setPosition(coordinates);
+    additional_text.setPosition(coordinates.x, coordinates.y - 30);
 }
 
 bool TextField::is_clicked(const sf::Vector2i &mouse_position) const {
-    auto bounds = rect.getGlobalBounds();
+    auto bounds = shape.getGlobalBounds();
     return (mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width &&
             mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height);
 }
@@ -20,9 +21,9 @@ void TextField::set_focus(bool focus) {
             text = "";
             first_click = false;
         }
-        rect.setOutlineColor(sf::Color::Blue);
+        shape.setOutlineColor(sf::Color::Blue);
     } else {
-        rect.setOutlineColor(sf::Color(127, 127, 127));
+        shape.setOutlineColor(sf::Color(127, 127, 127));
     }
 }
 
@@ -39,16 +40,19 @@ void TextField::handle_input(sf::Event event) {
 }
 
 void TextField::draw(sf::RenderWindow &window) const {
-    window.draw(rect);
+    window.draw(shape);
+    window.draw(additional_text);
     sf::Text text_to_draw(text, font);
     text_to_draw.setCharacterSize(26);
-    text_to_draw.setPosition({rect.getPosition().x, rect.getPosition().y - 3});
+    text_to_draw.setPosition({shape.getPosition().x, shape.getPosition().y - 3});
     text_to_draw.setFillColor(sf::Color::Black);
     window.draw(text_to_draw);
 }
-void TextField::change_focus() {
-    set_focus(!has_focus);
-}
+
 sf::RectangleShape const &TextField::get_shape() const {
-    return rect;
+    return shape;
+}
+void TextField::set_additional_text(const std::string &str) {
+    additional_text = sf::Text(str, font, 20);
+    additional_text.setFillColor(sf::Color::White);
 }
