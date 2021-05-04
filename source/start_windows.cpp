@@ -1,8 +1,8 @@
 #include <window.h>
 #include <cassert>
 #include <memory>
-#include "text_field.h"
 #include <string>
+#include "text_field.h"
 
 namespace {
 void check_text_field(TextField &field, sf::RenderWindow &window) {
@@ -182,11 +182,10 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 number_of_players_field.get_text() != "" &&
                                 number_of_cards_field.get_text() != "" &&
                                 seconds_for_turn_field.get_text() != "") {
-                                Settings settings(
-                                    room_field.get_text(),
-                                    std::stoi(number_of_players_field.get_text()),
-                                    std::stoi(number_of_cards_field.get_text()),
-                                    std::stoi(seconds_for_turn_field.get_text()));
+                                Settings settings(room_field.get_text(),
+                                                  std::stoi(number_of_players_field.get_text()),
+                                                  std::stoi(number_of_cards_field.get_text()),
+                                                  std::stoi(seconds_for_turn_field.get_text()));
                                 window.close();
                                 return std::make_unique<GameWindow>(settings);
                                 // TODO make room?

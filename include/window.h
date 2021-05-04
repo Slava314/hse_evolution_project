@@ -4,8 +4,8 @@
 #include "button.h"
 #include "constants.h"
 #include "game.h"
-#include "text_field.h"
 #include "settings.h"
+#include "text_field.h"
 
 class Window {
 public:
@@ -43,10 +43,10 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                       sf::Style::Titlebar | sf::Style::Close);
         font.loadFromFile("resources/t.ttf");
-        game.start_game(settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
+        game.start_game(
+            settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
     }
-
 
     std::unique_ptr<Window> handle_events() override;
     void add_cards();

@@ -25,12 +25,12 @@ void Game::start_game(Settings settings_) {
     // TODO - get count of players as a parametr. From GUI? or lobby?
     //    players.resize(1);
 
+    // TODO - cycle where player will add to vector
+    // TODO -
 
-    //TODO - cycle where player will add to vector
-    //TODO -
-
-    //TODO - ask server about players count and get stream of messages about their names and position
-//    int total_players = get_all_players();
+    // TODO - ask server about players count and get stream of messages about their names and
+    // position
+    //    int total_players = get_all_players();
     int i = 0;
     players.emplace_back("shershen0_first_player", 0);
     players.emplace_back("shershen0_second_player", 1);
@@ -66,6 +66,9 @@ std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
 Deck &Game::get_deck() {
     return deck;
 }
-std::size_t Game::get_cur_player() const{
+std::size_t Game::get_cur_player() const {
     return phase->get_cur_player();
+}
+Settings const &Game::get_settings() const {
+    return settings;
 }

@@ -10,6 +10,10 @@ public:
           size_of_deck(size_of_deck_),
           time_of_move(time_of_move_) {
     }
+    std::string const &get_room_name() const;
+    int get_quantity_of_players() const;
+    int get_size_of_deck() const;
+    int get_time_of_move() const;
 
 private:
     std::string room_name;

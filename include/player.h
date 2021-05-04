@@ -10,7 +10,6 @@
 
 class Player {
 public:
-
     /// i will do it
     Player() = default;
     explicit Player(std::string name_, int id_);
@@ -36,7 +35,6 @@ public:
 
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
 
-    int uniq_id; //server will identify player with this id
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
 
@@ -44,6 +42,7 @@ private:
     std::vector<std::shared_ptr<Animal>> animals_on_board;
     std::string name;
     bool chose_to_end_phase = false;
+    int uniq_id;  // server will identify player with this id
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_
