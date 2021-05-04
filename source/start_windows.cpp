@@ -2,6 +2,7 @@
 #include <cassert>
 #include <memory>
 #include "text_field.h"
+#include <string>
 
 namespace {
 void check_text_field(TextField &field, sf::RenderWindow &window) {
@@ -61,12 +62,6 @@ std::unique_ptr<Window> StartChoiceWindow::handle_events() {
                     return nullptr;
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button == sf::Mouse::Left) {
-                        if (default_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            window.close();
-                            return std::make_unique<GameWindow>();
-                        }
-                    }
-                    if (event.mouseButton.button == sf::Mouse::Left) {
                         if (make_game_button.is_clicked(sf::Mouse::getPosition(window))) {
                             window.close();
                             return std::make_unique<MakeGameWindow>();
@@ -89,11 +84,6 @@ std::unique_ptr<Window> StartChoiceWindow::handle_events() {
 }
 
 void StartChoiceWindow::init_window() {
-    default_button = TextButton(sf::Vector2f(200, 40), sf::Text("Start", font));
-    default_button.set_color(sf::Color(55, 55, 55));
-    default_button.set_position(
-        sf::Vector2f((window.getSize().x - default_button.get_shape().getSize().x) / 2.0,
-                     (window.getSize().y - default_button.get_shape().getSize().y) / 2.0 + 100));
     make_game_button = TextButton(sf::Vector2f(200, 40), sf::Text("Make game", font));
     make_game_button.set_color(sf::Color(55, 55, 55));
     make_game_button.set_position(
@@ -109,7 +99,6 @@ void StartChoiceWindow::init_window() {
 
 void StartChoiceWindow::draw() {
     window.clear();
-    default_button.draw(window);
     make_game_button.draw(window);
     join_game_button.draw(window);
     window.display();
@@ -193,6 +182,13 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 number_of_players_field.get_text() != "" &&
                                 number_of_cards_field.get_text() != "" &&
                                 seconds_for_turn_field.get_text() != "") {
+                                Settings settings(
+                                    room_field.get_text(),
+                                    std::stoi(number_of_players_field.get_text()),
+                                    std::stoi(number_of_cards_field.get_text()),
+                                    std::stoi(seconds_for_turn_field.get_text()));
+                                window.close();
+                                return std::make_unique<GameWindow>(settings);
                                 // TODO make room?
                             }
                         }

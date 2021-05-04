@@ -14,7 +14,7 @@ public:
     Game(struct Settings settings_);
     Game();
 
-    void start_game();
+    void start_game(Settings settings_);
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
 

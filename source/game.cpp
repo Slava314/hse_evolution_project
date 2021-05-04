@@ -18,7 +18,8 @@ size_t Game::get_deck_size() {
     return deck.get_deck_size();
 }
 
-void Game::start_game() {
+void Game::start_game(Settings settings_) {
+    settings = settings_;
     // TODO set number of players
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
