@@ -1,11 +1,13 @@
 #ifndef EVOLUTION_PROJECT_WINDOW_H_
 #define EVOLUTION_PROJECT_WINDOW_H_
 #include <SFML/Graphics.hpp>
+#include <cmrc/cmrc.hpp>
 #include "button.h"
 #include "constants.h"
 #include "game.h"
 #include "settings.h"
 #include "text_field.h"
+CMRC_DECLARE(resources);
 
 class Window {
 public:
@@ -23,7 +25,10 @@ public:
     StartWindow() {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         init_window();
     }
 
@@ -42,7 +47,10 @@ public:
     GameWindow(Settings settings) {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         game.start_game(
             settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
@@ -106,7 +114,10 @@ public:
         window.create(sf::VideoMode(200, 300), "property_window",
                       sf::Style::Titlebar | sf::Style::Close);
         window.setPosition({200, 200});
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
     }
 
     std::unique_ptr<Window> handle_events() override;
@@ -126,7 +137,10 @@ public:
     StartChoiceWindow() {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choice_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         init_window();
     }
 
@@ -146,7 +160,10 @@ public:
     JoinGameWindow() {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         init_window();
     }
 
@@ -167,7 +184,10 @@ public:
     MakeGameWindow() {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         init_window();
     }
 

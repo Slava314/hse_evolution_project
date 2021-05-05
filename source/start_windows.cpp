@@ -136,12 +136,12 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
 }
 
 void JoinGameWindow::init_window() {
-    room_field = TextField(20, "meow");
+    room_field = TextField(20, font, "meow");
     room_field.set_additional_text("Enter room name:");
     room_field.set_position(
         sf::Vector2f((window.getSize().x - 2 * room_field.get_shape().getSize().x) / 2.0 - 20,
                      (window.getSize().y - room_field.get_shape().getSize().y) / 2.0));
-    name_field = TextField(20, "no name");
+    name_field = TextField(20, font, "no name");
     name_field.set_additional_text("Enter your name:");
     name_field.set_position(
         sf::Vector2f((window.getSize().x - 2 * name_field.get_shape().getSize().x) / 2.0 +
@@ -210,31 +210,31 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
 }
 
 void MakeGameWindow::init_window() {
-    room_field = TextField(20, "meow");
+    room_field = TextField(20, font, "meow");
     room_field.set_additional_text("Enter room name:");
     room_field.set_position(
         sf::Vector2f((window.getSize().x - 2 * room_field.get_shape().getSize().x) / 2.0 - 20,
                      (window.getSize().y - room_field.get_shape().getSize().y) / 2.0 - 100));
-    name_field = TextField(20, "no name");
+    name_field = TextField(20, font, "no name");
     name_field.set_additional_text("Enter your name:");
     name_field.set_position(
         sf::Vector2f((window.getSize().x - 2 * name_field.get_shape().getSize().x) / 2.0 +
                          name_field.get_shape().getSize().x + 20,
                      (window.getSize().y - room_field.get_shape().getSize().y) / 2.0 - 100));
 
-    number_of_players_field = TextField(20, "2");
+    number_of_players_field = TextField(20, font, "2");
     number_of_players_field.set_additional_text("Enter number of players (2-4):");
     number_of_players_field.set_position(
         sf::Vector2f((window.getSize().x - 3 * name_field.get_shape().getSize().x) / 2.0 - 40,
                      (window.getSize().y - number_of_players_field.get_shape().getSize().y) / 2.0));
 
-    number_of_cards_field = TextField(20, "84");
+    number_of_cards_field = TextField(20, font, "84");
     number_of_cards_field.set_additional_text("Enter number of cards:");
     number_of_cards_field.set_position(
         sf::Vector2f((window.getSize().x - number_of_cards_field.get_shape().getSize().x) / 2.0,
                      (window.getSize().y - number_of_cards_field.get_shape().getSize().y) / 2.0));
 
-    seconds_for_turn_field = TextField(20, "60");
+    seconds_for_turn_field = TextField(20, font, "60");
     seconds_for_turn_field.set_additional_text("Enter time for turn in seconds:");
     seconds_for_turn_field.set_position(
         sf::Vector2f((window.getSize().x - seconds_for_turn_field.get_shape().getSize().x) / 2.0 +
