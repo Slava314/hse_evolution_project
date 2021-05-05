@@ -1,9 +1,13 @@
-#ifndef EVOLUTION_PROJECT__WINDOW_H_
-#define EVOLUTION_PROJECT__WINDOW_H_
+#ifndef EVOLUTION_PROJECT_WINDOW_H_
+#define EVOLUTION_PROJECT_WINDOW_H_
 #include <SFML/Graphics.hpp>
+#include <cmrc/cmrc.hpp>
 #include "button.h"
 #include "constants.h"
 #include "game.h"
+#include "settings.h"
+#include "text_field.h"
+CMRC_DECLARE(resources);
 
 class Window {
 public:
@@ -16,33 +20,39 @@ protected:
     virtual void draw() = 0;
 };
 
-class Start_Window : public Window {
+class StartWindow : public Window {
 public:
-    Start_Window() {
+    StartWindow() {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
         init_window();
     }
 
     std::unique_ptr<Window> handle_events() override;
-    ~Start_Window() override = default;
+    ~StartWindow() override = default;
 
 private:
-    Text_Button start_button;
+    TextButton start_button;
 
     void init_window();
     void draw() override;
 };
 
-class Game_Window : public Window {
+class GameWindow : public Window {
 public:
-    Game_Window() {
+    GameWindow(Settings settings) {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                       sf::Style::Titlebar | sf::Style::Close);
-        font.loadFromFile("resources/t.ttf");
-
-        game.start_game();  //важен порядок этих двух строчек, потом возможно надо будет исправить
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        game.start_game(
+            settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
     }
 
@@ -51,40 +61,149 @@ public:
     void set_cards_position();
     void init_window();
     void make_deck_shape();
-    void add_animal_shape(std::shared_ptr<Animal> new_animal);
+    void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
     void set_animals_position(bool with_new_place);
-    int get_selected_card() const;
-    void delete_animal_shape();
+    void kill_animals();
     sf::RenderWindow &get_window();
-    ~Game_Window() override = default;
-
-    int check_cards();
-
-    void click_card(int i);
-
+    std::shared_ptr<Card> get_clicked_card();
+    void click_card(const std::shared_ptr<Card> &card);
     bool check_new_animal();
-
-    std::shared_ptr<Card> play_animal(std::shared_ptr<Animal> shared_ptr);
-
+    std::shared_ptr<Card> play_animal(const std::shared_ptr<Animal> &shared_ptr);
     bool check_end_turn();
+    std::shared_ptr<Animal> check_animals();
+    void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
+    std::shared_ptr<Card> const &get_selected_card() const;
+    bool const &get_food_clicked() const;
+    std::shared_ptr<AnimalButton> get_clicked_property_animal();
+    void show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase);
 
-    int check_animals();
+    void make_food();
 
-    void add_property_to_animal(int i);
+    ~GameWindow() override = default;
+
+    bool check_food();
+
+    void click_food();
+
+    void feed_animal(const std::shared_ptr<Animal> &animal);
+
+    void change_player();
+
+    void use_property(std::shared_ptr<AnimalButton>, Properties prop);
 
 private:
     void draw() override;
     Game game;
     sf::Font font;
 
+    TextButton end_turn;
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
-    std::vector<Card_Button> player_cards_buttons;
-    std::vector<Animal_Button> player_animals_shapes;
-    int selected_card = -1;
+    std::vector<CardButton> player_cards_buttons;
+    std::vector<std::vector<AnimalButton>> player_animals_buttons;
+    std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
-    Text_Button end_turn;
-    int cur_player = 0;
+    // TextButton end_turn;
+    TextButton food;
+    bool food_clicked = false;
 };
 
-#endif  // EVOLUTION_PROJECT__WINDOW_H_
+class PropertyWindow : Window {
+public:
+    PropertyWindow(bool able_to_use_) : able_to_use(able_to_use_) {
+        window.create(sf::VideoMode(200, 300), "property_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        window.setPosition({200, 200});
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    Properties handle_properties();
+    void init_window(std::shared_ptr<AnimalButton> animal_button);
+
+    ~PropertyWindow() override = default;
+
+private:
+    bool able_to_use;
+    std::vector<PropertyButton> properties;
+    void draw() override;
+};
+
+class StartChoiceWindow : public Window {
+public:
+    StartChoiceWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choice_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~StartChoiceWindow() override = default;
+
+private:
+    TextButton join_game_button;
+    TextButton make_game_button;
+
+    void init_window();
+    void draw() override;
+};
+
+class JoinGameWindow : public Window {
+public:
+    JoinGameWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~JoinGameWindow() override = default;
+
+private:
+    TextField room_field;
+    TextField name_field;
+    TextButton join_button;
+
+    void init_window();
+    void draw() override;
+};
+
+class MakeGameWindow : public Window {
+public:
+    MakeGameWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("resources/times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~MakeGameWindow() override = default;
+
+private:
+    TextField room_field;
+    TextField name_field;
+    TextField number_of_cards_field;
+    TextField number_of_players_field;
+    TextField seconds_for_turn_field;
+    TextButton start_button;
+
+    void init_window();
+    void draw() override;
+};
+
+#endif  // EVOLUTION_PROJECT_WINDOW_H_

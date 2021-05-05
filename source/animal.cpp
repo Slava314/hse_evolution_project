@@ -1,8 +1,9 @@
 #include "animal.h"
 #include "game.h"
 #include "phase.h"
+#include <stdexcept>
 
-std::unordered_multiset<Animal::Prop> Animal::get_properties() const {
+std::unordered_multiset<Animal::Prop> &Animal::get_properties() {
     return animals_properties;
 }
 
@@ -31,6 +32,15 @@ void Animal::increase_owning_food() {
 
 bool Animal::is_hungry() const {
     return owning_food < food_needed;
+}
+int Animal::get_food_needed() const {
+    return food_needed;
+}
+int Animal::get_owning_food() const {
+    return owning_food;
+}
+void Animal::set_owning_food(int new_food) {
+    owning_food = new_food;
 }
 void Animal::increase_food_needed(std::size_t how_much) {
     food_needed += how_much;

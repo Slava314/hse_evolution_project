@@ -11,6 +11,7 @@
 class Player {
 public:
     /// i will do it
+    Player() = default;
     explicit Player(std::string name_, int id_);
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
@@ -32,15 +33,16 @@ public:
     [[nodiscard]] std::vector<std::shared_ptr<Card>> const &get_cards_in_hands() const;
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
-    int uniq_id; //server will identify player with this id
+    void handle_animal_death(std::shared_ptr<Animal> const &animal);
+
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
-    void handle_animal_death(std::shared_ptr<Animal> const &animal);
 
     std::vector<std::shared_ptr<Card>> cards_in_hands;
     std::vector<std::shared_ptr<Animal>> animals_on_board;
     std::string name;
     bool chose_to_end_phase = false;
+    int uniq_id;  // server will identify player with this id
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

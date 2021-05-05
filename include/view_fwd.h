@@ -3,8 +3,8 @@
 
 class View;
 
-class Development_Phase_View;
+class DevelopmentPhaseView;
 
-class Feeding_Phase_View;
+class FeedingPhaseView;
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_VIEW_FWD_H_

@@ -11,107 +11,104 @@
 
 class Button {
 public:
-    bool is_active = true;
-
     Button() = default;
-    explicit Button(sf::Vector2f shape_) : shape(shape_) {
+    explicit Button(const sf::Vector2f &shape_) : shape(shape_) {
     }
-    virtual ~Button() {
-    }
+    virtual ~Button() = default;
 
-    void set_color(sf::Color const &color);
-    virtual void set_position(sf::Vector2f const &position_);
-    void set_size(sf::Vector2f const &size);
-    void set_outline_color(sf::Color const &color);
+    void set_color(const sf::Color &color);
+    virtual void set_position(const sf::Vector2f &position_);
+    void set_size(const sf::Vector2f &size);
+    void set_outline_color(const sf::Color &color);
     void set_outline_thickness(float thickness);
-    virtual void set_scale(sf::Vector2f scale);
+    virtual void set_scale(const sf::Vector2f &scale);
     virtual void activate();
     virtual void deactivate();
-    virtual void draw(sf::RenderWindow &window);
+    virtual void draw(sf::RenderWindow &window) const;
+    virtual bool is_active() const;
+    virtual void set_active(bool value);
 
-    sf::Vector2f get_size();
-    sf::Vector2f const &get_position();
-    sf::RectangleShape const &get_shape();
+    sf::Vector2f const &get_size() const;
+    sf::Vector2f const &get_position() const;
+    sf::RectangleShape const &get_shape() const;
 
-    bool is_clicked(sf::Vector2i const &mouse_position);
+    bool is_clicked(const sf::Vector2i &mouse_position) const;
 
 protected:
     sf::RectangleShape shape;
+    bool is_active_ = true;
 };
 
-class Text_Button : public Button {
+class TextButton : public Button {
 public:
-    Text_Button() = default;
-    explicit Text_Button(sf::Vector2f shape_) : Button(shape_) {
+    TextButton() = default;
+    explicit TextButton(const sf::Vector2f &shape_) : Button(shape_) {
     }
-    explicit Text_Button(sf::Vector2f shape_, sf::Text text_)
+    explicit TextButton(const sf::Vector2f &shape_, sf::Text text_)
         : Button(shape_), text(std::move(text_)) {
     }
-    explicit Text_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
-        : Button(shape_), text(line, font) {
-    }
-    explicit Text_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
-        : Button(shape_), text(line, font) {
-    }
-    ~Text_Button() override = default;
+    ~TextButton() override = default;
 
-    void set_position(sf::Vector2f const &position_) override;
+    void set_position(const sf::Vector2f &position_) override;
     void set_text_size(int size);
-    void set_text_color(sf::Color color);
-    void set_scale(sf::Vector2f scale) override;
+    void set_text_color(const sf::Color &color);
+    void set_scale(const sf::Vector2f &scale) override;
     void activate() override;
     void deactivate() override;
-    void set_text(const std::wstring &line, sf::Font const &font);
-    void set_text(const std::string &line, sf::Font const &font);
-    void set_font(sf::Font const &font);
-    void draw(sf::RenderWindow &window) override;
+    void set_text(const std::wstring &line, const sf::Font &font);
+    void set_text(const std::string &line, const sf::Font &font);
+    void set_font(const sf::Font &font);
+    void draw(sf::RenderWindow &window) const override;
 
-    sf::Text const &get_text();
+    sf::Text const &get_text() const;
 
-protected:
+private:
     sf::Text text;
 };
 
-class Card_Button : public Text_Button {
+class CardButton : public TextButton {
 public:
-    explicit Card_Button(sf::Vector2f shape_) : Text_Button(shape_) {
+    explicit CardButton(const sf::Vector2f &shape_) : TextButton(shape_) {
     }
-    explicit Card_Button(sf::Vector2f shape_, sf::Text text_)
-    : Text_Button(shape_, std::move(text_)){
-    }
-    explicit Card_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
-    : Text_Button(shape_, line, font) {
-    }
-    explicit Card_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
-    : Text_Button(shape_, line, font) {
+    explicit CardButton(const sf::Vector2f &shape_, sf::Text text_)
+        : TextButton(shape_, std::move(text_)) {
     }
 
-    void set_object(std::shared_ptr<Card> obj);
-    std::shared_ptr<Card> get_object();
+    void set_object(const std::shared_ptr<Card> &obj);
+    std::shared_ptr<Card> const &get_object() const;
 
 private:
     std::shared_ptr<Card> object;
 };
 
-class Animal_Button : public Text_Button {
+class AnimalButton : public TextButton {
 public:
-    explicit Animal_Button(sf::Vector2f shape_) : Text_Button(shape_) {
+    explicit AnimalButton(const sf::Vector2f &shape_) : TextButton(shape_) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
-    explicit Animal_Button(sf::Vector2f shape_, sf::Text text_)
-    : Text_Button(shape_, std::move(text_)){
-    }
-    explicit Animal_Button(sf::Vector2f const &shape_, std::wstring const &line, sf::Font const &font)
-    : Text_Button(shape_, line, font) {
-    }
-    explicit Animal_Button(sf::Vector2f const &shape_, std::string const &line, sf::Font const &font)
-    : Text_Button(shape_, line, font) {
+    explicit AnimalButton(const sf::Vector2f &shape_, sf::Text text_)
+        : TextButton(shape_, std::move(text_)) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
 
-    void set_object(std::shared_ptr<Animal> obj);
-    std::shared_ptr<Animal> get_object();
+    void set_object(const std::shared_ptr<Animal> &obj);
+    void set_position(const sf::Vector2f &position_) override;
+    void draw(sf::RenderWindow &window) const override;
+    std::shared_ptr<Animal> const &get_object() const;
+    std::shared_ptr<Button> property_button;
 
 private:
     std::shared_ptr<Animal> object;
+};
+
+class PropertyButton : public TextButton {
+public:
+    PropertyButton(Properties prop_) : TextButton(), prop(prop_) {
+    }
+    Properties get_property();
+
+private:
+    Properties prop;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H
