@@ -26,7 +26,7 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         init_window();
@@ -48,7 +48,7 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         game.start_game(
@@ -115,7 +115,7 @@ public:
                       sf::Style::Titlebar | sf::Style::Close);
         window.setPosition({200, 200});
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
     }
@@ -138,7 +138,7 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choice_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         init_window();
@@ -161,7 +161,7 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         init_window();
@@ -185,7 +185,7 @@ public:
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
-        auto file = fs.open("resources/times.ttf");
+        auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         init_window();

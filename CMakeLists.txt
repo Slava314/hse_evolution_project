@@ -17,7 +17,7 @@ include_directories(include)
 
 include(CMakeRC.cmake)
 
-cmrc_add_resource_library(resources resources/times.ttf)
+cmrc_add_resource_library(resources WHENCE resources resources/times.ttf)
 
 add_executable(${PROJECT_NAME}
         source/button.cpp
