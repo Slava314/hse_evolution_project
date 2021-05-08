@@ -24,6 +24,14 @@ int find_in_card_buttons(const std::shared_ptr<Card> &card,
     }
     return -1;
 }
+
+int calc_player(int current, int other) {
+    if (current == other) {
+        return 0;
+    } else {
+        return other;
+    }
+}
 }  // namespace
 
 std::unique_ptr<Window> GameWindow::handle_events() {
@@ -49,7 +57,9 @@ std::unique_ptr<Window> GameWindow::handle_events() {
 
 void GameWindow::draw() {
     window.clear();
-    window.draw(sf::Text(game.get_players()[game.get_cur_player()].get_name(), font));
+    for (auto name : players_names) {
+        window.draw(name);
+    }
     window.draw(deck_shape);
     window.draw(deck_text);
     for (const auto &card : player_cards_buttons) {
@@ -87,6 +97,13 @@ void GameWindow::init_window() {
 
     end_turn.set_position({(WINDOW_WIDTH - CARD_WIDTH) / 2.0 + 50, deck_shape.getPosition().y});
     player_animals_buttons.resize(game.get_players().size());
+
+    for (int i = 0; i < game.get_players().size(); ++i) {
+        sf::Text new_name(game.get_players()[i].get_name(), font);
+        new_name.setCharacterSize(28);
+        players_names.push_back(new_name);
+    }
+    set_players_names_positions();
 }
 
 void GameWindow::make_deck_shape() {
@@ -177,11 +194,7 @@ void GameWindow::set_animals_position(bool with_new_place) {
     }
 
     // up player 1
-    if (game.get_cur_player() == 1) {
-        player = 0;
-    } else {
-        player = 1;
-    }
+    player = calc_player(game.get_cur_player(), 1);
     left_point_animals = (WINDOW_WIDTH - CARD_WIDTH * (player_animals_buttons[player].size()) -
                           FREE_SPACE * (player_animals_buttons[player].size() - 1)) /
                          2;
@@ -192,11 +205,7 @@ void GameWindow::set_animals_position(bool with_new_place) {
 
     if (game.get_players().size() >= 3) {
         // right player 2
-        if (game.get_cur_player() == 2) {
-            player = 0;
-        } else {
-            player = 2;
-        }
+        player = calc_player(game.get_cur_player(), 2);
         int number_of_animals = player_animals_buttons[player].size();
 
         left_point_animals = 1350 + (450 - CARD_WIDTH * (std::min(3, number_of_animals)) -
@@ -218,11 +227,7 @@ void GameWindow::set_animals_position(bool with_new_place) {
 
     if (game.get_players().size() >= 4) {
         // left player 3
-        if (game.get_cur_player() == 3) {
-            player = 0;
-        } else {
-            player = 3;
-        }
+        player = calc_player(game.get_cur_player(), 3);
         int number_of_animals = player_animals_buttons[player].size();
 
         left_point_animals = (450 - CARD_WIDTH * (std::min(3, number_of_animals)) -
@@ -241,6 +246,8 @@ void GameWindow::set_animals_position(bool with_new_place) {
                 sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 450));
         }
     }
+
+    set_players_names_positions();
 }
 
 sf::RenderWindow &GameWindow::get_window() {
@@ -456,6 +463,32 @@ void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button, bo
     }
 }
 void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
+}
+
+void GameWindow::set_players_names_positions() {
+    std::size_t player = game.get_cur_player();
+    // local player
+    players_names[player].setPosition(
+        (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, WINDOW_HEIGHT - 280);
+
+    // up player 1
+    player = calc_player(game.get_cur_player(), 1);
+    players_names[player].setPosition(
+        (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, 0);
+
+    if (game.get_players().size() >= 3) {
+        // right player 2
+        player = calc_player(game.get_cur_player(), 2);
+        players_names[player].setPosition(
+            1350 + (450 - players_names[player].getGlobalBounds().width) / 2, 200);
+    }
+
+    if (game.get_players().size() >= 4) {
+        // left player 3
+        player = calc_player(game.get_cur_player(), 3);
+        players_names[player].setPosition((450 - players_names[player].getGlobalBounds().width) / 2,
+                                          200);
+    }
 }
 
 void PropertyWindow::draw() {

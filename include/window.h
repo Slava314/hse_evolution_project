@@ -55,6 +55,7 @@ public:
             settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
     }
+    ~GameWindow() override = default;
 
     std::unique_ptr<Window> handle_events() override;
     void recalc_cards();
@@ -63,6 +64,7 @@ public:
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
     void set_animals_position(bool with_new_place);
+    void set_players_names_positions();
     void recalc_animals();
     sf::RenderWindow &get_window();
     std::shared_ptr<Card> get_clicked_card();
@@ -74,22 +76,17 @@ public:
     void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
     std::shared_ptr<Card> const &get_selected_card() const;
     bool const &get_food_clicked() const;
-    std::shared_ptr<AnimalButton> get_clicked_property_animal();
-    void show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase);
 
     void make_food();
-
-    ~GameWindow() override = default;
-
     bool check_food();
-
     void click_food();
-
     void feed_animal(const std::shared_ptr<Animal> &animal);
 
-    void change_player();
-
+    std::shared_ptr<AnimalButton> get_clicked_property_animal();
+    void show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase);
     void use_property(std::shared_ptr<AnimalButton>, Properties prop);
+
+    void change_player();
 
 private:
     void draw() override;
@@ -105,6 +102,7 @@ private:
     Button place_for_new_animal;
     TextButton food;
     bool food_clicked = false;
+    std::vector<sf::Text> players_names;
 };
 
 class PropertyWindow : Window {
