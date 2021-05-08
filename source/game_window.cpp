@@ -24,6 +24,14 @@ int find_in_card_buttons(const std::shared_ptr<Card> &card,
     }
     return -1;
 }
+
+int calc_player(int current, int other) {
+    if (current == other) {
+        return 0;
+    } else {
+        return other;
+    }
+}
 }  // namespace
 
 std::unique_ptr<Window> GameWindow::handle_events() {
@@ -49,8 +57,9 @@ std::unique_ptr<Window> GameWindow::handle_events() {
 
 void GameWindow::draw() {
     window.clear();
-    window.draw(sf::Text(game.get_players()[game.get_cur_player_index()].get_name(), font));
-
+    for (auto name : players_names) {
+        window.draw(name);
+    }
     window.draw(deck_shape);
     window.draw(deck_text);
     for (const auto &card : player_cards_buttons) {
@@ -88,6 +97,13 @@ void GameWindow::init_window() {
 
     end_turn.set_position({(WINDOW_WIDTH - CARD_WIDTH) / 2.0 + 50, deck_shape.getPosition().y});
     player_animals_buttons.resize(game.get_players().size());
+
+    for (int i = 0; i < game.get_players().size(); ++i) {
+        sf::Text new_name(game.get_players()[i].get_name(), font);
+        new_name.setCharacterSize(28);
+        players_names.push_back(new_name);
+    }
+    set_players_names_positions();
 }
 
 void GameWindow::make_deck_shape() {
@@ -107,7 +123,7 @@ void GameWindow::make_deck_shape() {
         deck_shape.getPosition().y);
 }
 
-void GameWindow::add_cards() {
+void GameWindow::recalc_cards() {
     player_cards_buttons.clear();
     auto cards = game.get_players()[game.get_cur_player_index()].get_cards_in_hands();
     for (const auto &card : cards) {
@@ -142,14 +158,13 @@ void GameWindow::set_cards_position() {
             left_point_cards + (FREE_SPACE + CARD_WIDTH) * i, WINDOW_HEIGHT - CARD_HEIGHT - 50));
     }
 }
-void GameWindow::add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id = -1) {
+void GameWindow::add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id) {
     AnimalButton new_animal_shape(
         sf::Vector2f(CARD_WIDTH, CARD_HEIGHT),
-        sf::Text(
-            "properties: " +
-                std::to_string(game.get_players()[game.get_cur_player_index()].count_animal_properties(new_animal)),
-            font));
 
+        sf::Text("properties: " +
+                     std::to_string(game.get_players()[id].count_animal_properties(new_animal)),
+                 font));
 
     new_animal_shape.set_color(CARD_COLOR);
     new_animal_shape.set_outline_thickness(5);
@@ -158,39 +173,82 @@ void GameWindow::add_animal_shape(const std::shared_ptr<Animal> &new_animal, int
     new_animal_shape.set_active(false);
     new_animal_shape.set_object(new_animal);
     new_animal_shape.property_button->set_color({0, 0, 0, 0});
-    if(id == -1){
-        player_animals_buttons[game.get_cur_player_index()].push_back(new_animal_shape);
-    }else{
-        player_animals_buttons[id].push_back(new_animal_shape);
-    }
+    player_animals_buttons[id].push_back(new_animal_shape);
 }
 
 void GameWindow::set_animals_position(bool with_new_place) {
     int extra = with_new_place;
+    std::size_t player = game.get_cur_player_index();
+    // local player
     std::size_t left_point_animals =
-        (WINDOW_WIDTH - CARD_WIDTH * (player_animals_buttons[game.get_cur_player_index()].size() + extra) -
-         FREE_SPACE * (player_animals_buttons[game.get_cur_player_index()].size() - 1 + extra)) /
+        (WINDOW_WIDTH - CARD_WIDTH * (player_animals_buttons[player].size() + extra) -
+         FREE_SPACE * (player_animals_buttons[player].size() - 1 + extra)) /
         2;
-    for (std::size_t j = 0; j < player_animals_buttons[game.get_cur_player_index()].size(); ++j) {
-        player_animals_buttons[game.get_cur_player_index()][j].set_position(sf::Vector2f(
+    for (std::size_t j = 0; j < player_animals_buttons[player].size(); ++j) {
+        player_animals_buttons[player][j].set_position(sf::Vector2f(
             left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, WINDOW_HEIGHT - CARD_HEIGHT - 300));
     }
     if (with_new_place) {
         place_for_new_animal.set_position(sf::Vector2f(
-            left_point_animals + (FREE_SPACE + CARD_WIDTH) * player_animals_buttons[game.get_cur_player_index()].size(),
-
+            left_point_animals + (FREE_SPACE + CARD_WIDTH) * player_animals_buttons[player].size(),
             WINDOW_HEIGHT - CARD_HEIGHT - 300));
     }
 
-    left_point_animals =
-        (WINDOW_WIDTH - CARD_WIDTH * (player_animals_buttons[game.get_cur_player_index()^1].size()) -
-            FREE_SPACE * (player_animals_buttons[game.get_cur_player_index()].size() - 1)) /
-            2;
-    for (std::size_t j = 0; j < player_animals_buttons[game.get_cur_player_index()^1].size(); ++j) {
-        player_animals_buttons[game.get_cur_player_index()^1][j].set_position(sf::Vector2f(
-            left_point_animals + (FREE_SPACE + CARD_WIDTH) * j,  50));
-
+    // up player 1
+    player = calc_player(game.get_cur_player_index(), 1);
+    left_point_animals = (WINDOW_WIDTH - CARD_WIDTH * (player_animals_buttons[player].size()) -
+                          FREE_SPACE * (player_animals_buttons[player].size() - 1)) /
+                         2;
+    for (std::size_t j = 0; j < player_animals_buttons[player].size(); ++j) {
+        player_animals_buttons[player][j].set_position(
+            sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 50));
     }
+
+    if (game.get_players().size() >= 3) {
+        // right player 2
+        player = calc_player(game.get_cur_player_index(), 2);
+        int number_of_animals = player_animals_buttons[player].size();
+
+        left_point_animals = 1350 + (450 - CARD_WIDTH * (std::min(3, number_of_animals)) -
+                                     FREE_SPACE * (std::min(3, number_of_animals) - 1)) /
+                                        2;
+        for (int j = 0; j < std::min(3, number_of_animals); ++j) {
+            player_animals_buttons[player][j].set_position(
+                sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 250));
+        }
+
+        left_point_animals = 1350 + (450 - CARD_WIDTH * (number_of_animals - 3) -
+                                     FREE_SPACE * (number_of_animals - 3 - 1)) /
+                                        2;
+        for (int j = 0; j < number_of_animals - 3; ++j) {
+            player_animals_buttons[player][j + 3].set_position(
+                sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 450));
+        }
+    }
+
+    if (game.get_players().size() >= 4) {
+        // left player 3
+        player = calc_player(game.get_cur_player_index(), 3);
+        int number_of_animals = player_animals_buttons[player].size();
+
+        left_point_animals = (450 - CARD_WIDTH * (std::min(3, number_of_animals)) -
+                              FREE_SPACE * (std::min(3, number_of_animals) - 1)) /
+                             2;
+        for (int j = 0; j < std::min(3, number_of_animals); ++j) {
+            player_animals_buttons[player][j].set_position(
+                sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 250));
+        }
+
+        left_point_animals = (450 - CARD_WIDTH * (number_of_animals - 3) -
+                              FREE_SPACE * (number_of_animals - 3 - 1)) /
+                             2;
+        for (int j = 0; j < number_of_animals - 3; ++j) {
+            player_animals_buttons[player][j + 3].set_position(
+                sf::Vector2f(left_point_animals + (FREE_SPACE + CARD_WIDTH) * j, 450));
+        }
+    }
+
+    set_players_names_positions();
 }
 
 sf::RenderWindow &GameWindow::get_window() {
@@ -247,7 +305,7 @@ std::shared_ptr<Card> GameWindow::play_animal(const std::shared_ptr<Animal> &ani
     selected_card = nullptr;
     place_for_new_animal.deactivate();
     set_cards_position();
-    add_animal_shape(animal);
+    add_animal_shape(animal, game.get_cur_player_index());
     set_animals_position(false);
     for (auto &player_cards_button : player_cards_buttons) {
         player_cards_button.activate();
@@ -274,10 +332,12 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
         }
         selected_card = nullptr;
         set_cards_position();
-        if (int index = find_in_animal_buttons(animal, player_animals_buttons[game.get_cur_player_index()]); index >= 0) {
+        if (int index =
+                find_in_animal_buttons(animal, player_animals_buttons[game.get_cur_player_index()]);
+            index >= 0) {
             player_animals_buttons[game.get_cur_player_index()][index].set_text(
-                "properties: " +
-                    std::to_string(game.get_players()[game.get_cur_player_index()].count_animal_properties(animal)),
+                "properties: " + std::to_string(game.get_players()[game.get_cur_player_index()]
+                                                    .count_animal_properties(animal)),
 
                 font);
             player_animals_buttons[game.get_cur_player_index()][index].set_text_size(22);
@@ -355,8 +415,9 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
     if (cur_food == 0) {
         food.deactivate();
     }
-    if (int index = find_in_animal_buttons(animal, player_animals_buttons[game.get_cur_player_index()]); index >= 0) {
-
+    if (int index =
+            find_in_animal_buttons(animal, player_animals_buttons[game.get_cur_player_index()]);
+        index >= 0) {
         make_food();
         food_clicked = false;
         for (auto &ani : player_animals_buttons[game.get_cur_player_index()]) {
@@ -365,7 +426,7 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
     }
 }
 
-void GameWindow::kill_animals() {
+void GameWindow::recalc_animals() {
     for (std::size_t i = 0; i < game.get_players().size(); i++) {
         auto animals = game.get_players()[i].get_animals_on_board();
         player_animals_buttons[i].clear();
@@ -378,7 +439,7 @@ void GameWindow::kill_animals() {
 }
 
 void GameWindow::change_player() {
-    add_cards();
+    recalc_cards();
     set_animals_position(false);
 }
 std::shared_ptr<AnimalButton> GameWindow::get_clicked_property_animal() {
@@ -404,6 +465,32 @@ void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button, bo
     }
 }
 void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
+}
+
+void GameWindow::set_players_names_positions() {
+    std::size_t player = game.get_cur_player_index();
+    // local player
+    players_names[player].setPosition(
+        (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, WINDOW_HEIGHT - 280);
+
+    // up player 1
+    player = calc_player(game.get_cur_player_index(), 1);
+    players_names[player].setPosition(
+        (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, 0);
+
+    if (game.get_players().size() >= 3) {
+        // right player 2
+        player = calc_player(game.get_cur_player_index(), 2);
+        players_names[player].setPosition(
+            1350 + (450 - players_names[player].getGlobalBounds().width) / 2, 200);
+    }
+
+    if (game.get_players().size() >= 4) {
+        // left player 3
+        player = calc_player(game.get_cur_player_index(), 3);
+        players_names[player].setPosition((450 - players_names[player].getGlobalBounds().width) / 2,
+                                          200);
+    }
 }
 
 void PropertyWindow::draw() {

@@ -12,3 +12,6 @@ int Settings::get_size_of_deck() const {
 int Settings::get_time_of_move() const {
     return time_of_move;
 }
+void Settings::set_local_player(int i) {
+    local_player = i;
+}

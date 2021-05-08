@@ -59,11 +59,11 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     }
 }
 DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player_index(0) {
-    end_turn.resize(2, 0);
+    end_turn.resize(game.get_players().size(), 0);
 }
 std::size_t DevelopmentPhase::get_cur_player_index() const {
     return cur_player_index;
 }
-Player& DevelopmentPhase::get_cur_player() {
+Player &DevelopmentPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }

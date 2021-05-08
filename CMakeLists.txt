@@ -15,9 +15,9 @@ find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
 include_directories(include)
 
-#include(CMakeRC.cmake)
+include(CMakeRC.cmake)
 
-#cmrc_add_resource_library(resources resources/times.ttf)
+cmrc_add_resource_library(resources WHENCE resources resources/times.ttf)
 
 add_executable(${PROJECT_NAME}
         source/button.cpp
@@ -41,12 +41,13 @@ find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 set(SFML_DIR "SFML-2.5.1-macos-clang/include/SFML")
 set(SFML_STATIC_LIBRARIES TRUE)
 
-set (resources "${CMAKE_SOURCE_DIR}/resources")
-set (resources_target "${CMAKE_CURRENT_BINARY_DIR}/resources")
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink ${resources} ${resources_target}
-        COMMENT "symbolic link resources folder from ${resources} => ${resources_target}"
-)
+#set (resources "${CMAKE_SOURCE_DIR}/resources")
+#set (resources_target "${CMAKE_CURRENT_BINARY_DIR}/resources")
+#add_custom_command(
+#        TARGET ${PROJECT_NAME} POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E create_symlink ${resources} ${resources_target}
+#        COMMENT "symbolic link resources folder from ${resources} => ${resources_target}"
+#)
 
-target_link_libraries(evolution_project sfml-graphics sfml-audio)
+target_link_libraries(evolution_project sfml-graphics sfml-audio resources)
+#target_link_libraries(evolution_project PRIVATE resources)

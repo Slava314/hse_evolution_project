@@ -5,12 +5,13 @@
 
 void DevelopmentPhaseView::start_development_phase(GameWindow &window) const {
     cards_delivery(window);
+    window.recalc_cards();
     phase.set_start_of_phase(false);
 }
 
 void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
     phase.cards_delivery();
-    window.add_cards();
+    window.recalc_cards();
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
     auto new_animal = std::make_shared<Animal>(phase.get_cur_player());
@@ -83,6 +84,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();
+    window.recalc_cards();
     phase.set_start_of_phase(false);
 }
 void FeedingPhaseView::feed_animal(const std::shared_ptr<Animal> &animal,

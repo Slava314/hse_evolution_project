@@ -10,12 +10,12 @@
 class TextField : public sf::Transformable {
 public:
     TextField() = default;
-    TextField(std::size_t maxChars, std::string str = "")
+    TextField(std::size_t maxChars, const sf::Font &font_, std::string str = "")
         : size(maxChars),
+          font(font_),
           text(std::move(str)),
           shape(sf::Vector2f(14 * size, 26)),
           has_focus(false) {
-        font.loadFromFile("resources/t.ttf");
         shape.setOutlineThickness(2);
         shape.setFillColor(sf::Color::White);
         shape.setOutlineColor(sf::Color(127, 127, 127));
