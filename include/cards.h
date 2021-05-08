@@ -7,13 +7,16 @@ class Card {
 public:
     //this is weird
     Properties property = Properties::DEFAULT;
+
     int extra_food = 0;
     // this one only for default case, to create a fake card to deliver cards to players
     explicit Card(Properties prop) : property(prop){
     }
 
+
     std::pair<Properties, int> get_info();
 //    Card() = default;
+
     ~Card() = default;
 
 protected:

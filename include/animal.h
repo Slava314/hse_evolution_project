@@ -3,6 +3,7 @@
 
 #include <unordered_set>
 #include <vector>
+#include <memory>
 #include "phase_fwd.h"
 #include "properties.h"
 
@@ -10,7 +11,7 @@ class Player;
 class Animal {
 public:
     using Prop = Properties;
-    [[nodiscard]] std::unordered_multiset<Prop> get_properties() const;
+    [[nodiscard]] std::unordered_multiset<Animal::Prop> &get_properties() ;
     static void UseProperty(Properties properties, FeedingPhase &);
     void increase_owning_food();
     void increase_food_needed(std::size_t how_much);

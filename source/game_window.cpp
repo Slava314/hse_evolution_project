@@ -1,8 +1,8 @@
-#include "window.h"
 #include <cassert>
 #include "player.h"
 #include "properties.h"
 #include "view.h"
+#include "window.h"
 
 namespace {
 int find_in_animal_buttons(const std::shared_ptr<Animal> &animal,
@@ -26,45 +26,8 @@ int find_in_card_buttons(const std::shared_ptr<Card> &card,
 }
 }  // namespace
 
-std::unique_ptr<Window> StartWindow::handle_events() {
-    while (window.isOpen()) {
-        sf::Event event{};
-        if (window.waitEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    return nullptr;
-                case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            window.close();
-                            return std::make_unique<GameWindow>();
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        window.clear();
-        draw();
-        window.display();
-    }
-    assert(false);
-}
-
-void StartWindow::init_window() {
-    start_button = TextButton(sf::Vector2f(200, 40), sf::Text("Start", font));
-    start_button.set_color(sf::Color(55, 55, 55));
-    start_button.set_position(
-        sf::Vector2f((window.getSize().x - start_button.get_shape().getSize().x) / 2.0,
-                     (window.getSize().y - start_button.get_shape().getSize().y) / 2.0));
-}
-void StartWindow::draw() {
-    start_button.draw(window);
-}
-
 std::unique_ptr<Window> GameWindow::handle_events() {
+    int count = 0;
     while (window.isOpen()) {
         sf::Event event{};
         if (window.waitEvent(event)) {
@@ -79,15 +42,15 @@ std::unique_ptr<Window> GameWindow::handle_events() {
             }
         }
 
-        window.clear();
         draw();
-        window.display();
     }
     assert(false);
 }
 
 void GameWindow::draw() {
+    window.clear();
     window.draw(sf::Text(game.get_players()[game.get_cur_player_index()].get_name(), font));
+
     window.draw(deck_shape);
     window.draw(deck_text);
     for (const auto &card : player_cards_buttons) {
@@ -107,6 +70,7 @@ void GameWindow::draw() {
     }
 
     end_turn.draw(window);
+    window.display();
 }
 
 void GameWindow::init_window() {
@@ -160,7 +124,7 @@ void GameWindow::add_cards() {
             new_button.set_outline_color(CARD_OUTLINE_COLOR);
             new_button.set_object(card);
             Properties prop = card->get_info().first;
-            new_button.set_text(prop._to_string(), font);
+            new_button.set_text(get_name(prop), font);
             new_button.set_text_size(20);
             player_cards_buttons.push_back(new_button);
         }
@@ -186,12 +150,14 @@ void GameWindow::add_animal_shape(const std::shared_ptr<Animal> &new_animal, int
                 std::to_string(game.get_players()[game.get_cur_player_index()].count_animal_properties(new_animal)),
             font));
 
+
     new_animal_shape.set_color(CARD_COLOR);
     new_animal_shape.set_outline_thickness(5);
     new_animal_shape.set_outline_color(CARD_OUTLINE_COLOR);
     new_animal_shape.set_text_size(22);
     new_animal_shape.set_active(false);
     new_animal_shape.set_object(new_animal);
+    new_animal_shape.property_button->set_color({0, 0, 0, 0});
     if(id == -1){
         player_animals_buttons[game.get_cur_player_index()].push_back(new_animal_shape);
     }else{
@@ -212,6 +178,7 @@ void GameWindow::set_animals_position(bool with_new_place) {
     if (with_new_place) {
         place_for_new_animal.set_position(sf::Vector2f(
             left_point_animals + (FREE_SPACE + CARD_WIDTH) * player_animals_buttons[game.get_cur_player_index()].size(),
+
             WINDOW_HEIGHT - CARD_HEIGHT - 300));
     }
 
@@ -222,6 +189,7 @@ void GameWindow::set_animals_position(bool with_new_place) {
     for (std::size_t j = 0; j < player_animals_buttons[game.get_cur_player_index()^1].size(); ++j) {
         player_animals_buttons[game.get_cur_player_index()^1][j].set_position(sf::Vector2f(
             left_point_animals + (FREE_SPACE + CARD_WIDTH) * j,  50));
+
     }
 }
 
@@ -310,6 +278,7 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
             player_animals_buttons[game.get_cur_player_index()][index].set_text(
                 "properties: " +
                     std::to_string(game.get_players()[game.get_cur_player_index()].count_animal_properties(animal)),
+
                 font);
             player_animals_buttons[game.get_cur_player_index()][index].set_text_size(22);
         }
@@ -343,10 +312,11 @@ void GameWindow::make_food() {
         for (std::size_t i = 0; i < player_animals_buttons[k].size(); i++) {
             std::string str =
                 "properties: " + std::to_string(game.get_players()[k].count_animal_properties(
-                    player_animals_buttons[k][i].get_object()));
+                                     player_animals_buttons[k][i].get_object()));
             str += "\n   food: ";
-            str += std::to_string(player_animals_buttons[k][i].get_object()->get_owning_food()) + "/" +
-                std::to_string(player_animals_buttons[k][i].get_object()->get_food_needed());
+            str += std::to_string(player_animals_buttons[k][i].get_object()->get_owning_food()) +
+                   "/" +
+                   std::to_string(player_animals_buttons[k][i].get_object()->get_food_needed());
             player_animals_buttons[k][i].set_text(str, font);
             player_animals_buttons[k][i].set_text_size(22);
             player_animals_buttons[k][i].set_active(true);
@@ -386,6 +356,7 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
         food.deactivate();
     }
     if (int index = find_in_animal_buttons(animal, player_animals_buttons[game.get_cur_player_index()]); index >= 0) {
+
         make_food();
         food_clicked = false;
         for (auto &ani : player_animals_buttons[game.get_cur_player_index()]) {
@@ -395,7 +366,7 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
 }
 
 void GameWindow::kill_animals() {
-    for(std::size_t i = 0; i < game.get_players().size(); i++){
+    for (std::size_t i = 0; i < game.get_players().size(); i++) {
         auto animals = game.get_players()[i].get_animals_on_board();
         player_animals_buttons[i].clear();
         for (auto &animal : animals) {
@@ -409,4 +380,84 @@ void GameWindow::kill_animals() {
 void GameWindow::change_player() {
     add_cards();
     set_animals_position(false);
+}
+std::shared_ptr<AnimalButton> GameWindow::get_clicked_property_animal() {
+    for (auto player_animals : player_animals_buttons) {
+        for (auto animal : player_animals) {
+            if (animal.property_button->is_clicked(sf::Mouse::getPosition(window))) {
+                return std::make_shared<AnimalButton>(animal);
+            }
+        }
+    }
+    return nullptr;
+}
+void GameWindow::show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase) {
+    if (animal_button->get_object()->get_properties().size() > 0) {
+        window.setActive(false);
+        PropertyWindow property_window(phase);
+        property_window.init_window(animal_button);
+        Properties use_prop = property_window.handle_properties();
+        window.setActive(true);
+        if (use_prop != Properties::DEFAULT) {
+            use_property(animal_button, use_prop);
+        }
+    }
+}
+void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
+}
+
+void PropertyWindow::draw() {
+    window.clear();
+    for (auto button : properties) {
+        button.draw(window);
+    }
+    window.display();
+}
+
+void PropertyWindow::init_window(std::shared_ptr<AnimalButton> animal_button) {
+    auto property_list = animal_button->get_object()->get_properties();
+    int count = 0;
+    for (Properties prop : property_list) {
+        count++;
+        PropertyButton new_prop(prop);
+        new_prop.set_position(sf::Vector2f(0, (count - 1) * 50));
+        new_prop.set_size({200, 50});
+        new_prop.set_color(sf::Color::Black);
+        new_prop.set_text(std::to_string(count) + ") " + get_name(prop), font);
+        new_prop.set_text_size(18);
+        //        if (able_to_use) {
+        //            if(){ //check ability to use from game and current player
+        //            new_prop.set_text_color(sf::Color::Green);
+        //            }
+        //        }
+        new_prop.set_active(false);
+        properties.push_back(new_prop);
+    }
+}
+
+Properties PropertyWindow::handle_properties() {
+    while (window.isOpen()) {
+        sf::Event event{};
+        if (window.waitEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            if (able_to_use) {
+                if (event.type == sf::Event::MouseButtonPressed &&
+                    event.mouseButton.button == sf::Mouse::Left) {
+                    for (auto &button : properties) {
+                        if (button.is_clicked(sf::Mouse::getPosition(window))) {
+                            window.close();
+                            return button.get_property();
+                        }
+                    }
+                }
+            }
+        }
+        draw();
+    }
+    return Properties::DEFAULT;
+}
+std::unique_ptr<Window> PropertyWindow::handle_events() {
+    return std::unique_ptr<Window>();
 }

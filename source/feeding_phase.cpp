@@ -1,6 +1,5 @@
 #include <cassert>
 #include "phase.h"
-#include "phase_fwd.h"
 #include "player.h"
 #include "view.h"
 

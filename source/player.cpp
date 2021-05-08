@@ -1,7 +1,7 @@
 #include "player.h"
 #include <cassert>
-#include <utility>
 #include <stdexcept>
+#include <utility>
 
 Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
     cards_in_hands.resize(0);
@@ -69,8 +69,7 @@ void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
     erase_card_from_hands(which_card);
 }
 
-std::pair<Player::Prop, int> Player::get_card_info(
-    const std::shared_ptr<Card> &looking_card) {
+std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {
     try {
         for (const auto &card : cards_in_hands) {
             if (card.get() == looking_card.get()) {

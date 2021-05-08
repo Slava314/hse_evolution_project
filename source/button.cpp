@@ -17,7 +17,8 @@ void Button::set_position(const sf::Vector2f &position) {
 bool Button::is_clicked(const sf::Vector2i &mouse_position) const {
     auto bounds = shape.getGlobalBounds();
     return (mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width &&
-            mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height) && is_active_;
+            mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height) &&
+           is_active_;
 }
 
 void Button::set_size(const sf::Vector2f &size) {
@@ -142,10 +143,21 @@ void AnimalButton::set_object(const std::shared_ptr<Animal> &obj) {
 std::shared_ptr<Animal> const &AnimalButton::get_object() const {
     return object;
 }
+void AnimalButton::set_position(const sf::Vector2f &position_) {
+    TextButton::set_position(position_);
+    property_button->set_position(position_);
+}
+void AnimalButton::draw(sf::RenderWindow &window) const {
+    TextButton::draw(window);
+    property_button->draw(window);
+}
 
 void CardButton::set_object(const std::shared_ptr<Card> &obj) {
     object = obj;
 }
 std::shared_ptr<Card> const &CardButton::get_object() const {
     return object;
+}
+Properties PropertyButton::get_property() {
+    return prop;
 }

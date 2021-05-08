@@ -64,6 +64,8 @@ public:
     void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
     std::shared_ptr<Card> const &get_selected_card() const;
     bool const &get_food_clicked() const;
+    std::shared_ptr<AnimalButton> get_clicked_property_animal();
+    void show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase);
 
     void make_food();
 
@@ -77,20 +79,44 @@ public:
 
     void change_player();
 
+    void use_property(std::shared_ptr<AnimalButton>, Properties prop);
+
 private:
     void draw() override;
     Game game;
     sf::Font font;
 
+    TextButton end_turn;
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     std::vector<CardButton> player_cards_buttons;
     std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
-    TextButton end_turn;
+    // TextButton end_turn;
     TextButton food;
     bool food_clicked = false;
+};
+
+class PropertyWindow : Window {
+public:
+    PropertyWindow(bool able_to_use_) : able_to_use(able_to_use_) {
+        window.create(sf::VideoMode(200, 300), "property_window",
+                      sf::Style::Titlebar | sf::Style::Close);
+        window.setPosition({200, 200});
+        font.loadFromFile("resources/t.ttf");
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    Properties handle_properties();
+    void init_window(std::shared_ptr<AnimalButton> animal_button);
+
+    ~PropertyWindow() override = default;
+
+private:
+    bool able_to_use;
+    std::vector<PropertyButton> properties;
+    void draw() override;
 };
 
 #endif  // EVOLUTION_PROJECT__WINDOW_H_
