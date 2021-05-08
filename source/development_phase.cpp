@@ -26,7 +26,7 @@ void DevelopmentPhase::give_property_to_animal(const std::shared_ptr<Card> &card
                                                const std::shared_ptr<Animal> &new_animal) {
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
-    game.get_players()[cur_player].use_card_as_property(card, new_animal);
+    game.get_players()[cur_player_index].use_card_as_property(card, new_animal);
 }
 
 std::vector<std::vector<std::shared_ptr<Card>>> DevelopmentPhase::get_cards() {
@@ -37,30 +37,33 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                                   std::shared_ptr<Animal> &new_animal) {
     assert(card.get() != nullptr);
     assert(new_animal.get() != nullptr);
-    game.get_players()[cur_player].put_card_as_animal(card, new_animal);
+    game.get_players()[cur_player_index].put_card_as_animal(card, new_animal);
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     //TODO check auto end turn
     int ans = get_view()->handle_event(window, event);
     if(ans != 0){
         if (ans == 2) {
-            end_turn[cur_player] = 1;
+            end_turn[cur_player_index] = 1;
             sum += 1;
             if (sum == game.get_players().size()) {
                 set_next_phase();
                 return;
             }
         }
-        cur_player = (cur_player + 1) % game.get_players().size();
-        while (end_turn[cur_player] == 1) {
-            cur_player = (cur_player + 1) % game.get_players().size();
+        cur_player_index = (cur_player_index + 1) % game.get_players().size();
+        while (end_turn[cur_player_index] == 1) {
+            cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
     }
 }
-DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player(0) {
+DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player_index(0) {
     end_turn.resize(2, 0);
 }
-std::size_t DevelopmentPhase::get_cur_player() const {
-    return cur_player;
+std::size_t DevelopmentPhase::get_cur_player_index() const {
+    return cur_player_index;
+}
+Player& DevelopmentPhase::get_cur_player() {
+    return game.get_players()[game.get_cur_player_index()];
 }

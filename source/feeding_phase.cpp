@@ -13,7 +13,7 @@ void FeedingPhase::set_next_phase() {
 }
 
 FeedingPhase::FeedingPhase(Game &game_)
-    : game(game_), food_balance(define_food_balance()), cur_player(0) {
+    : game(game_), food_balance(define_food_balance()), cur_player_index(0) {
     end_turn.resize(2, 0);
 }
 
@@ -42,6 +42,15 @@ bool FeedingPhase::is_end_of_phase() const {
     return food_balance == 0;
 }
 
+void FeedingPhase::attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim) {
+    if (victim->could_be_attacked(attacker)) {
+        attacker->increase_owning_food();
+        attacker->increase_owning_food();
+        victim->get_owner().handle_animal_death(victim);
+    } else {
+        // заморозить свойство "хищник"
+    }
+}
 void FeedingPhase::kill_animals() {
     for (auto &player : game.get_players()) {
         for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
@@ -65,11 +74,11 @@ void FeedingPhase::set_start_of_phase(bool start) {
     start_of_phase = start;
 }
 void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
-    //TODO check auto end turn
+    // TODO check auto end turn
     int ans = get_view()->handle_event(window, event);
     if (ans != 0) {
         if (ans == 2) {
-            end_turn[cur_player] = 1;
+            end_turn[cur_player_index] = 1;
             sum += 1;
             if (sum == game.get_players().size()) {
                 kill_animals();
@@ -78,13 +87,13 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
                 return;
             }
         }
-        cur_player = (cur_player + 1) % game.get_players().size();
-        while (end_turn[cur_player] == 1) {
-            cur_player = (cur_player + 1) % game.get_players().size();
+        cur_player_index = (cur_player_index + 1) % game.get_players().size();
+        while (end_turn[cur_player_index] == 1) {
+            cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
     }
 }
-std::size_t FeedingPhase::get_cur_player() const {
-    return cur_player;
+std::size_t FeedingPhase::get_cur_player_index() const {
+    return cur_player_index;
 }

@@ -13,7 +13,7 @@ void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
     window.add_cards();
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
-    auto new_animal = std::make_shared<Animal>();
+    auto new_animal = std::make_shared<Animal>(phase.get_cur_player());
     phase.add_animal(window.get_selected_card(), new_animal);
     window.play_animal(new_animal);
 }
