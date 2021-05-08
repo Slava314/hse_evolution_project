@@ -34,6 +34,7 @@ void Game::start_game() {
     int i = 0;
     players.emplace_back("shershen0_first_player", i);
     // временное решение по генерации, пока нет настроек и больше карт
+
     constexpr int N = 3;
     std::vector<std::pair<Properties, int>> cards_info(N);
     cards_info[0] = {Properties::FAT_TISSUE, 8};
@@ -64,4 +65,7 @@ std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
 
 Deck &Game::get_deck() {
     return deck;
+}
+std::size_t Game::get_cur_player_index() const{
+    return phase->get_cur_player_index();
 }

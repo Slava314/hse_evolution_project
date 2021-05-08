@@ -27,7 +27,6 @@ add_executable(${PROJECT_NAME}
         source/player.cpp
         source/window.cpp
         source/view.cpp
-        source/experimenting.cpp
         source/main.cpp
         source/development_phase.cpp
         source/feeding_phase.cpp

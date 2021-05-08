@@ -12,6 +12,7 @@ public:
 
     std::vector<std::shared_ptr<Card>> get_deck_cards();
     void generate_deck(std::vector<std::pair<Properties, int>> &cards_info);
+
     [[nodiscard]] int get_deck_size() const;
     void cards_delivery(std::vector<Player> &players);
 private:

@@ -1,6 +1,7 @@
 #include "player.h"
 #include <cassert>
 #include <utility>
+#include <stdexcept>
 
 Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
     cards_in_hands.resize(0);
@@ -52,7 +53,7 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
                     to_which_card->get_properties().insert(adding.first);
                     to_which_card->increase_food_needed(adding.second);
                 }  // else{} - throw like an exeption for GUI - to look for another animal or
-                   // another card with property
+                // another card with property
             }
         }
     } catch (...) {
@@ -84,6 +85,7 @@ std::pair<Player::Prop, int> Player::get_card_info(
 }
 
 void Player::kill_animal(const std::shared_ptr<Animal> &animal) {
+    assert(animal.get() != nullptr);
     handle_animal_death(animal);
 }
 
@@ -105,7 +107,7 @@ size_t Player::count_animal_properties(const std::shared_ptr<Animal> &animal) {
             }
         }
     } catch (...) {
-        throw std::logic_error("DID NOt FIND ANIMAL ON thE BOARD");
+        throw std::logic_error("DID NOT FIND ANIMAL ON THE BOARD");
     }
     return 1;
 }
