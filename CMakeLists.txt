@@ -31,7 +31,9 @@ add_executable(${PROJECT_NAME}
         source/development_phase.cpp
         source/feeding_phase.cpp
         source/cards.cpp
-        source/start_windows.cpp)
+        source/start_windows.cpp
+        source/properties.cpp
+        source/text_field.cpp source/settings.cpp)
 
 include_directories(include)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)

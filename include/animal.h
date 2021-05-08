@@ -1,9 +1,9 @@
 #ifndef EVOLUTION_PROJECT_ANIMAL_H
 #define EVOLUTION_PROJECT_ANIMAL_H
 
+#include <memory>
 #include <unordered_set>
 #include <vector>
-#include <memory>
 #include "phase_fwd.h"
 #include "properties.h"
 
@@ -11,7 +11,7 @@ class Player;
 class Animal {
 public:
     using Prop = Properties;
-    [[nodiscard]] std::unordered_multiset<Animal::Prop> &get_properties() ;
+    [[nodiscard]] std::unordered_multiset<Animal::Prop> &get_properties();
     static void UseProperty(Properties properties, FeedingPhase &);
     void increase_owning_food();
     void increase_food_needed(std::size_t how_much);
@@ -28,7 +28,7 @@ public:
 private:
     int food_needed = 1;
     int owning_food = 0;
-    Player& owner;
+    Player &owner;
     std::unordered_multiset<Prop> animals_properties{};
 };
 #endif  // EVOLUTION_PROJECT_ANIMAL_H
