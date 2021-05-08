@@ -12,7 +12,7 @@ std::string &Player::get_name() {
     return name;
 }
 
-void Player::set_name(std::string name_)  {
+void Player::set_name(std::string name_) {
     name = name_;
 }
 

@@ -50,7 +50,6 @@ void StartWindow::draw() {
     window.clear();
     start_button.draw(window);
     window.display();
-
 }
 
 std::unique_ptr<Window> StartChoiceWindow::handle_events() {

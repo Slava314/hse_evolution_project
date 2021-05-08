@@ -14,7 +14,6 @@ public:
     Player() = default;
     explicit Player(std::string name_, int id_);
 
-
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
     using Prop = Properties;
 

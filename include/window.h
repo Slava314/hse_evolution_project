@@ -129,7 +129,6 @@ private:
     void draw() override;
 };
 
-
 class StartChoiceWindow : public Window {
 public:
     StartChoiceWindow() {

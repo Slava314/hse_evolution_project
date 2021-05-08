@@ -11,5 +11,4 @@ std::string get_rus_name(const int i);
 
 enum Properties { DEFAULT, FAT_TISSUE, BIG, STOMPER };
 
-
 #endif  // EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_

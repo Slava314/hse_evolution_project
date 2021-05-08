@@ -30,13 +30,9 @@ void Game::start_game(Settings settings_) {
     // TODO -
 
     // TODO - ask server about players count and get stream of messages about their names and
-    // position
-    //    int total_players = get_all_players();
-    int i = 0;
-    players.emplace_back("shershen0_first_player", 0);
-    players.emplace_back("shershen0_second_player", 1);
-    players.emplace_back("shershen0_third_player", 2);
-    players.emplace_back("shershen0_fourth_player", 3);
+    for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
+        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player", i);
+    }
     // временное решение по генерации, пока нет настроек и больше карт
 
     constexpr int N = 3;
@@ -71,7 +67,7 @@ std::vector<std::shared_ptr<Card>> Game::get_deck_cards() {
 Deck &Game::get_deck() {
     return deck;
 }
-std::size_t Game::get_cur_player_index() const{
+std::size_t Game::get_cur_player_index() const {
     return phase->get_cur_player_index();
 }
 Settings const &Game::get_settings() const {
