@@ -57,13 +57,13 @@ public:
     }
 
     std::unique_ptr<Window> handle_events() override;
-    void add_cards();
+    void recalc_cards();
     void set_cards_position();
     void init_window();
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
     void set_animals_position(bool with_new_place);
-    void kill_animals();
+    void recalc_animals();
     sf::RenderWindow &get_window();
     std::shared_ptr<Card> get_clicked_card();
     void click_card(const std::shared_ptr<Card> &card);
@@ -103,7 +103,6 @@ private:
     std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
     Button place_for_new_animal;
-    // TextButton end_turn;
     TextButton food;
     bool food_clicked = false;
 };

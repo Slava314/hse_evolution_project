@@ -13,7 +13,7 @@ void FeedingPhase::set_next_phase() {
 
 FeedingPhase::FeedingPhase(Game &game_)
     : game(game_), food_balance(define_food_balance()), cur_player(0) {
-    end_turn.resize(2, 0);
+    end_turn.resize(game.get_players().size(), 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -53,16 +53,14 @@ void FeedingPhase::kill_animals() {
         }
     }
 
-//    for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
-//        if (player.get_animals_on_board()[i]->is_hungry()) {
-//            player.handle_animal_death(player.get_animals_on_board()[i]);
-//            i--;
-//        }else{
-//            player.get_animals_on_board()[i]->set_owning_food(0);
-//        }
-//    }
-    
-
+    //    for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
+    //        if (player.get_animals_on_board()[i]->is_hungry()) {
+    //            player.handle_animal_death(player.get_animals_on_board()[i]);
+    //            i--;
+    //        }else{
+    //            player.get_animals_on_board()[i]->set_owning_food(0);
+    //        }
+    //    }
 }
 
 size_t FeedingPhase::get_food_balance() const {
@@ -83,7 +81,7 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
             sum += 1;
             if (sum == game.get_players().size()) {
                 kill_animals();
-                window.kill_animals();
+                window.recalc_animals();
                 set_next_phase();
                 return;
             }

@@ -2,6 +2,8 @@
 #include <string>
 
 struct Settings {
+    void set_local_player(int i);
+
 public:
     Settings() = default;
     Settings(std::string room_name_, int quantity_of_players_, int size_of_deck_, int time_of_move_)
@@ -20,4 +22,5 @@ private:
     int quantity_of_players;
     int size_of_deck;
     int time_of_move;
+    int local_player = 0;
 };

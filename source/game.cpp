@@ -20,6 +20,7 @@ size_t Game::get_deck_size() {
 
 void Game::start_game(Settings settings_) {
     settings = settings_;
+    settings.set_local_player(0);
     // TODO set number of players
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
@@ -34,6 +35,8 @@ void Game::start_game(Settings settings_) {
     int i = 0;
     players.emplace_back("shershen0_first_player", 0);
     players.emplace_back("shershen0_second_player", 1);
+    players.emplace_back("shershen0_third_player", 2);
+    players.emplace_back("shershen0_fourth_player", 3);
     // временное решение по генерации, пока нет настроек и больше карт
     constexpr int N = 3;
     std::vector<std::pair<Properties, int>> cards_info(N);
@@ -41,6 +44,7 @@ void Game::start_game(Settings settings_) {
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};
     deck.generate_deck(cards_info);
+    phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
 void Game::set_phase(std::unique_ptr<Phase> new_phase) {
