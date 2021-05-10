@@ -2,13 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
-Game::Game(Settings settings_) : settings(settings_) {
+Game::Game(const Settings &settings_) : settings(settings_) {
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
-Game::Game() {
-    phase = std::make_unique<DevelopmentPhase>(*this);
-}
 
 std::unique_ptr<Phase> const &Game::get_phase() const {
     return phase;
@@ -18,8 +15,8 @@ size_t Game::get_deck_size() {
     return deck.get_deck_size();
 }
 
-void Game::start_game(Settings settings_) {
-    settings = settings_;
+void Game::start_game() {
+//    settings = settings_;
     settings.set_local_player(0);
     // TODO set number of players
 

@@ -44,15 +44,16 @@ private:
 
 class GameWindow : public Window {
 public:
-    GameWindow(Settings settings) {
+    GameWindow(Game &&game_) : game(std::move(game_)) {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
-        game.start_game(
-            settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
+        game.start_game();
+//        game.start_game(
+//            settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
         init_window();
     }
     ~GameWindow() override = default;

@@ -11,10 +11,9 @@ class Game {
 public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
-    Game(struct Settings settings_);
-    Game();
+    Game(const Settings &settings_);
 
-    void start_game(Settings settings_);
+    void start_game();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
 
