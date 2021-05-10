@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
+
+
 Game::Game(const Settings &settings_) : settings(settings_) {
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
@@ -69,4 +71,10 @@ std::size_t Game::get_cur_player_index() const {
 }
 Settings const &Game::get_settings() const {
     return settings;
+}
+
+void Game::create_room() {
+    user::CreateRoom create_room1;
+    user::CreateRoomResponse create_room_response;
+    auto status = stub_->create_room(&context, create_room1, &create_room_response);
 }
