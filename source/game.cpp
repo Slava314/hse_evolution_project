@@ -2,12 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
+Game::Game(const Settings &settings_)
+    : settings(settings_),
+      stub_(user::UserService::NewStub( //check that it is valid stub
+          grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
 
-
-Game::Game(const Settings &settings_) : settings(settings_) {
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
-
 
 std::unique_ptr<Phase> const &Game::get_phase() const {
     return phase;
@@ -18,15 +19,15 @@ size_t Game::get_deck_size() {
 }
 
 void Game::start_game() {
-//    settings = settings_;
+    //    settings = settings_;
     settings.set_local_player(0);
+    deck = Deck (settings.get_seed(), settings.get_size_of_deck());
     // TODO set number of players
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
     //    players.resize(1);
 
     // TODO - cycle where player will add to vector
-    // TODO -
 
     // TODO - ask server about players count and get stream of messages about their names and
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
@@ -74,6 +75,7 @@ Settings const &Game::get_settings() const {
 }
 
 void Game::create_room() {
+    grpc::ClientContext context;  //?
     user::CreateRoom create_room1;
     user::CreateRoomResponse create_room_response;
     auto status = stub_->create_room(&context, create_room1, &create_room_response);

@@ -33,13 +33,14 @@ message Token {
   repeated Error errors = 3; //array of errors if such happened
 }
 
-message Error {
+message Error { //todo add to messages?
   int32 code = 1;
   string description = 2;
 }
 
 message JoinRoom{
   string room_name = 1;
+  string player_name = 2;
 }
 
 message JoinRoomResponse{
@@ -52,7 +53,7 @@ message CreateRoom{
 }
 
 message CreateRoomResponse{
-  int32 id = 1;
+  string id = 1;
 }
 
 message Settings{
@@ -61,4 +62,5 @@ message Settings{
   int32 size_of_deck = 3;
   int32 time_of_move = 4;
   int32 local_player = 5;
+  int32 seed = 6;
 }

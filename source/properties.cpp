@@ -9,6 +9,27 @@
         return "BIG";
     if (i == 3)
         return "STOMPER";
+    if(i == 4){
+        return "";
+    }
+    if(i == 5){
+        return "";
+    }
+//    if(i == 5){
+//        return "";
+//    }
+//    if(i == 5){
+//        return "";
+//    }
+//    if(i == 5){
+//        return "";
+//    }
+//    if(i == 5){
+//        return "";
+//    }
+//    if(i == 5){
+//        return "";
+//    }
     return "NOT VALID";
 }
 

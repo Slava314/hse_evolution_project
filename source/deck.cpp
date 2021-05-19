@@ -25,22 +25,21 @@ void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
         }
     }
 
-    auto rnd = std::default_random_engine{};
-    std::shuffle(deck_of_cards.begin(), deck_of_cards.end(), rnd);
+    std::shuffle(deck_of_cards.begin(), deck_of_cards.end(), random_gen);
 }
 
 int Deck::get_deck_size() const {
     return deck_of_cards.size();
 }
 
-int need_card(Player const &player) {
+int Deck::need_card(const Player &player) {
     if (player.get_animals_on_board().empty() and player.get_cards_in_hands().empty()) {
-        return 6;
+        return FULL_GET_CARDS;
     } else {
         if (player.get_animals_on_board().size() + player.get_cards_in_hands().size() + 1 > 6) {
-            return std::max(static_cast<unsigned long>(0), 6 - player.get_cards_in_hands().size());
+            return std::max(static_cast<unsigned long>(0), FULL_GET_CARDS - player.get_cards_in_hands().size());
         } else {
-            return player.get_animals_on_board().size() + 1;
+            return player.get_animals_on_board().size() + ADDING_CARDS;
         }
     }
 }
@@ -56,4 +55,9 @@ void Deck::cards_delivery(std::vector<Player> &players) {
 }
 std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
     return deck_of_cards;
+}
+
+Deck::Deck(const int &seed, const int &size) {
+    random_gen.seed(seed);
+    deck_size = size;
 }

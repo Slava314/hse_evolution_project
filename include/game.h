@@ -16,7 +16,7 @@
 #include <grpcpp/create_channel.h>
 #include <grpcpp/security/credentials.h>
 
-#include "../server/proto-src/server.grpc.pb.h"
+#include "server.grpc.pb.h"
 
 
 class Game {
@@ -24,6 +24,7 @@ public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
     explicit Game(const Settings &settings_);
+    Game(Game &&game) = default;
 
     void create_room();
     void start_game();
@@ -39,12 +40,13 @@ public:
     Settings const &get_settings() const;
 
 private:
-    std::unique_ptr<Phase> phase;
-    std::vector<Player> players;
     Deck deck;
     Settings settings;
+    std::unique_ptr<Phase> phase;
+    std::vector<Player> players;
     std::unique_ptr<user::UserService::Stub> stub_;
-    grpc::ClientContext context;
+    std::string player_name;
+//    user::UserService::Stub stub_;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

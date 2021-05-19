@@ -41,7 +41,13 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     // TODO check auto end turn
+
+    // he cant make any moves - should skip him
+
     int ans = get_view()->handle_event(window, event);
+    if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
+        ans = 2;
+    }
     if (ans != 0) {
         if (ans == 2) {
             end_turn[cur_player_index] = 1;
