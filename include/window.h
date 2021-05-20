@@ -23,7 +23,7 @@ protected:
 class StartWindow : public Window {
 public:
     StartWindow() {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start_window",
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
@@ -36,7 +36,8 @@ public:
     ~StartWindow() override = default;
 
 private:
-    TextButton start_button;
+    TextButton start_local_game_button;
+    TextButton start_online_game_button;
 
     void init_window();
     void draw() override;
@@ -45,7 +46,7 @@ private:
 class GameWindow : public Window {
 public:
     GameWindow(Settings settings) {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
@@ -108,7 +109,7 @@ private:
 class PropertyWindow : Window {
 public:
     PropertyWindow(bool able_to_use_) : able_to_use(able_to_use_) {
-        window.create(sf::VideoMode(200, 300), "property_window",
+        window.create(sf::VideoMode(200, 300), "Properties",
                       sf::Style::Titlebar | sf::Style::Close);
         window.setPosition({200, 200});
         auto fs = cmrc::resources::get_filesystem();
@@ -132,7 +133,7 @@ private:
 class StartChoiceWindow : public Window {
 public:
     StartChoiceWindow() {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choice_window",
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Choose your own destiny",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
@@ -155,7 +156,7 @@ private:
 class JoinGameWindow : public Window {
 public:
     JoinGameWindow() {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join_window",
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Join online game",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
@@ -179,7 +180,7 @@ private:
 class MakeGameWindow : public Window {
 public:
     MakeGameWindow() {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make_window",
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Make online game",
                       sf::Style::Titlebar | sf::Style::Close);
         auto fs = cmrc::resources::get_filesystem();
         auto file = fs.open("times.ttf");
@@ -203,4 +204,33 @@ private:
     void draw() override;
 };
 
+
+class StartLocalGameWindow : public Window {
+public:
+    StartLocalGameWindow() {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Start local game",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~StartLocalGameWindow() override = default;
+
+private:
+    TextField number_of_cards_field;
+    TextField number_of_players_field;
+    TextField seconds_for_turn_field;
+    std::size_t number_of_players = 0;
+    std::vector<TextField> players_names;
+    TextField field_for_number_of_players;
+    TextButton start_button;
+    Settings settings;
+
+    void init_window();
+    void draw() override;
+};
 #endif  // EVOLUTION_PROJECT_WINDOW_H_
