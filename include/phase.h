@@ -16,6 +16,7 @@ public:
     virtual std::size_t get_cur_player_index() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual ~Phase() = default;
+
 };
 
 class DevelopmentPhase : public Phase {

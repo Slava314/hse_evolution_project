@@ -2,11 +2,31 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::ClientReader;
+using grpc::ClientReaderWriter;
+using grpc::ClientWriter;
+using grpc::Status;
+
+using user::CreateRoomRequest;
+using user::CreateRoomResponse;
+using user::GetPlayerRequest;
+using user::GetPlayerResponse;
+using user::JoinRoomRequest;
+using user::JoinRoomResponse;
+
+using user::Error;
+using user::Request;
+using user::Response;
+using user::Token;
+using user::User;
+using user::UserService;
+
 Game::Game(const Settings &settings_)
     : settings(settings_),
-      stub_(user::UserService::NewStub( //check that it is valid stub
+      stub_(user::UserService::NewStub(  // check that it is valid stub
           grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
-
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
@@ -18,29 +38,32 @@ size_t Game::get_deck_size() {
     return deck.get_deck_size();
 }
 
+void Game::apply_settings() {
+    deck = Deck(settings.get_seed(), settings.get_size_of_deck());
+    players.resize(settings.get_total());
+    deck.set_random_gen(settings.get_seed());
+}
+
 void Game::start_game() {
-    //    settings = settings_;
+    apply_settings();
     settings.set_local_player(0);
-    deck = Deck (settings.get_seed(), settings.get_size_of_deck());
-    // TODO set number of players
+    deck.set_cards_info();
 
-    // TODO - get count of players as a parametr. From GUI? or lobby?
-    //    players.resize(1);
-
-    // TODO - cycle where player will add to vector
-
-    // TODO - ask server about players count and get stream of messages about their names and
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
-        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player", i);
+        ClientContext context;
+        GetPlayerRequest get_player_request;
+        get_player_request.set_player_id(i);
+        get_player_request.set_room_id(settings.get_room_id());
+        GetPlayerResponse get_player_response;
+        auto stream = stub_->GetPlayerName(&context, get_player_request, &get_player_response);
+        std::string name = get_player_response.name();
+        players.emplace_back(name);
+        //---
+        //        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player");
+        //---
     }
-    // временное решение по генерации, пока нет настроек и больше карт
 
-    constexpr int N = 3;
-    std::vector<std::pair<Properties, int>> cards_info(N);
-    cards_info[0] = {Properties::FAT_TISSUE, 8};
-    cards_info[1] = {Properties::BIG, 8};
-    cards_info[2] = {Properties::STOMPER, 8};
-    deck.generate_deck(cards_info);
+    deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
@@ -74,9 +97,45 @@ Settings const &Game::get_settings() const {
     return settings;
 }
 
-void Game::create_room() {
-    grpc::ClientContext context;  //?
-    user::CreateRoom create_room1;
-    user::CreateRoomResponse create_room_response;
-    auto status = stub_->create_room(&context, create_room1, &create_room_response);
+void Game::create_room(std::string &player_name_) {
+    ClientContext context;
+    CreateRoomRequest create_room_request;
+    CreateRoomResponse create_room_response;
+
+   /// FAIL create_room_request.set_allocated_player_name(&player_name_);
+//   create_room_request.set
+    user::Settings settings1;
+    settings1.set_quantity_of_players(settings.get_quantity_of_players());
+    settings1.set_size_of_deck(settings.get_size_of_deck());
+    settings1.set_time_of_move(settings.get_time_of_move());
+    settings1.set_local_player(settings.get_local_player());
+    settings1.set_seed(settings.get_seed());
+    settings1.set_total(settings.get_total());
+    //    does not have room id now - will get it from response
+    /// FAIL     create_room_request.set_allocated_settings(&settings1);
+    create_room_request.set_player_name(player_name_);
+    auto status = stub_->CreateRoom(&context, create_room_request, &create_room_response);
+    // TODO - lately
+    //    if(!status.ok()) {
+    //    }
+
+    settings.set_room_id(create_room_response.id());
+}
+
+void Game::join_room(std::string room_id, std::string player_name) {
+    ClientContext context;
+    JoinRoomRequest join_room_request;
+    JoinRoomResponse join_room_response;
+
+    join_room_request.set_allocated_room_name(&room_id);
+    join_room_request.set_allocated_player_name(&player_name);
+    auto status = stub_->JoinRoom(&context, join_room_request, &join_room_response);
+    Settings settings1{join_room_response.settings().quantity_of_players(),
+                       join_room_response.settings().size_of_deck(),
+                       join_room_response.settings().time_of_move(),
+                       join_room_response.settings().local_player(),
+                       join_room_response.settings().seed(),
+                       join_room_response.settings().total(),
+                       join_room_response.settings().room_id()};
+    settings = settings1;
 }

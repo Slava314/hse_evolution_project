@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
+Player::Player(std::string name_) : name(std::move(name_)) {
     cards_in_hands.resize(0);
     animals_on_board.resize(0);
 }

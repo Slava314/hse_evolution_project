@@ -7,7 +7,6 @@
 #include "player.h"
 #include "settings.h"
 
-
 #include <grpcpp/server_context.h>
 #include <grpc++/grpc++.h>
 #include <grpc/grpc.h>
@@ -26,7 +25,8 @@ public:
     explicit Game(const Settings &settings_);
     Game(Game &&game) = default;
 
-    void create_room();
+    void create_room(std::string &player_name_);
+    void join_room(std::string room_id, std::string player_name);
     void start_game();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
@@ -40,12 +40,15 @@ public:
     Settings const &get_settings() const;
 
 private:
+    void apply_settings();
+private:
     Deck deck;
     Settings settings;
     std::unique_ptr<Phase> phase;
     std::vector<Player> players;
     std::unique_ptr<user::UserService::Stub> stub_;
     std::string player_name;
+    std::string uniq_room_id;
 //    user::UserService::Stub stub_;
 };
 

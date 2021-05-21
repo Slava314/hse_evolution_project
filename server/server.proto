@@ -4,10 +4,11 @@ package user;
 
 
 service UserService {
-  rpc create_room(CreateRoom) returns (CreateRoomResponse) {}
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
 
-  rpc join_room(JoinRoom) returns (JoinRoomResponse) {}
+  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
 
+  rpc GetPlayerName(GetPlayerRequest) returns (GetPlayerResponse) {}
   //  rpc get_message(Request) returns (Response) {}
   //
   //  rpc send_message(User) returns (Token) {}
@@ -33,12 +34,12 @@ message Token {
   repeated Error errors = 3; //array of errors if such happened
 }
 
-message Error { //todo add to messages?
+message Error {//todo add to messages?
   int32 code = 1;
   string description = 2;
 }
 
-message JoinRoom{
+message JoinRoomRequest{
   string room_name = 1;
   string player_name = 2;
 }
@@ -47,9 +48,9 @@ message JoinRoomResponse{
   Settings settings = 1;
 }
 
-message CreateRoom{
-  //  string name = 1;
-  Settings settings = 1;
+message CreateRoomRequest{
+  string player_name = 1;
+  Settings settings = 2;
 }
 
 message CreateRoomResponse{
@@ -57,10 +58,20 @@ message CreateRoomResponse{
 }
 
 message Settings{
-  string room_name = 1;
-  int32 quantity_of_players = 2;
-  int32 size_of_deck = 3;
-  int32 time_of_move = 4;
-  int32 local_player = 5;
-  int32 seed = 6;
+  int32 quantity_of_players = 1;
+  int32 size_of_deck = 2;
+  int32 time_of_move = 3;
+  int32 local_player = 4;
+  int32 seed = 5;
+  int32 total = 6;
+  string room_id = 7;
+}
+
+message GetPlayerRequest{
+  int32 player_id = 1;
+  string room_id = 2;
+}
+
+message GetPlayerResponse{
+  string name = 1;
 }

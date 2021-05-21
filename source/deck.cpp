@@ -4,7 +4,7 @@
 #include <vector>
 #include "properties.h"
 
-void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
+void Deck::generate_deck() {
     for (auto card : cards_info) {
         while (card.second--) {
             switch (card.first) {
@@ -60,4 +60,14 @@ std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
 Deck::Deck(const int &seed, const int &size) {
     random_gen.seed(seed);
     deck_size = size;
+}
+void Deck::set_random_gen(int seed) {
+    random_gen = std::mt19937 (seed);
+}
+void Deck::set_cards_info() {
+    cards_info.resize(CARDS_TYPE);
+
+    cards_info[0] = {Properties::FAT_TISSUE, 8};
+    cards_info[1] = {Properties::BIG, 8};
+    cards_info[2] = {Properties::STOMPER, 8};
 }

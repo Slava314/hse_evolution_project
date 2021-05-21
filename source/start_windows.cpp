@@ -188,12 +188,8 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                                   std::stoi(seconds_for_turn_field.get_text()));
                                 window.close();
                                 Game game(settings);
-                                game.create_room();
+                                game.create_room((std::string &)(std::move(name_field.get_text())));
                                 return std::make_unique<GameWindow>(std::move(game));
-//                                return std::make_unique<GameWindow>(settings);
-                                // TODO make room?
-                                //create Game(settings), Game.create_room, game_window(game)
-
                             }
                         }
                     }

@@ -17,7 +17,6 @@
 #include "proto-src/server.grpc.pb.h"
 #include "settings.h"
 
-
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::ClientReader;
@@ -28,36 +27,32 @@ using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
-using user::CreateRoom;
+using user::CreateRoomRequest;
 using user::CreateRoomResponse;
-using user::Error;
-using user::JoinRoom;
+using user::GetPlayerRequest;
+using user::GetPlayerResponse;
+using user::JoinRoomRequest;
 using user::JoinRoomResponse;
+
+using user::Error;
 using user::Request;
 using user::Response;
 using user::Token;
 using user::User;
 using user::UserService;
 
-////TODO
-// struct Settings {
-//  std::string room_name;
-//  int quantity_of_players;
-//  int size_of_deck;
-//  int time_of_move;
-//  int local_player = 0;
-//};
-
 class ServiceImpl final : public UserService::Service {
-    Status create_room(ServerContext *context,
-                       const CreateRoom *request,
-                       CreateRoomResponse *reply) override {
-        //TODO - ADD SEED FOR RANDOM
+    Status CreateRoom(ServerContext *context,
+                      const CreateRoomRequest *request,
+                      CreateRoomResponse *response) override {
+        // TODO - print the id of the room
+
+        // should i get name of this player too?
         std::string room_id;
         while (1) {
             for (int i = 0; i < ROOM_ID_LEN; ++i) {
                 int a = random();
-                while (isalpha(static_cast<char>(a)) == false or
+                while (isalpha(static_cast<char>(a)) == false and
                        isdigit(static_cast<char>(a)) == false) {
                     a = random();
                 }
@@ -70,38 +65,54 @@ class ServiceImpl final : public UserService::Service {
             }
         }
         assert(room_id.size() == ROOM_ID_LEN);
-        Settings settings{request->settings().room_name(),
-                          request->settings().quantity_of_players(),
-                          request->settings().size_of_deck(), request->settings().time_of_move(),
-                          request->settings().local_player()};
-        // adding new room with settings
+        /// default seed equals 0 in settings
+        Settings settings{request->settings().quantity_of_players(),
+                          request->settings().size_of_deck(),
+                          request->settings().time_of_move(),
+                          request->settings().local_player(),
+                          rand(),
+                          1,
+                          room_id};
+        /// adding new room with settings
         id_sett_room_list.insert({room_id, settings});
-
-        reply->set_id(room_id);
+        /// adding player's /*id*/ and /*name*/
+        id_name_player_list.insert({{0, room_id}, request->player_name()});
+        response->set_id(room_id);
         return Status::OK;
     }
 
-    Status join_room(ServerContext *context,
-                     const JoinRoom *request,
-                     JoinRoomResponse *reply) override {
-        //TODO - ADD SEED FOR RANDOM
-        std::string room_name = request->room_name();
-        std::string player_name = request->player_name(); //todo - use it somewhere
+    Status JoinRoom(ServerContext *context,
+                    const JoinRoomRequest *request,
+                    JoinRoomResponse *reply) override {
+        std::string room_id = request->room_name();
+        std::string player_name = request->player_name();  // todo - use it somewhere
 
-        auto looking_id = id_sett_room_list.find(room_name); //tood - change room_name -> room_id (?)
-        assert(looking_id != id_sett_room_list.end());  /// ok or not?
+        auto looking_id = id_sett_room_list.find(room_id);
+        // TODO suppose its better to do /throw/
+        assert(looking_id != id_sett_room_list.end());
 
         Settings settings = looking_id->second;
         user::Settings settings1;
-        std::string a = settings.get_room_name();
-        settings1.set_allocated_room_name(&a);
+
         settings1.set_quantity_of_players(settings.get_quantity_of_players());
         settings1.set_size_of_deck(settings.get_size_of_deck());
         settings1.set_time_of_move(settings.get_time_of_move());
         settings1.set_local_player(settings.get_local_player() + 1);  // todo think about it
         settings1.set_seed(settings.get_seed());
-        reply->set_allocated_settings(&settings1);
+        settings1.set_room_id(settings.get_room_id());
+        // todo update in future if user left lobby
+        settings1.set_total(settings.get_total() + 1);
+        settings1.set_room_id(request->room_name());
 
+        id_name_player_list.insert(
+            {{settings.get_local_player() + 1, room_id}, request->player_name()});
+        // update /*local_player*/ field in settings to update this field correctly in future
+        id_sett_room_list[room_id].set_local_player(settings.get_local_player() + 1);
+
+        // i guess this should be true - todo think about it
+        assert(settings.get_local_player() + 1 == id_sett_room_list[room_id].get_local_player());
+
+        reply->set_allocated_settings(&settings1);
         return Status::OK;
     }
 
@@ -113,10 +124,20 @@ class ServiceImpl final : public UserService::Service {
         return Status::OK;
     }
 
+    Status GetPlayerName(ServerContext *context,
+                         const GetPlayerRequest *request,
+                         GetPlayerResponse *response) override {
+        int player_id = request->player_id();
+        std::string room_id = request->room_id();
+        std::string name = id_name_player_list[{player_id, room_id}];
+        response->set_name(name);
+        return Status::OK;
+    }
+
 private:
-    const int ROOM_ID_LEN = 100;
+    const int ROOM_ID_LEN = 10;
     std::unordered_map<std::string, Settings> id_sett_room_list;
-    //  std::unordered_map<std::string, int> id_num_room_list;
+    std::unordered_map<std::pair<int, std::string>, std::string> id_name_player_list;
 };
 
 void RunServer() {

@@ -3,50 +3,51 @@
 
 #include <string>
 
-struct Settings {
-    void set_local_player(int i);
-
+class Settings {
 public:
+    void set_local_player(int i);  //?? why do i need this
+
     Settings() = default;
-    Settings(std::string room_name_, int quantity_of_players_, int size_of_deck_, int time_of_move_)
-        : room_name(std::move(room_name_)),
-          quantity_of_players(quantity_of_players_),
-          size_of_deck(size_of_deck_),
-          time_of_move(time_of_move_) {
+
+    //constructor for window_settings
+    Settings(std::string room_name_, int quantity_, int size_deck_, int time_)
+        : quantity_of_players(quantity_), size_of_deck(size_deck_), time_of_move(time_) {
     }
 
-    Settings(std::string room_name_,
-             int quantity_of_players_,
-             int size_of_deck_,
-             int time_of_move_,
-             int local_player_)
-        : room_name(std::move(room_name_)),
-          quantity_of_players(quantity_of_players_),
-          size_of_deck(size_of_deck_),
-          time_of_move(time_of_move_),
-          local_player(local_player_) {
+    Settings(int quantity_,
+             int size_deck_,
+             int time_,
+             int local_,
+             int seed_,
+             int total_,
+             std::string room_id_)
+        : quantity_of_players(quantity_),
+          size_of_deck(size_deck_),
+          time_of_move(time_),
+          local_player(local_),
+          seed(std::move(seed_)),
+          total_players(total_),
+          room_id(room_id_) {
     }
 
-    void set_values(std::string room_name_,
-                    int quantity_of_players_,
-                    int size_of_deck_,
-                    int time_of_move_,
-                    int local_player_);
-
-    const std::string get_room_name() const;
     int get_quantity_of_players() const;
     int get_size_of_deck() const;
     int get_time_of_move() const;
     int get_local_player() const;
     int get_seed() const;
+    int get_total() const;
+    std::string get_room_id() const;
+
+    void set_room_id(const std::string &id);
 
 private:
-    std::string room_name;
     int quantity_of_players;
     int size_of_deck;
     int time_of_move;
     int local_player = 0;
     int seed = 0;
+    int total_players;
+    std::string room_id;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_

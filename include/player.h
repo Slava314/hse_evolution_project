@@ -12,7 +12,7 @@ class Player {
 public:
     /// i will do it
     Player() = default;
-    explicit Player(std::string name_, int id_);
+    explicit Player(std::string name_);
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
     using Prop = Properties;
@@ -42,7 +42,6 @@ private:
     std::vector<std::shared_ptr<Animal>> animals_on_board;
     std::string name;
     bool chose_to_end_phase = false;
-    int uniq_id;  // server will identify player with this id
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_
