@@ -1,32 +1,29 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_GAME_H_
 #define EVOLUTION_PROJECT_INCLUDE_GAME_H_
-#include <memory>
-#include <vector>
-#include "deck.h"
-#include "phase.h"
-#include "player.h"
-#include "settings.h"
-
-#include <grpcpp/server_context.h>
 #include <grpc++/grpc++.h>
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
 #include <grpcpp/client_context.h>
 #include <grpcpp/create_channel.h>
 #include <grpcpp/security/credentials.h>
-
+#include <grpcpp/server_context.h>
+#include <memory>
+#include <vector>
+#include "deck.h"
+#include "phase.h"
+#include "player.h"
 #include "server.grpc.pb.h"
-
+#include "settings.h"
 
 class Game {
 public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
-    explicit Game(const Settings &settings_);
+    explicit Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub = nullptr);
     Game(Game &&game) = default;
 
-    void create_room(std::string &player_name_);
-    void join_room(std::string room_id, std::string player_name);
+    void create_room(const std::string &player_name_);
+    static Game join_room(std::string room_id, std::string player_name);
     void start_game();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
@@ -40,7 +37,9 @@ public:
     Settings const &get_settings() const;
 
 private:
+    Game() = default;
     void apply_settings();
+
 private:
     Deck deck;
     Settings settings;
@@ -49,7 +48,7 @@ private:
     std::unique_ptr<user::UserService::Stub> stub_;
     std::string player_name;
     std::string uniq_room_id;
-//    user::UserService::Stub stub_;
+    //    user::UserService::Stub stub_;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

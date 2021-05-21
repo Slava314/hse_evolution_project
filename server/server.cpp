@@ -15,7 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include "proto-src/server.grpc.pb.h"
-#include "settings.h"
+//#include "settings.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -66,13 +66,14 @@ class ServiceImpl final : public UserService::Service {
         }
         assert(room_id.size() == ROOM_ID_LEN);
         /// default seed equals 0 in settings
-        Settings settings{request->settings().quantity_of_players(),
-                          request->settings().size_of_deck(),
-                          request->settings().time_of_move(),
-                          request->settings().local_player(),
-                          rand(),
-                          1,
-                          room_id};
+        //        user::Settings settings{request->settings().quantity_of_players(),
+        //                          request->settings().size_of_deck(),
+        //                          request->settings().time_of_move(),
+        //                          request->settings().local_player(),
+        //                          rand(),
+        //                          1,
+        //                          room_id};
+        user::Settings settings = request->settings();
         /// adding new room with settings
         id_sett_room_list.insert({room_id, settings});
         /// adding player's /*id*/ and /*name*/
@@ -84,6 +85,7 @@ class ServiceImpl final : public UserService::Service {
     Status JoinRoom(ServerContext *context,
                     const JoinRoomRequest *request,
                     JoinRoomResponse *reply) override {
+        std::cout << "FAIL1" << '\n';
         std::string room_id = request->room_name();
         std::string player_name = request->player_name();  // todo - use it somewhere
 
@@ -91,28 +93,37 @@ class ServiceImpl final : public UserService::Service {
         // TODO suppose its better to do /throw/
         assert(looking_id != id_sett_room_list.end());
 
-        Settings settings = looking_id->second;
-        user::Settings settings1;
+        user::Settings settings = looking_id->second;
+        std::cout << "FAIL2" << '\n';
 
-        settings1.set_quantity_of_players(settings.get_quantity_of_players());
-        settings1.set_size_of_deck(settings.get_size_of_deck());
-        settings1.set_time_of_move(settings.get_time_of_move());
-        settings1.set_local_player(settings.get_local_player() + 1);  // todo think about it
-        settings1.set_seed(settings.get_seed());
-        settings1.set_room_id(settings.get_room_id());
-        // todo update in future if user left lobby
-        settings1.set_total(settings.get_total() + 1);
-        settings1.set_room_id(request->room_name());
+        //        settings1.set_quantity_of_players(settings.get_quantity_of_players());
+        //        settings1.set_size_of_deck(settings.get_size_of_deck());
+        //        settings1.set_time_of_move(settings.get_time_of_move());
+        //        settings1.set_local_player(settings.get_local_player() + 1);  // todo think about
+        //        it settings1.set_seed(settings.get_seed());
+        //        settings1.set_room_id(settings.get_room_id());
+        //        // todo update in future if user left lobby
+        //        settings1.set_total(settings.get_total() + 1); //TODO
+        //        settings1.set_room_id(request->room_name());
 
-        id_name_player_list.insert(
-            {{settings.get_local_player() + 1, room_id}, request->player_name()});
-        // update /*local_player*/ field in settings to update this field correctly in future
-        id_sett_room_list[room_id].set_local_player(settings.get_local_player() + 1);
 
-        // i guess this should be true - todo think about it
-        assert(settings.get_local_player() + 1 == id_sett_room_list[room_id].get_local_player());
 
-        reply->set_allocated_settings(&settings1);
+//        std::cout << "FAIL3" << '\n';
+//
+//        id_name_player_list.insert(
+//            {{settings.get_local_player() + 1, room_id}, request->player_name()});
+//        // update /*local_player*/ field in settings to update this field correctly in future
+//        id_sett_room_list[room_id].set_local_player(settings.get_local_player() + 1);
+//
+//        std::cout << "FAIL4" << '\n';
+//
+//        // i guess this should be true - todo think about it
+//        assert(settings.get_local_player() + 1 == id_sett_room_list[room_id].get_local_player());
+
+//        reply->set_settings(settings);
+        *reply->mutable_settings() = settings;
+        std::cout << "FAIL5" << '\n';
+
         return Status::OK;
     }
 
@@ -136,7 +147,7 @@ class ServiceImpl final : public UserService::Service {
 
 private:
     const int ROOM_ID_LEN = 10;
-    std::unordered_map<std::string, Settings> id_sett_room_list;
+    std::unordered_map<std::string, user::Settings> id_sett_room_list;
     std::unordered_map<std::pair<int, std::string>, std::string> id_name_player_list;
 };
 

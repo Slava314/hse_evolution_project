@@ -23,10 +23,14 @@ using user::Token;
 using user::User;
 using user::UserService;
 
-Game::Game(const Settings &settings_)
-    : settings(settings_),
-      stub_(user::UserService::NewStub(  // check that it is valid stub
-          grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
+Game::Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub)
+    : settings(settings_) {
+    if (stub_ == nullptr) {
+        stub_ = user::UserService::NewStub(  // check that it is valid stub
+            grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+    } else {
+        stub_ = std::move(stub);
+    }
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
@@ -97,13 +101,12 @@ Settings const &Game::get_settings() const {
     return settings;
 }
 
-void Game::create_room(std::string &player_name_) {
+void Game::create_room(const std::string &player_name_) {
     ClientContext context;
     CreateRoomRequest create_room_request;
     CreateRoomResponse create_room_response;
 
-   /// FAIL create_room_request.set_allocated_player_name(&player_name_);
-//   create_room_request.set
+    create_room_request.set_player_name(player_name_);
     user::Settings settings1;
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
@@ -112,8 +115,7 @@ void Game::create_room(std::string &player_name_) {
     settings1.set_seed(settings.get_seed());
     settings1.set_total(settings.get_total());
     //    does not have room id now - will get it from response
-    /// FAIL     create_room_request.set_allocated_settings(&settings1);
-    create_room_request.set_player_name(player_name_);
+    *create_room_request.mutable_settings() = settings1;
     auto status = stub_->CreateRoom(&context, create_room_request, &create_room_response);
     // TODO - lately
     //    if(!status.ok()) {
@@ -122,13 +124,17 @@ void Game::create_room(std::string &player_name_) {
     settings.set_room_id(create_room_response.id());
 }
 
-void Game::join_room(std::string room_id, std::string player_name) {
+Game Game::join_room(std::string room_id, std::string player_name) {
     ClientContext context;
     JoinRoomRequest join_room_request;
     JoinRoomResponse join_room_response;
 
-    join_room_request.set_allocated_room_name(&room_id);
-    join_room_request.set_allocated_player_name(&player_name);
+//    join_room_request.set_room_name(&room_id);
+    join_room_request.set_room_name(room_id);
+    join_room_request.set_player_name(player_name);
+//    join_room_request.set_player_name(&player_name);
+    auto stub_ = user::UserService::NewStub(  // check that it is valid stub
+        grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
     auto status = stub_->JoinRoom(&context, join_room_request, &join_room_response);
     Settings settings1{join_room_response.settings().quantity_of_players(),
                        join_room_response.settings().size_of_deck(),
@@ -137,5 +143,6 @@ void Game::join_room(std::string room_id, std::string player_name) {
                        join_room_response.settings().seed(),
                        join_room_response.settings().total(),
                        join_room_response.settings().room_id()};
-    settings = settings1;
+    Game game(settings1, std::move(stub_));
+    return game;
 }
