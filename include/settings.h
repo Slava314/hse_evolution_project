@@ -9,8 +9,11 @@ public:
 
     Settings() = default;
 
-    //constructor for window_settings
-    Settings(std::string room_name_, int quantity_, int size_deck_, int time_)
+    // constructor for window_settings
+    Settings(const std::string &room_name_,
+             const int &quantity_,
+             const int &size_deck_,
+             const int &time_)
         : quantity_of_players(quantity_), size_of_deck(size_deck_), time_of_move(time_) {
     }
 

@@ -9,10 +9,16 @@ service UserService {
   rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
 
   rpc GetPlayerName(GetPlayerRequest) returns (GetPlayerResponse) {}
+
+  rpc GiveCardFDeck(GiveCardFromDeck) returns (Nothing) {}
+
   //  rpc get_message(Request) returns (Response) {}
   //
   //  rpc send_message(User) returns (Token) {}
   //
+}
+
+message Nothing{
 }
 
 message User {
@@ -74,4 +80,14 @@ message GetPlayerRequest{
 
 message GetPlayerResponse{
   string name = 1;
+}
+
+message GiveCardFromDeck{
+  PlayerAndRoom player_and_room = 1;
+  int32 quantity = 2;
+}
+
+message PlayerAndRoom{
+  int32 player_id = 1;
+  string room_id = 2;
 }

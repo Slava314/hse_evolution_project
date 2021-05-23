@@ -14,10 +14,9 @@ public:
     std::vector<std::shared_ptr<Card>> get_deck_cards();
     void generate_deck();
     [[nodiscard]] int get_deck_size() const;
-    void cards_delivery(std::vector<Player> &players);
+    void cards_delivery(Player& player);
     void set_random_gen(int seed);
     void set_cards_info();
-private:
     int need_card(const Player &player);
 private:
     static const int CARDS_TYPE = 3;

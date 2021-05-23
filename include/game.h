@@ -23,7 +23,7 @@ public:
     Game(Game &&game) = default;
 
     void create_room(const std::string &player_name_);
-    static Game join_room(std::string room_id, std::string player_name);
+    static Game join_room(const std::string &room_id,const  std::string &player_name);
     void start_game();
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
@@ -36,6 +36,7 @@ public:
     size_t get_deck_size();
     Settings const &get_settings() const;
 
+    std::unique_ptr<user::UserService::Stub> stub_;
 private:
     Game() = default;
     void apply_settings();
@@ -45,7 +46,6 @@ private:
     Settings settings;
     std::unique_ptr<Phase> phase;
     std::vector<Player> players;
-    std::unique_ptr<user::UserService::Stub> stub_;
     std::string player_name;
     std::string uniq_room_id;
     //    user::UserService::Stub stub_;

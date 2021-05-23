@@ -103,6 +103,7 @@ void GameWindow::init_window() {
         new_name.setCharacterSize(28);
         players_names.push_back(new_name);
     }
+    std::cout << "PLAYERS COUNT = " << game.get_players().size() << std::endl;
     set_players_names_positions();
 }
 

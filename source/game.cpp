@@ -1,6 +1,7 @@
 #include "game.h"
 #include <SFML/Graphics.hpp>
 #include <utility>
+#include "errors.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -25,6 +26,7 @@ using user::UserService;
 
 Game::Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub)
     : settings(settings_) {
+    std::cout << "SETTINGS IN CONSTRUCTOR = " << settings_.get_total() << std::endl;
     if (stub_ == nullptr) {
         stub_ = user::UserService::NewStub(  // check that it is valid stub
             grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
@@ -50,15 +52,18 @@ void Game::apply_settings() {
 
 void Game::start_game() {
     apply_settings();
-    settings.set_local_player(0);
+//    settings.set_local_player(0);
     deck.set_cards_info();
 
+    std::cout << "PLAYERS COUNT = " << get_players().size() << std::endl;
+    std::cout << "TOTAL = " << settings.get_total() << std::endl;
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
         ClientContext context;
         GetPlayerRequest get_player_request;
+        GetPlayerResponse get_player_response;
+
         get_player_request.set_player_id(i);
         get_player_request.set_room_id(settings.get_room_id());
-        GetPlayerResponse get_player_response;
         auto stream = stub_->GetPlayerName(&context, get_player_request, &get_player_response);
         std::string name = get_player_response.name();
         players.emplace_back(name);
@@ -108,34 +113,49 @@ void Game::create_room(const std::string &player_name_) {
 
     create_room_request.set_player_name(player_name_);
     user::Settings settings1;
+
+    std::cout << "SETTINGS TOTAL" << settings.get_total() << std::endl;
+
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
     settings1.set_time_of_move(settings.get_time_of_move());
     settings1.set_local_player(settings.get_local_player());
     settings1.set_seed(settings.get_seed());
     settings1.set_total(settings.get_total());
+    std::cout << "TOTAL = " << settings.get_total() << std::endl;
     //    does not have room id now - will get it from response
     *create_room_request.mutable_settings() = settings1;
+
     auto status = stub_->CreateRoom(&context, create_room_request, &create_room_response);
-    // TODO - lately
-    //    if(!status.ok()) {
-    //    }
+
+    if (!status.ok()) {
+        throw GameConnecting("Could not create room, sad");
+    }
 
     settings.set_room_id(create_room_response.id());
 }
 
-Game Game::join_room(std::string room_id, std::string player_name) {
+Game Game::join_room(const std::string &room_id, const std::string &player_name) {
     ClientContext context;
     JoinRoomRequest join_room_request;
     JoinRoomResponse join_room_response;
 
-//    join_room_request.set_room_name(&room_id);
+    //    join_room_request.set_room_name(&room_id);
     join_room_request.set_room_name(room_id);
     join_room_request.set_player_name(player_name);
-//    join_room_request.set_player_name(&player_name);
+    //    join_room_request.set_player_name(&player_name);
     auto stub_ = user::UserService::NewStub(  // check that it is valid stub
         grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+    if(stub_ == nullptr){
+        throw GameConnecting("Sorry, cannot join you to the room, our stub_ is nullptr");
+    }
+
     auto status = stub_->JoinRoom(&context, join_room_request, &join_room_response);
+
+    if (!status.ok()) {
+        throw GameConnecting("Could not join room, sad");
+    }
+
     Settings settings1{join_room_response.settings().quantity_of_players(),
                        join_room_response.settings().size_of_deck(),
                        join_room_response.settings().time_of_move(),
@@ -143,6 +163,7 @@ Game Game::join_room(std::string room_id, std::string player_name) {
                        join_room_response.settings().seed(),
                        join_room_response.settings().total(),
                        join_room_response.settings().room_id()};
+
     Game game(settings1, std::move(stub_));
     return game;
 }

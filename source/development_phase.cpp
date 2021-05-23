@@ -7,12 +7,38 @@ std::unique_ptr<View> DevelopmentPhase::get_view() {
     return std::make_unique<DevelopmentPhaseView>(*this);
 }
 
-void DevelopmentPhase::set_next_phase() {
+void DevelopmentPhase:: set_next_phase() {
     game.set_phase(std::make_unique<FeedingPhase>(game));
 }
 
 void DevelopmentPhase::cards_delivery() {
-    game.get_deck().cards_delivery(game.get_players());
+//    game.get_deck().cards_delivery(game.get_players());
+//    grpc::ClientContext context;
+//    user::GiveCardFromDeck give_card_from_deck;
+//    user::Nothing nothing;
+//    game.stub_->GiveCardFDeck(&context, give_card_from_deck, &nothing);
+//
+//    for (int i = 0; i < game.get_players().size(); ++i) {
+//        auto player = game.get_players()[i];
+//        int needed = game.get_deck().need_card(player);
+//        give_card_from_deck.set_quantity(needed);
+//        give_card_from_deck.mutable_player_and_room()->set_player_id(game.get_settings().get_local_player());
+//        give_card_from_deck.mutable_player_and_room()->set_room_id(game.get_settings().get_room_id());
+//        game.stub_->GiveCardFDeck(&context, give_card_from_deck, &nothing);
+//
+//    }
+    for(int i = 0; i < game.get_players().size(); i++){
+        auto player = game.get_players()[i];
+        if(i == game.get_settings().get_local_player()){
+            int needed = game.get_deck().need_card(player);
+            game.get_deck().cards_delivery(player);
+        } else {
+            auto need = game.get_deck().need_card(player);
+            while (need--) {
+                game.get_deck().get_deck_cards().pop_back();
+            }
+        }
+    }
 }
 
 bool DevelopmentPhase::is_running_first_time() const {
@@ -39,6 +65,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     assert(new_animal.get() != nullptr);
     game.get_players()[cur_player_index].put_card_as_animal(card, new_animal);
 }
+
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     // TODO check auto end turn
 
@@ -64,6 +91,7 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
         window.change_player();
     }
 }
+
 DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player_index(0) {
     end_turn.resize(game.get_players().size(), 0);
 }

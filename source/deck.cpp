@@ -44,14 +44,19 @@ int Deck::need_card(const Player &player) {
     }
 }
 
-void Deck::cards_delivery(std::vector<Player> &players) {
-    for (auto &player : players) {
+void Deck::cards_delivery(Player &player) {
+//    for (auto &player : players) {
+//        auto need = need_card(player);
+//        while (need--) {
+//            player.add_card_in_hands(deck_of_cards.back());
+//            deck_of_cards.pop_back();
+//        }
+//    }
         auto need = need_card(player);
         while (need--) {
             player.add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
-    }
 }
 std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
     return deck_of_cards;

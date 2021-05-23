@@ -117,8 +117,8 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                         check_text_field(name_field, window);
                         if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
                             if (room_field.get_text() != "" && name_field.get_text() != "") {
-                                // TODO join room?
-                                Game game_ = Game::join_room(room_field.get_text(), name_field.get_text());
+                                Game game_ =
+                                    Game::join_room(room_field.get_text(), name_field.get_text());
                                 return std::make_unique<GameWindow>(std::move(game_));
                             }
                         }
@@ -191,6 +191,8 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 window.close();
                                 Game game(settings);
                                 game.create_room((std::string &)(std::move(name_field.get_text())));
+                                // TODO - print to monitor
+                                // game.get_settings().get_room_id();
                                 return std::make_unique<GameWindow>(std::move(game));
                             }
                         }
