@@ -26,7 +26,6 @@ using user::UserService;
 
 Game::Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub)
     : settings(settings_) {
-    std::cout << "SETTINGS IN CONSTRUCTOR = " << settings_.get_total() << std::endl;
     if (stub_ == nullptr) {
         stub_ = user::UserService::NewStub(  // check that it is valid stub
             grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
@@ -55,8 +54,6 @@ void Game::start_game() {
 //    settings.set_local_player(0);
     deck.set_cards_info();
 
-    std::cout << "PLAYERS COUNT = " << get_players().size() << std::endl;
-    std::cout << "TOTAL = " << settings.get_total() << std::endl;
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
         ClientContext context;
         GetPlayerRequest get_player_request;
@@ -114,7 +111,6 @@ void Game::create_room(const std::string &player_name_) {
     create_room_request.set_player_name(player_name_);
     user::Settings settings1;
 
-    std::cout << "SETTINGS TOTAL" << settings.get_total() << std::endl;
 
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
@@ -122,7 +118,6 @@ void Game::create_room(const std::string &player_name_) {
     settings1.set_local_player(settings.get_local_player());
     settings1.set_seed(settings.get_seed());
     settings1.set_total(settings.get_total());
-    std::cout << "TOTAL = " << settings.get_total() << std::endl;
     //    does not have room id now - will get it from response
     *create_room_request.mutable_settings() = settings1;
 
