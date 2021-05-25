@@ -23,6 +23,7 @@ public:
     void add_card_in_hands(const std::shared_ptr<Card> &card);
     void put_card_as_animal(const std::shared_ptr<Card> &which_card,
                             const std::shared_ptr<Animal> &animal);
+    void put_card_as_animal(const std::shared_ptr<Animal> &animal);
     void use_card_as_property(const std::shared_ptr<Card> &which_card,
                               const std::shared_ptr<Animal> &to_which_card);
 

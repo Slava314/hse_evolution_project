@@ -2,6 +2,7 @@
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 
 #include <string>
+#include <iostream>
 
 std::string get_name(const int i);
 std::string get_rus_name(const int i);

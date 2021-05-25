@@ -1,4 +1,5 @@
 #include "settings.h"
+#include <iostream>
 
 //std::string const &Settings::get_room_name() const {
 //    return room_name;
@@ -26,6 +27,15 @@ void Settings::set_local_player(int i) {
 //    local_player = local_player_ + 1;
 //}
 
+void Settings::print_all()const {
+    std::cout << "quantity of players = " << quantity_of_players <<std::endl;
+    std::cout << "size_of_deck = " << size_of_deck <<std::endl;
+    std::cout << "time of move = " << time_of_move <<std::endl;
+    std::cout << "local_player = " << local_player <<std::endl;
+    std::cout << "seed = " << seed <<std::endl;
+    std::cout << "total = " << total_players << std::endl;
+
+}
 
 int Settings::get_quantity_of_players() const {
     return quantity_of_players;

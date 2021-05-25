@@ -51,24 +51,39 @@ void Game::apply_settings() {
 
 void Game::start_game() {
     apply_settings();
-//    settings.set_local_player(0);
+    //    settings.set_local_player(0);
     deck.set_cards_info();
 
+    //TODO wtf?? - why 3 players
+    std::cout << "quantity of players = " << settings.get_quantity_of_players() << std::endl;
+
+    //should i ask  server - how many players do i have
+/*    ClientContext context;
+    user::Nothing nothing;
+    user::AskHowManyPlayersTotalInGame ask_how_many_players_total_in_game;
+    auto status = stub_->AskHowManyPlayersInTotal(&context, nothing, &ask_how_many_players_total_in_game);
+    int total_players = ask_how_many_players_total_in_game.how_many();
+    players.resize(total_players);*/
+    //SHOULD THIS BE TRUE - DOE NOT INCLUDE THE HOST, BECAUSE NEED TO GET OEPLE, THAT HAS VONNCETED
+//    for (int i = 0; i < total_players; ++i) {
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
-        ClientContext context;
-        GetPlayerRequest get_player_request;
-        GetPlayerResponse get_player_response;
+                ClientContext context;
+                user::GetPlayerRequest get_player_request;
+                user::GetPlayerResponse get_player_response;
 
-        get_player_request.set_player_id(i);
-        get_player_request.set_room_id(settings.get_room_id());
-        auto stream = stub_->GetPlayerName(&context, get_player_request, &get_player_response);
-        std::string name = get_player_response.name();
-        players.emplace_back(name);
-        //---
-        //        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player");
-        //---
+                get_player_request.set_player_id(i);
+                get_player_request.set_room_id(settings.get_room_id());
+                auto stream = stub_->GetPlayerName(&context, get_player_request,
+                &get_player_response);
+                std::string name = get_player_response.name();
+//                if(i == settings.get_local_player() and name != player_name ){
+//                    std::cout << "Player's name does not match with server" << std::endl;
+//                }
+                players.emplace_back(name);
+//                ---
+//        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player");
+        //        ---
     }
-
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
@@ -111,7 +126,6 @@ void Game::create_room(const std::string &player_name_) {
     create_room_request.set_player_name(player_name_);
     user::Settings settings1;
 
-
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
     settings1.set_time_of_move(settings.get_time_of_move());
@@ -128,9 +142,11 @@ void Game::create_room(const std::string &player_name_) {
     }
 
     settings.set_room_id(create_room_response.id());
+    settings.print_all();
 }
 
 Game Game::join_room(const std::string &room_id, const std::string &player_name) {
+    std::cout << "JOIN'\n";
     ClientContext context;
     JoinRoomRequest join_room_request;
     JoinRoomResponse join_room_response;
@@ -141,7 +157,7 @@ Game Game::join_room(const std::string &room_id, const std::string &player_name)
     //    join_room_request.set_player_name(&player_name);
     auto stub_ = user::UserService::NewStub(  // check that it is valid stub
         grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
-    if(stub_ == nullptr){
+    if (stub_ == nullptr) {
         throw GameConnecting("Sorry, cannot join you to the room, our stub_ is nullptr");
     }
 
@@ -160,5 +176,21 @@ Game Game::join_room(const std::string &room_id, const std::string &player_name)
                        join_room_response.settings().room_id()};
 
     Game game(settings1, std::move(stub_));
+    settings1.print_all();
+
     return game;
 }
+
+// bool Game::send_request_to_server(std::function<grpc::Status(void)> func, unsigned int interval)
+// {
+//    std::thread([func, interval]() {
+//        while (true) {
+//            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(interval);
+//            func();
+//            if(r.ok() == 1){
+//                break;
+//            }
+//            std::this_thread::sleep_until(x);
+//        }
+//    }).detach();
+//}

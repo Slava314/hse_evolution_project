@@ -15,7 +15,9 @@ public:
     void generate_deck();
     [[nodiscard]] int get_deck_size() const;
     void cards_delivery(Player& player);
-    void set_random_gen(int seed);
+    void cards_delivery(std::vector<Player> &players);
+
+        void set_random_gen(int seed);
     void set_cards_info();
     int need_card(const Player &player);
 private:

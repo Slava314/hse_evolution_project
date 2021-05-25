@@ -37,26 +37,40 @@ int Deck::need_card(const Player &player) {
         return FULL_GET_CARDS;
     } else {
         if (player.get_animals_on_board().size() + player.get_cards_in_hands().size() + 1 > 6) {
-            return std::max(static_cast<unsigned long>(0), FULL_GET_CARDS - player.get_cards_in_hands().size());
+            auto n = std::max(static_cast<unsigned long>(0),
+                              FULL_GET_CARDS - player.get_cards_in_hands().size());
+            return (n > get_deck_size() ? get_deck_size() : n);
         } else {
-            return player.get_animals_on_board().size() + ADDING_CARDS;
+            auto n = player.get_animals_on_board().size() + ADDING_CARDS;
+            return (n > get_deck_size() ? get_deck_size() : n);
         }
     }
 }
 
-void Deck::cards_delivery(Player &player) {
-//    for (auto &player : players) {
-//        auto need = need_card(player);
-//        while (need--) {
-//            player.add_card_in_hands(deck_of_cards.back());
-//            deck_of_cards.pop_back();
-//        }
-//    }
+void Deck::cards_delivery(std::vector<Player> &players) {
+    for (auto &player : players) {
         auto need = need_card(player);
         while (need--) {
             player.add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();
         }
+    }
+}
+
+void Deck::cards_delivery(Player &player) {
+    //    for (auto &player : players) {
+    //        auto need = need_card(player);
+    //        while (need--) {
+    //            player.add_card_in_hands(deck_of_cards.back());
+    //            deck_of_cards.pop_back();
+    //        }
+    //    }
+
+    auto need = need_card(player);
+    while (need--) {
+        player.add_card_in_hands(deck_of_cards.back());
+        deck_of_cards.pop_back();
+    }
 }
 std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
     return deck_of_cards;
@@ -66,8 +80,9 @@ Deck::Deck(const int &seed, const int &size) {
     random_gen.seed(seed);
     deck_size = size;
 }
+
 void Deck::set_random_gen(int seed) {
-    random_gen = std::mt19937 (seed);
+    random_gen = std::mt19937(seed);
 }
 void Deck::set_cards_info() {
     cards_info.resize(CARDS_TYPE);

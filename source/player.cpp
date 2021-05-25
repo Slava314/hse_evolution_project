@@ -70,6 +70,12 @@ void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
     erase_card_from_hands(which_card);
 }
 
+void Player::put_card_as_animal(const std::shared_ptr<Animal> &animal) {
+    assert(animal.get() != nullptr);
+    animals_on_board.push_back(animal);
+}
+
+
 std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {
     try {
         for (const auto &card : cards_in_hands) {

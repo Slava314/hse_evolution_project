@@ -2,11 +2,15 @@
 #define EVOLUTION_PROJECT_SOURCE_PHASE_H_
 
 #include <SFML/Window/Event.hpp>
+#include <chrono>
+#include <functional>
 #include <memory>
+#include <thread>
 #include <vector>
 #include "animal.h"
 #include "cards.h"
 #include "game_fwd.h"
+#include "server.grpc.pb.h"
 #include "view_fwd.h"
 #include "window_fwd.h"
 
@@ -16,7 +20,7 @@ public:
     virtual std::size_t get_cur_player_index() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual ~Phase() = default;
-
+    const int INTERVAL = 1500;
 };
 
 class DevelopmentPhase : public Phase {

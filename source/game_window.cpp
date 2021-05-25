@@ -103,6 +103,7 @@ void GameWindow::init_window() {
         new_name.setCharacterSize(28);
         players_names.push_back(new_name);
     }
+
     set_players_names_positions();
 }
 
@@ -125,6 +126,27 @@ void GameWindow::make_deck_shape() {
 
 void GameWindow::recalc_cards() {
     player_cards_buttons.clear();
+
+    std::cout << "-----------------------" << std::endl;
+
+    //    std::cout << "PLAYERS QUANTITY " << game.get_players().size() << std::endl;
+    std::cout << "GAME in window &    " << &game << std::endl;
+    std::cout << "get-players WINDOW  ---- " << &game.get_players() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "player eq = " << game.get_cur_player_index() << std::endl;
+
+    std::cout << "player address IN WINDOW " << &game.get_players()[game.get_cur_player_index()]
+              << std::endl;
+
+    std::cout << std::endl;
+    std::cout << "get current player cards in hands "
+              << game.get_players()[game.get_cur_player_index()].get_cards_in_hands().size()
+              << std::endl;
+
+    std::cout << "total cacrds in deck  = " << game.get_deck_size() << std::endl;
+    std::cout << "players size = " << game.get_players().size() << std::endl;
+
     auto cards = game.get_players()[game.get_cur_player_index()].get_cards_in_hands();
     for (const auto &card : cards) {
         bool exist = false;
@@ -147,6 +169,8 @@ void GameWindow::recalc_cards() {
     }
     set_cards_position();
     make_deck_shape();
+
+    std::cout << "||||||||||||||||||||||||" << std::endl;
 }
 
 void GameWindow::set_cards_position() {
@@ -491,6 +515,7 @@ void GameWindow::set_players_names_positions() {
         players_names[player].setPosition((450 - players_names[player].getGlobalBounds().width) / 2,
                                           200);
     }
+    std::cout << "I FELL IN INITWINDOW ALLLLLL" << std::endl;
 }
 
 void PropertyWindow::draw() {
