@@ -56,3 +56,6 @@ void TextField::set_additional_text(const std::string &str) {
     additional_text = sf::Text(str, font, 20);
     additional_text.setFillColor(sf::Color::White);
 }
+sf::Vector2f const &TextField::get_size() const {
+    return shape.getSize();
+}

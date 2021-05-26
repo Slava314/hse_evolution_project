@@ -31,7 +31,7 @@ void Game::start_game(Settings settings_) {
 
     // TODO - ask server about players count and get stream of messages about their names and
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
-        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player", i);
+        players.emplace_back(settings.get_player_name(i), i);
     }
     // временное решение по генерации, пока нет настроек и больше карт
 

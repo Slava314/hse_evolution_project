@@ -28,6 +28,7 @@ public:
     void draw(sf::RenderWindow &window) const;
     sf::RectangleShape const &get_shape() const;
     void set_additional_text(const std::string &str);
+    sf::Vector2f const &get_size() const;
 
 private:
     std::size_t size;
