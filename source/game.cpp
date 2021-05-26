@@ -44,8 +44,36 @@ size_t Game::get_deck_size() {
 }
 
 void Game::apply_settings() {
+    std::cout << "APPLYING SETTINGS \n";
     deck = Deck(settings.get_seed(), settings.get_size_of_deck());
+    //get total players from server - to make sure
+    ClientContext context;
+    user::Request request;
+    user::TotalPlayers response;
+    std::cout << "getting room id = " << settings.get_room_id() << std::endl;
+    request.set_room_id(settings.get_room_id());
+    std::cout <<"I GOT HERE\n";
+    std::cout <<"getting total = " <<  settings.get_total() << std::endl;
+    std::cout << "my own index = " << settings.get_local_player() << std::endl;
+    auto status = stub_->GetTotalPlayers(&context, request, &response);
+    if (!status.ok()) {
+        throw GameConnecting("Could not get total players, sadly");
+    }
+    settings.set_total_players(response.count());
     players.resize(settings.get_total());
+    ///initialize vector of players with their names
+    for (int i = 0; i < players.size(); ++i) {
+        if(i != get_cur_player_index()){
+            //ask server about name
+            user::GetPlayerRequest request_;
+            user::GetPlayerResponse response_;
+            auto status = stub_->GetPlayerName(&context, request_, &response_);
+            if(!status.ok()){
+                //TODO - throw something
+            }
+            players[i].set_name(response_.name());
+        }
+    }
     deck.set_random_gen(settings.get_seed());
 }
 
@@ -66,6 +94,7 @@ void Game::start_game() {
     players.resize(total_players);*/
     //SHOULD THIS BE TRUE - DOE NOT INCLUDE THE HOST, BECAUSE NEED TO GET OEPLE, THAT HAS VONNCETED
 //    for (int i = 0; i < total_players; ++i) {
+
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
                 ClientContext context;
                 user::GetPlayerRequest get_player_request;
@@ -84,6 +113,7 @@ void Game::start_game() {
 //        players.emplace_back("shershen0_" + std::to_string(i + 1) + "_player");
         //        ---
     }
+
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
@@ -146,7 +176,7 @@ void Game::create_room(const std::string &player_name_) {
 }
 
 Game Game::join_room(const std::string &room_id, const std::string &player_name) {
-    std::cout << "JOIN'\n";
+    std::cout << "JOIN\n";
     ClientContext context;
     JoinRoomRequest join_room_request;
     JoinRoomResponse join_room_response;

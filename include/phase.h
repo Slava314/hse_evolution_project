@@ -14,13 +14,14 @@
 #include "view_fwd.h"
 #include "window_fwd.h"
 
+using namespace std::chrono_literals;
 class Phase {
 public:
     virtual std::unique_ptr<View> get_view() = 0;
     virtual std::size_t get_cur_player_index() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual ~Phase() = default;
-    const int INTERVAL = 1500;
+    const int INTERVAL = 100;
 };
 
 class DevelopmentPhase : public Phase {
@@ -42,8 +43,12 @@ public:
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     void run_phase(GameWindow &window, sf::Event event) override;
-    ~DevelopmentPhase() override = default;
+    void parse_message(const std::string &str);
 
+        ~DevelopmentPhase() override = default;
+
+private:
+    void add_animal();
 private:
     Game &game;
     int cur_player_index;

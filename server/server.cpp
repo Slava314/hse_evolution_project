@@ -48,7 +48,8 @@ class ServiceImpl final : public UserService::Service {
                       const CreateRoomRequest *request,
                       CreateRoomResponse *response) override {
         if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
         }
         // TODO - print the id of the room
         std::cout << "CREATE1" << '\n';
@@ -104,7 +105,8 @@ class ServiceImpl final : public UserService::Service {
                     const JoinRoomRequest *request,
                     JoinRoomResponse *reply) override {
         if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
         }
         std::string room_id = request->room_name();
         std::string player_name = request->player_name();
@@ -114,7 +116,7 @@ class ServiceImpl final : public UserService::Service {
         std::cout << "JOIN1.5" << '\n';
 
         if (looking_id == id_sett_room_list.end()) {
-            throw ServerError("Could not join room, there is no such room with this id --- " +
+            return Status(grpc::StatusCode::CANCELLED,"Could not join room, there is no such room with this id --- " +
                               room_id);
         }
         std::cout << "JOIN2" << '\n';
@@ -130,6 +132,7 @@ class ServiceImpl final : public UserService::Service {
         std::cout << "JOIN4" << '\n';
 
         *reply->mutable_settings() = settings;
+        std::cout << "JOIN5" << '\n';
 
         return Status::OK;
     }
@@ -138,29 +141,13 @@ class ServiceImpl final : public UserService::Service {
                              const user::PlayAsAnimalAction *request,
                              user::PlayAsAnimalAction *reply) override {
         if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
         }
         user::Action message;
         message.set_player_id(request->player());
         *message.mutable_play_animal() = *request;
-        saved_messages.push_back(message);
-        return Status::OK;
-    }
-
-    Status AskHowManyPlayersInTotal(ServerContext *context,
-                                    const user::Nothing *request,
-                                    user::AskHowManyPlayersTotalInGame *reply) override {
-        if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
-        }
-        if(id_sett_room_list.find(request->message().value()) == id_sett_room_list.end()){
-            std::cout << "Could not get total players before delivering cards\n";
-//            throw ServerError("Could not get total players before delivering cards");
-        }
-
-        auto looking_settings = id_sett_room_list[request->message().value()];
-        //getting the last's player settings - they have to be valid
-        reply->set_how_many(looking_settings.total());
+        saved_data_for_messages.push_back(message);
         return Status::OK;
     }
 
@@ -176,7 +163,8 @@ class ServiceImpl final : public UserService::Service {
                          const GetPlayerRequest *request,
                          GetPlayerResponse *response) override {
         if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
         }
         int player_id = request->player_id();
         std::string room_id = request->room_id();
@@ -185,11 +173,59 @@ class ServiceImpl final : public UserService::Service {
         return Status::OK;
     }
 
+    Status GetMessage(ServerContext *context,
+    const user::Nothing *request,
+        user::Message *response) override {
+        if(messages.empty()){
+            return Status::CANCELLED;
+        }
+        response->set_str(messages.back());
+        return Status::OK;
+    }
+
+    Status GetDataAboutMove(ServerContext *context,
+                            const user::Nothing *request,
+                            user::Action *response) override {
+        return Status::OK;
+    }
+
+    Status  GetTotalPlayers(ServerContext *context,
+                            const user::Request *request,
+                            user::TotalPlayers *response) override {
+        std::cout << "GRP1 \n";
+        if (context->IsCancelled()) {
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
+        }
+        std::cout << "GRP2 \n";
+
+        std::string room_id = request->room_id();
+
+        std::cout << "GRP3 \n";
+
+        std::cout << "room id = " << room_id << std::endl;
+        if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
+            return Status(grpc::StatusCode::CANCELLED, "Could not join room, there is no such room with this id --- " +
+                room_id);
+        }
+
+        std::cout << "GRP4 \n";
+
+        auto found = id_sett_room_list.find(room_id);
+        response->set_count(found->second.total());
+        std::cout << "GRP5 \n";
+
+        return Status::OK;
+    }
+
+
 private:
     const int ROOM_ID_LEN = 5;
     std::map<std::string, user::Settings> id_sett_room_list;
     std::map<std::pair<int, std::string>, std::string> id_name_player_list;
-    std::vector<user::Action> saved_messages;
+    std::vector<user::Action> saved_data_for_messages;
+    std::vector<std::string> messages;
+    std::vector<std::string> players_names;
 };
 
 void RunServer() {

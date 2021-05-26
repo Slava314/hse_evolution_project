@@ -47,6 +47,8 @@ public:
     const std::string &get_player_name(std::size_t ind) const;
 
     void set_room_id(const std::string &id);
+    void set_total_players(int count);
+
     void print_all() const;
 private:
     int quantity_of_players;
@@ -55,6 +57,7 @@ private:
     int local_player = 0;
     int seed;
     int total_players;
+    std::vector<std::string> players_names;
     std::string room_id;
     std::vector<std::string> players_names;
 };

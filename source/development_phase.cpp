@@ -83,48 +83,130 @@ std::vector<std::vector<std::shared_ptr<Card>>> DevelopmentPhase::get_cards() {
 
 void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                                   std::shared_ptr<Animal> &new_animal) {
-    // TODO - ask умеет ли гуй понимать, что другой пользователь надал именно на эту кнопку
-    // answer - no
-    assert(card.get() != nullptr);
-    assert(new_animal.get() != nullptr);
+    //    assert(card.get() != nullptr);
+    //    assert(new_animal.get() != nullptr);
 
     grpc::ClientContext context;
-    user::PlayAsAnimalAction request;
-    user::PlayAsAnimalAction response;
-    std::chrono::time_point deadline = std::chrono::system_clock::now() +
-        std::chrono::milliseconds(300);
+
+    std::chrono::time_point deadline =
+        std::chrono::system_clock::now() + std::chrono::milliseconds(300);
     context.set_deadline(deadline);
-    grpc::Status status;
-    while (true) {
-        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-        status = game.stub_->AddCardOnTheBoard(&context, request, &response);
-        if (status.ok() == 1) {
-            break;
+
+    /// his turn to make move
+    if (auto cur_player = game.get_cur_player_index();
+        cur_player == game.get_settings().get_local_player()) {
+        user::PlayAsAnimalAction request;
+        user::PlayAsAnimalAction response;
+
+        request.set_player(cur_player);
+        auto status = game.stub_->AddCardOnTheBoard(&context, request, &response);
+        if (status.ok()) {
+            /// evrth is good, make move, make a little ping, to wait for
+            /// other player's to ask server
+            game.get_players()[cur_player].put_card_as_animal(card, new_animal);
+            std::this_thread::sleep_for(250ms);
+        } else {
+            // throw something?
         }
-        std::this_thread::sleep_until(x);
-    }
-
-    int player = response.player();
-
-    //выкладывать карту на поле у конкретного игрока, если она у другого игрока
-    //иначе добавить карту к себе
-    if (player == cur_player_index) {
-        game.get_players()[player].put_card_as_animal(card, new_animal);
     } else {
-        //выкладывать карту на поле у конкретного игрока, если она у другого игрока
-        game.get_players()[player].put_card_as_animal(new_animal);
+        /// ask server to get_message and update other player's animals on the board and then
+        /// redraw them
+        grpc::Status status = grpc::Status::CANCELLED;
+        while (!status.ok()) {
+            user::Nothing nothing;
+            user::Action action;
+            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
+            status = game.stub_->GetDataAboutMove(&context, nothing, &action);
+            if (status.ok() == 1) {
+                int player = action.player_id();
+                auto l = action.mutable_play_animal();
+                std::shared_ptr<Animal> animal;
+                game.get_players()[l->player()].put_card_as_animal(animal);
+                break;
+            } else {
+                std::this_thread::sleep_until(x);
+                continue;
+            }
+        }
     }
 }
 
+void DevelopmentPhase::add_animal() {
+    grpc::ClientContext context;
+
+    std::chrono::time_point deadline =
+        std::chrono::system_clock::now() + std::chrono::milliseconds(300);
+    context.set_deadline(deadline);
+    grpc::Status status = grpc::Status::CANCELLED;
+    while (!status.ok()) {
+        user::Nothing nothing;
+        user::Action action;
+        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
+        status = game.stub_->GetDataAboutMove(&context, nothing, &action);
+        if (status.ok() == 1) {
+            int player = action.player_id();
+            auto l = action.mutable_play_animal();
+            std::shared_ptr<Animal> animal;
+            game.get_players()[l->player()].put_card_as_animal(animal);
+            break;
+        } else {
+            std::this_thread::sleep_until(x);
+            continue;
+        }
+    }
+}
+
+
+void DevelopmentPhase::parse_message(const std::string &str)  {
+    const std::string add_card("Player added new card on the board");
+    if(str.compare(add_card) == true){
+        //вызвать нужную функцию, которая обратится к серверу и отрисует нужную карту
+       add_animal(); //сам разберется кто?
+    }
+}
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
+//    grpc::ClientContext context;
+//    user::Request request;
+//    user::TotalPlayers response;
+//    request.set_room_id(game.get_settings().get_room_id());
+//    game.stub_->GetTotalPlayers(&context, request, &response);
+    std::cout <<"HOW MANY PLAYERS1 = " <<  game.get_settings().get_total() << std::endl;
+    std::cout <<"HOW MANY PLAYERS2 = " <<  game.get_players().size() << std::endl;
+
     // TODO check auto end turn
 
+    // TODO - придется парсить сообщение - какое действие нужно выполнить
     // he cant make any moves - should skip him
 
     int ans = get_view()->handle_event(window, event);
+
+//    grpc::ClientContext context;
+//    if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
+//        /// ask server to get_message and update other player's animals on the board and then
+//        /// redraw them
+//        grpc::Status status = grpc::Status::CANCELLED;
+//        std::string str;
+//        while (!status.ok()) {
+//            user::Nothing nothing;
+//            user::Message message;
+//            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
+//            status = game.stub_->GetMessage(&context, nothing, &message);
+//            if (status.ok() == 1) {
+//                str = message.str();
+//                break;
+//            } else {
+//                std::this_thread::sleep_until(x);
+//                continue;
+//            }
+//        }
+//        parse_message(str); //will call the right function for each message (player's action)
+//    }
+
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
+    //TODO - обработать пропуск хода и всего такого
+
     if (ans != 0) {
         if (ans == 2) {
             end_turn[cur_player_index] = 1;

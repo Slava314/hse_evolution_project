@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
 #        -Wmissing-field-initializers -Wctor-dtor-privacy -Wnon-virtual-dtor
 #        -Wold-style-cast -Woverloaded-virtual -Wsign-promo -Weffc++)
 
-add_compile_options(-O3)
+#add_compile_options(-O3)
 
 find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 

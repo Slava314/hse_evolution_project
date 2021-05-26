@@ -16,12 +16,15 @@ service UserService {
 
   rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){}
 
-  rpc AskHowManyPlayersInTotal(Nothing) returns(AskHowManyPlayersTotalInGame) {}
-  //  rpc get_message(Request) returns (Response) {}
-  //
+  rpc GetMessage(Nothing) returns (Message) {}
+
+  rpc GetDataAboutMove(Nothing) returns (Action) {}
+
+  rpc GetTotalPlayers(Request) returns(TotalPlayers){}
   //  rpc send_message(User) returns (Token) {}
   //
 }
+
 
 message Nothing{
   google.protobuf.Any message = 1;
@@ -32,7 +35,10 @@ message User {
   string name = 2;
 }
 
-message Request {}
+message Request {
+  int32 player_id = 1;
+  string room_id = 2;
+}
 
 message Response {
   User user = 1;
@@ -120,3 +126,10 @@ message Action {
   }
 }
 
+message Message{
+  string str = 1;
+}
+
+message TotalPlayers{
+  int32 count = 1;
+}

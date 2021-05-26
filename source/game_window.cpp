@@ -143,7 +143,7 @@ void GameWindow::recalc_cards() {
               << game.get_players()[game.get_cur_player_index()].get_cards_in_hands().size()
               << std::endl;
 
-    std::cout << "total cacrds in deck  = " << game.get_deck_size() << std::endl;
+    std::cout << "total cards in deck  = " << game.get_deck_size() << std::endl;
     std::cout << "players size = " << game.get_players().size() << std::endl;
 
     auto cards = game.get_players()[game.get_cur_player_index()].get_cards_in_hands();
@@ -497,6 +497,7 @@ void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
 void GameWindow::set_players_names_positions() {
     std::size_t player = game.get_cur_player_index();
     // local player
+    std::cout << "getting players name size = " << players_names.size() << std::endl;
     players_names[player].setPosition(
         (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, WINDOW_HEIGHT - 280);
 
@@ -518,7 +519,7 @@ void GameWindow::set_players_names_positions() {
         players_names[player].setPosition((450 - players_names[player].getGlobalBounds().width) / 2,
                                           200);
     }
-    std::cout << "I FELL IN INITWINDOW ALLLLLL" << std::endl;
+    std::cout << "OUT SET PLAYERS NAMES POSITION    " << std::endl;
 }
 
 void PropertyWindow::draw() {

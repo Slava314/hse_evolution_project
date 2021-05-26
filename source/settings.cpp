@@ -68,4 +68,7 @@ void Settings::set_player_name(const std::string &name, std::size_t ind) {
 }
 const std::string &Settings::get_player_name(std::size_t ind) const {
     return players_names[ind];
+
+void Settings::set_total_players(int count) {
+    total_players = count;
 }
