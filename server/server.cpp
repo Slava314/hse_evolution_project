@@ -135,13 +135,15 @@ class ServiceImpl final : public UserService::Service {
     }
 
     Status AddCardOnTheBoard(ServerContext *context,
-                             const user::AddCardOnTheBoardR *request,
-                             user::AddCardOnTheBoardR *reply) override {
+                             const user::PlayAsAnimalAction *request,
+                             user::PlayAsAnimalAction *reply) override {
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
         }
-        int player = request->player();
-
+        user::Action message;
+        message.set_player_id(request->player());
+        *message.mutable_play_animal() = *request;
+        saved_messages.push_back(message);
         return Status::OK;
     }
 
@@ -155,6 +157,7 @@ class ServiceImpl final : public UserService::Service {
             std::cout << "Could not get total players before delivering cards\n";
 //            throw ServerError("Could not get total players before delivering cards");
         }
+
         auto looking_settings = id_sett_room_list[request->message().value()];
         //getting the last's player settings - they have to be valid
         reply->set_how_many(looking_settings.total());
@@ -186,6 +189,7 @@ private:
     const int ROOM_ID_LEN = 5;
     std::map<std::string, user::Settings> id_sett_room_list;
     std::map<std::pair<int, std::string>, std::string> id_name_player_list;
+    std::vector<user::Action> saved_messages;
 };
 
 void RunServer() {

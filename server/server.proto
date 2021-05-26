@@ -14,7 +14,7 @@ service UserService {
 
   rpc GiveCardFDeck(GiveCardFromDeck) returns (Nothing) {}
 
-  rpc AddCardOnTheBoard(AddCardOnTheBoardR) returns (AddCardOnTheBoardR){}
+  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){}
 
   rpc AskHowManyPlayersInTotal(Nothing) returns(AskHowManyPlayersTotalInGame) {}
   //  rpc get_message(Request) returns (Response) {}
@@ -98,10 +98,25 @@ message PlayerAndRoom{
   string room_id = 2;
 }
 
-message AddCardOnTheBoardR{
+message PlayAsAnimalAction{
   int32 player = 1;
+}
+
+message PlayAsPropertyAction{
+
 }
 
 message AskHowManyPlayersTotalInGame{
   int32 how_many = 1;
 }
+
+message Action {
+  int32 player_id = 1;
+  uint64 unixtimestam = 2;
+
+  oneof ActionData {
+    PlayAsAnimalAction play_animal = 3;
+    PlayAsPropertyAction play_animal_properties  = 4;
+  }
+}
+

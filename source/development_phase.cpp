@@ -89,8 +89,8 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     assert(new_animal.get() != nullptr);
 
     grpc::ClientContext context;
-    user::AddCardOnTheBoardR request;
-    user::AddCardOnTheBoardR response;
+    user::PlayAsAnimalAction request;
+    user::PlayAsAnimalAction response;
     std::chrono::time_point deadline = std::chrono::system_clock::now() +
         std::chrono::milliseconds(300);
     context.set_deadline(deadline);
