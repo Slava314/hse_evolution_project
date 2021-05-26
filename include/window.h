@@ -162,6 +162,7 @@ public:
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
+        wait_text = sf::Text("", font);
         init_window();
     }
 
@@ -169,6 +170,7 @@ public:
     ~JoinGameWindow() override = default;
 
 private:
+    sf::Text wait_text;
     TextField room_field;
     TextField name_field;
     TextButton join_button;

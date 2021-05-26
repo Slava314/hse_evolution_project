@@ -49,7 +49,6 @@ std::unique_ptr<Window> GameWindow::handle_events() {
                 break;
             }
         }
-
         draw();
     }
     assert(false);

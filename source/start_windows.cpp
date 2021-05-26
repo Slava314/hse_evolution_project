@@ -125,12 +125,14 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                     window.close();
                     return nullptr;
                 case sf::Event::MouseButtonPressed:
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        check_text_field(room_field, window);
-                        check_text_field(name_field, window);
-                        if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            if (room_field.get_text() != "" && name_field.get_text() != "") {
-                                // TODO join room?
+                    if (wait_text.getString() == "") {
+                        if (event.mouseButton.button == sf::Mouse::Left) {
+                            check_text_field(room_field, window);
+                            check_text_field(name_field, window);
+                            if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
+                                if (room_field.get_text() != "" && name_field.get_text() != "") {
+                                    wait_text.setString("please wait for other players");
+                                }
                             }
                         }
                     }
@@ -168,9 +170,15 @@ void JoinGameWindow::init_window() {
 
 void JoinGameWindow::draw() {
     window.clear();
-    room_field.draw(window);
-    name_field.draw(window);
-    join_button.draw(window);
+    if (wait_text.getString() != "") {
+        wait_text.setPosition((WINDOW_WIDTH - wait_text.getLocalBounds().width) / 2,
+                              (WINDOW_HEIGHT - wait_text.getLocalBounds().height) / 2);
+        window.draw(wait_text);
+    } else {
+        room_field.draw(window);
+        name_field.draw(window);
+        join_button.draw(window);
+    }
     window.display();
 }
 
@@ -312,6 +320,9 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                                 }
                             }
                         } else {
+                            for (int i = 0; i < number_of_players; ++i) {
+                                check_text_field(players_names[i], window);
+                            }
                             if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
                                 int cnt = 0;
                                 for (int i = 0; i < number_of_players; ++i) {
