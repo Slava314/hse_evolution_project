@@ -21,7 +21,6 @@ size_t Game::get_deck_size() {
 void Game::start_game(Settings settings_) {
     settings = settings_;
     settings.set_local_player(0);
-    // TODO set number of players
 
     // TODO - get count of players as a parametr. From GUI? or lobby?
     //    players.resize(1);
@@ -72,4 +71,7 @@ std::size_t Game::get_cur_player_index() const {
 }
 Settings const &Game::get_settings() const {
     return settings;
+}
+std::size_t Game::get_local_player_index() const {
+    return settings.get_local_player();
 }

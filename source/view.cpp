@@ -43,7 +43,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             window.click_card(clicked_card);
             return 0;
         }
-        if (window.check_new_animal()) {
+        if (window.get_selected_card() != nullptr && window.check_new_animal()) {
             add_animal(window);
             return 1;
         }

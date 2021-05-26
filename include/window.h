@@ -64,7 +64,7 @@ public:
     void init_window();
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
-    void set_animals_position(bool with_new_place);
+    void set_animals_position();
     void set_players_names_positions();
     void recalc_animals();
     sf::RenderWindow &get_window();
@@ -97,10 +97,12 @@ private:
     TextButton end_turn;
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
+    sf::Text turn_of;
+    TextButton play_animal_button;
+    TextButton feed_animal_button;
     std::vector<CardButton> player_cards_buttons;
     std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
-    Button place_for_new_animal;
     TextButton food;
     bool food_clicked = false;
     std::vector<sf::Text> players_names;

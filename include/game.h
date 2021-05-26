@@ -25,6 +25,7 @@ public:
     Deck &get_deck();
     size_t get_deck_size();
     Settings const &get_settings() const;
+    std::size_t get_local_player_index() const;
 
 private:
     std::unique_ptr<Phase> phase;
