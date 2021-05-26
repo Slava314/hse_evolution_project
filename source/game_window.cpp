@@ -61,6 +61,7 @@ void GameWindow::draw() {
     }
     window.draw(deck_shape);
     window.draw(deck_text);
+    window.draw(turn_of);
     for (const auto &card : player_cards_buttons) {
         card.draw(window);
     }
@@ -84,6 +85,10 @@ void GameWindow::draw() {
 
 void GameWindow::init_window() {
     make_deck_shape();
+
+    turn_of.setString("Turn of: " + game.get_players()[game.get_cur_player_index()].get_name());
+    turn_of.setFont(font);
+    turn_of.setCharacterSize(28);
 
     end_turn.set_size({150, 40});
     end_turn.set_color(sf::Color(55, 55, 55));
@@ -456,6 +461,7 @@ void GameWindow::recalc_animals() {
 }
 
 void GameWindow::change_player() {
+    turn_of.setString("Turn of: " + game.get_players()[game.get_cur_player_index()].get_name());
     recalc_cards();
     set_animals_position();
 }
