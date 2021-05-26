@@ -190,17 +190,23 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                         check_text_field(number_of_cards_field, window);
                         check_text_field(seconds_for_turn_field, window);
                         if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            if (room_field.get_text() != "" && name_field.get_text() != "" &&
-                                number_of_players_field.get_text() != "" &&
-                                number_of_cards_field.get_text() != "" &&
-                                seconds_for_turn_field.get_text() != "") {
-                                Settings settings(room_field.get_text(),
-                                                  std::stoi(number_of_players_field.get_text()),
-                                                  std::stoi(number_of_cards_field.get_text()),
-                                                  std::stoi(seconds_for_turn_field.get_text()));
+                            if (room_id.getString() == "") {
+                                if (room_field.get_text() != "" && name_field.get_text() != "" &&
+                                    number_of_players_field.get_text() != "" &&
+                                    number_of_cards_field.get_text() != "" &&
+                                    seconds_for_turn_field.get_text() != "") {
+                                    settings =
+                                        Settings(room_field.get_text(),
+                                                 std::stoi(number_of_players_field.get_text()),
+                                                 std::stoi(number_of_cards_field.get_text()),
+                                                 std::stoi(seconds_for_turn_field.get_text()));
+                                    settings.set_player_name(name_field.get_text(), 0);
+                                    // TODO get room id in room_id
+                                    room_id.setString("room id: 1");
+                                }
+                            } else {
                                 window.close();
                                 return std::make_unique<GameWindow>(settings);
-                                // TODO make room?
                             }
                         }
                     }
@@ -262,11 +268,17 @@ void MakeGameWindow::init_window() {
 
 void MakeGameWindow::draw() {
     window.clear();
-    room_field.draw(window);
-    name_field.draw(window);
-    number_of_cards_field.draw(window);
-    number_of_players_field.draw(window);
-    seconds_for_turn_field.draw(window);
+    if (room_id.getString() != "") {
+        room_id.setPosition((WINDOW_WIDTH - room_id.getLocalBounds().width) / 2,
+                            (WINDOW_HEIGHT - room_id.getLocalBounds().height) / 2);
+        window.draw(room_id);
+    } else {
+        room_field.draw(window);
+        name_field.draw(window);
+        number_of_cards_field.draw(window);
+        number_of_players_field.draw(window);
+        seconds_for_turn_field.draw(window);
+    }
     start_button.draw(window);
     window.display();
 }

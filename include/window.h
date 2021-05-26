@@ -186,6 +186,7 @@ public:
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
+        room_id = sf::Text("", font);
         init_window();
     }
 
@@ -193,17 +194,18 @@ public:
     ~MakeGameWindow() override = default;
 
 private:
+    sf::Text room_id;
     TextField room_field;
     TextField name_field;
     TextField number_of_cards_field;
     TextField number_of_players_field;
     TextField seconds_for_turn_field;
     TextButton start_button;
+    Settings settings;
 
     void init_window();
     void draw() override;
 };
-
 
 class StartLocalGameWindow : public Window {
 public:
