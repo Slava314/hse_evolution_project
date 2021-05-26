@@ -90,8 +90,8 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
             sum += 1;
             if (sum == game.get_players().size()) {
                 kill_animals();
-                window.recalc_animals();
                 set_next_phase();
+                window.recalc_animals();
                 return;
             }
         }

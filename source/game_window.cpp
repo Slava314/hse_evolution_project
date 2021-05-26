@@ -49,7 +49,6 @@ std::unique_ptr<Window> GameWindow::handle_events() {
                 break;
             }
         }
-
         draw();
     }
     assert(false);
@@ -384,8 +383,10 @@ std::shared_ptr<Card> const &GameWindow::get_selected_card() const {
 }
 
 void GameWindow::make_food() {
-    food.set_size({40, 40});
+    food.set_size({50, 50});
     food.set_color(sf::Color::Yellow);
+    food.set_outline_color(sf::Color::Green);
+    food.set_outline_thickness(0);
     food.set_text(
         std::to_string(dynamic_cast<FeedingPhase *>(game.get_phase().get())->get_food_balance()),
         font);
@@ -418,12 +419,14 @@ bool GameWindow::check_food() {
 void GameWindow::click_food() {
     if (!food_clicked) {
         food_clicked = true;
+        food.set_outline_thickness(5);
         for (auto &animal : player_animals_buttons[game.get_cur_player_index()]) {
             if (!(animal.get_object()->is_hungry())) {
                 animal.deactivate();
             }
         }
     } else {
+        food.set_outline_thickness(0);
         food_clicked = false;
         for (auto &animal : player_animals_buttons[game.get_cur_player_index()]) {
             animal.activate();

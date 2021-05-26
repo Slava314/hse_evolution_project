@@ -2,6 +2,7 @@
 #define EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_
 
 #include <string>
+#include <vector>
 
 class Settings {
 public:
@@ -9,6 +10,7 @@ public:
 
     Settings() = default;
 
+    //TODO - resize player_names with valid quantity
     // constructor for window_settings
     Settings(const std::string &room_name_,
              const int &quantity_,
@@ -41,6 +43,8 @@ public:
     int get_seed() const;
     int get_total() const;
     std::string get_room_id() const;
+    void set_player_name(const std::string &name, std::size_t ind);
+    const std::string &get_player_name(std::size_t ind) const;
 
     void set_room_id(const std::string &id);
     void print_all() const;
@@ -52,6 +56,7 @@ private:
     int seed;
     int total_players;
     std::string room_id;
+    std::vector<std::string> players_names;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_

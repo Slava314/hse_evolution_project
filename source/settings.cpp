@@ -63,3 +63,9 @@ std::string Settings::get_room_id() const {
 void Settings::set_room_id(const std::string &id) {
     room_id = id;
 }
+void Settings::set_player_name(const std::string &name, std::size_t ind) {
+    players_names[ind] = name;
+}
+const std::string &Settings::get_player_name(std::size_t ind) const {
+    return players_names[ind];
+}
