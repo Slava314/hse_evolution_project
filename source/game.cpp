@@ -75,3 +75,9 @@ Settings const &Game::get_settings() const {
 std::size_t Game::get_local_player_index() const {
     return settings.get_local_player();
 }
+void Game::set_end_game(int i) {
+    end_of_game = i;
+}
+int Game::get_end_game() const {
+    return end_of_game;
+}

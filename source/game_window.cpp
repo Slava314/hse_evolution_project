@@ -35,7 +35,6 @@ int calc_player(int current, int other) {
 }  // namespace
 
 std::unique_ptr<Window> GameWindow::handle_events() {
-    int count = 0;
     while (window.isOpen()) {
         sf::Event event{};
         if (window.waitEvent(event)) {
@@ -45,6 +44,10 @@ std::unique_ptr<Window> GameWindow::handle_events() {
             }
             if (game.get_phase()) {
                 game.get_phase()->run_phase(*this, event);
+                if (game.get_end_game() == 2) {
+                    window.close();
+                    return std::make_unique<EndGameWindow>(std::move(game));
+                }
             } else {
                 break;
             }
@@ -62,6 +65,8 @@ void GameWindow::draw() {
     window.draw(deck_shape);
     window.draw(deck_text);
     window.draw(turn_of);
+    instruction.setPosition(WINDOW_WIDTH - instruction.getLocalBounds().width - 10, 0);
+    window.draw(instruction);
     for (const auto &card : player_cards_buttons) {
         card.draw(window);
     }
@@ -89,6 +94,10 @@ void GameWindow::init_window() {
     turn_of.setString("Turn of: " + game.get_players()[game.get_cur_player_index()].get_name());
     turn_of.setFont(font);
     turn_of.setCharacterSize(28);
+
+    instruction.setString("hello");
+    instruction.setFont(font);
+    instruction.setCharacterSize(28);
 
     end_turn.set_size({150, 40});
     end_turn.set_color(sf::Color(55, 55, 55));
@@ -420,11 +429,21 @@ void GameWindow::click_food() {
                 animal.deactivate();
             }
         }
+        for (int i = 0; i < player_animals_buttons.size(); ++i) {
+            if (i == game.get_cur_player_index()) {
+                continue;
+            }
+            for (auto &player_animal_button : player_animals_buttons[i]) {
+                player_animal_button.deactivate();
+            }
+        }
     } else {
         food.set_outline_thickness(0);
         food_clicked = false;
-        for (auto &animal : player_animals_buttons[game.get_cur_player_index()]) {
-            animal.activate();
+        for (int i = 0; i < player_animals_buttons.size(); ++i) {
+            for (auto &player_animal_button : player_animals_buttons[i]) {
+                player_animal_button.activate();
+            }
         }
     }
 }
@@ -442,8 +461,10 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
         index >= 0) {
         make_food();
         food_clicked = false;
-        for (auto &ani : player_animals_buttons[game.get_cur_player_index()]) {
-            ani.activate();
+        for (int i = 0; i < player_animals_buttons.size(); ++i) {
+            for (auto &player_animal_button : player_animals_buttons[i]) {
+                player_animal_button.activate();
+            }
         }
     }
 }

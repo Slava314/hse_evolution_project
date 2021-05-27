@@ -26,12 +26,15 @@ public:
     size_t get_deck_size();
     Settings const &get_settings() const;
     std::size_t get_local_player_index() const;
+    void set_end_game(int i);
+    int get_end_game() const;
 
 private:
     std::unique_ptr<Phase> phase;
     std::vector<Player> players;
     Deck deck;
     Settings settings;
+    int end_of_game = 0;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

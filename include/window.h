@@ -98,6 +98,7 @@ private:
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     sf::Text turn_of;
+    sf::Text instruction;
     TextButton play_animal_button;
     TextButton feed_animal_button;
     std::vector<CardButton> player_cards_buttons;
@@ -235,6 +236,32 @@ private:
     TextField field_for_number_of_players;
     TextButton start_button;
     Settings settings;
+
+    void init_window();
+    void draw() override;
+};
+
+class EndGameWindow : public Window {
+public:
+    EndGameWindow(Game game_) : game(std::move(game_)) {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "End game",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~EndGameWindow() override = default;
+
+private:
+    Game game;
+    std::vector<std::tuple<std::string, int, int>> results;
+    std::vector<sf::Text> leaders_name;
+    std::vector<sf::Text> leaders_score;
+    sf::Text leaderboard;
 
     void init_window();
     void draw() override;
