@@ -36,9 +36,11 @@ public:
     size_t get_deck_size();
     Settings const &get_settings() const;
 
+
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
 
     std::unique_ptr<user::UserService::Stub> stub_;
+    //    Game() = default;
 private:
     Game() = default;
     void apply_settings();

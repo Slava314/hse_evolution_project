@@ -125,16 +125,6 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                     window.close();
                     return nullptr;
                 case sf::Event::MouseButtonPressed:
-//<<<<<<< HEAD
-//                    if (event.mouseButton.button == sf::Mouse::Left) {
-//                        check_text_field(room_field, window);
-//                        check_text_field(name_field, window);
-//                        if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
-//                            if (room_field.get_text() != "" && name_field.get_text() != "") {
-//                                Game game_ =
-//                                    Game::join_room(room_field.get_text(), name_field.get_text());
-//                                return std::make_unique<GameWindow>(std::move(game_));
-//=======
                     if (wait_text.getString() == "") {
                         if (event.mouseButton.button == sf::Mouse::Left) {
                             check_text_field(room_field, window);
@@ -142,8 +132,13 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                             if (join_button.is_clicked(sf::Mouse::getPosition(window))) {
                                 if (room_field.get_text() != "" && name_field.get_text() != "") {
                                     wait_text.setString("please wait for other players");
+                                    Game game_ = Game::join_room(room_field.get_text(),
+                                                                 name_field.get_text());
+
+                                    //TODO - ask server - has the game started already?
+//                                    window.close();
+                                    return std::make_unique<GameWindow>(std::move(game_));
                                 }
-//>>>>>>> origin/master
                             }
                         }
                     }
@@ -209,32 +204,28 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                         check_text_field(number_of_cards_field, window);
                         check_text_field(seconds_for_turn_field, window);
                         if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
-                            if (room_id.getString() == "") {
-                                if (room_field.get_text() != "" && name_field.get_text() != "" &&
-                                    number_of_players_field.get_text() != "" &&
-                                    number_of_cards_field.get_text() != "" &&
-                                    seconds_for_turn_field.get_text() != "") {
-                                    settings =
-                                        Settings(room_field.get_text(),
-                                                 std::stoi(number_of_players_field.get_text()),
-                                                 std::stoi(number_of_cards_field.get_text()),
-                                                 std::stoi(seconds_for_turn_field.get_text()));
-                                    settings.set_player_name(name_field.get_text(), 0);
-                                    // TODO get room id in room_id
-                                    room_id.setString("room id: 1");
-                                }
-                            } else {
+                            if (room_field.get_text() != "" && name_field.get_text() != "" &&
+                                number_of_players_field.get_text() != "" &&
+                                number_of_cards_field.get_text() != "" &&
+                                seconds_for_turn_field.get_text() != "") {
+                                settings =
+                                    Settings(room_field.get_text(),
+                                             std::stoi(number_of_players_field.get_text()),
+                                             std::stoi(number_of_cards_field.get_text()),
+                                             std::stoi(seconds_for_turn_field.get_text()));
+                            }
+                            Game game(settings);
+
+                            game.create_room((std::move(name_field.get_text())));
+
+                            if (room_id.getString() != "") {
+                                //TODO call grpc
                                 window.close();
-<<<<<<< HEAD
-                                Game game(settings);
-                                game.create_room((std::string &)(std::move(name_field.get_text())));
                                 // TODO - print to monitor
                                 // game.get_settings().get_room_id();
                                 return std::make_unique<GameWindow>(std::move(game));
-=======
-                                return std::make_unique<GameWindow>(settings);
->>>>>>> origin/master
                             }
+                            room_id.setString("room id: " + game.get_settings().get_room_id());
                         }
                     }
                     break;
@@ -349,12 +340,33 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                                         cnt++;
                                     }
                                 }
+
                                 if (cnt == number_of_players) {
+                                    std::cout << "WHERE AM I\n";
+
                                     for (int i = 0; i < number_of_players; ++i) {
                                         settings.set_player_name(players_names[i].get_text(), i);
+                                        std::cout << "cant make it1 \n";
                                     }
+                                    std::cout << "WHERE AM I2\n";
+
+                                    std::cout << "cant make it2 \n";
+
                                     window.close();
-                                    return std::make_unique<GameWindow>(settings);
+                                    std::cout << "cant make it3 \n";
+
+                                    Game game(settings);
+                                    std::cout << "cant make it4 \n";
+
+                                    game.create_room((std::string &)(std::move(
+                                        players_names[game.get_settings().get_local_player()]
+                                            .get_text())));
+                                    std::cout << "cant make it5 \n";
+
+                                    return std::make_unique<GameWindow>(std::move(game));
+
+                                    //                                    return
+                                    //                                    std::make_unique<GameWindow>(settings);
                                 }
                             }
                         }

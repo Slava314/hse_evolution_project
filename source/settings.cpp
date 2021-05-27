@@ -66,9 +66,14 @@ void Settings::set_room_id(const std::string &id) {
 void Settings::set_player_name(const std::string &name, std::size_t ind) {
     players_names[ind] = name;
 }
+void Settings::set_name_in_players_name(const std::string &str){
+    players_names.push_back(str);
+}
 const std::string &Settings::get_player_name(std::size_t ind) const {
     return players_names[ind];
+}
 
 void Settings::set_total_players(int count) {
     total_players = count;
 }
+

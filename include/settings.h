@@ -45,9 +45,10 @@ public:
     std::string get_room_id() const;
     void set_player_name(const std::string &name, std::size_t ind);
     const std::string &get_player_name(std::size_t ind) const;
-
+    void set_name_in_players_name(const std::string &str);
     void set_room_id(const std::string &id);
     void set_total_players(int count);
+
 
     void print_all() const;
 private:
@@ -59,7 +60,6 @@ private:
     int total_players;
     std::vector<std::string> players_names;
     std::string room_id;
-    std::vector<std::string> players_names;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_SETTINGS_H_

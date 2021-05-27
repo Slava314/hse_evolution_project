@@ -47,12 +47,13 @@ class ServiceImpl final : public UserService::Service {
     Status CreateRoom(ServerContext *context,
                       const CreateRoomRequest *request,
                       CreateRoomResponse *response) override {
+        std::cout << "Creating server - successfully\n";
+
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
         // TODO - print the id of the room
-        std::cout << "CREATE1" << '\n';
 
         std::string room_id;
         while (1) {
@@ -72,38 +73,29 @@ class ServiceImpl final : public UserService::Service {
                 continue;
             }
         }
-        std::cout << "CREATE2" << '\n';
 
-        std::cout << "room_id len = " << room_id.size() << std::endl;
-        std::cout << "room id --- " << room_id << std::endl;
         //        assert(room_id.size() == ROOM_ID_LEN);
         user::Settings settings = request->settings();
-        std::cout << (request->settings().seed() == 0) << std::endl;
-        std::cout << "GETTING SEED  = " << settings.seed() << std::endl;
-        std::cout << "CREATE3" << '\n';
 
-        /// seed is random for specific room
-        // gets it from the host settings
-        //        settings.set_seed(random());
+        settings.set_room_id(room_id);
         settings.set_total(1);
         /// adding new room with settings
         id_sett_room_list.insert({room_id, settings});
         /// adding player's /*id*/ and /*name*/
+        pl_id_room_id_player_list.insert({{0, room_id}, request->player_name()});
 
-        std::cout << "CREATE4" << '\n';
-
-        id_name_player_list.insert({{0, room_id}, request->player_name()});
         response->set_id(room_id);
 
-        std::cout << "CREATE5" << '\n';
-        std::cout << "is_sett_room_list.size() = " << id_sett_room_list.size() << std::endl;
-        std::cout << "room_id = " << room_id << std::endl;
+        std::cout << "room id = " << room_id << std::endl;
+        std::cout << "Creating server - successfully - getting out of here\n";
+
         return Status::OK;
     }
 
     Status JoinRoom(ServerContext *context,
                     const JoinRoomRequest *request,
                     JoinRoomResponse *reply) override {
+        std::cout << "Joining server - successfully\n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -111,28 +103,24 @@ class ServiceImpl final : public UserService::Service {
         std::string room_id = request->room_name();
         std::string player_name = request->player_name();
 
-        std::cout << "JOIN1" << '\n';
         auto looking_id = id_sett_room_list.find(room_id);
-        std::cout << "JOIN1.5" << '\n';
-
         if (looking_id == id_sett_room_list.end()) {
-            return Status(grpc::StatusCode::CANCELLED,"Could not join room, there is no such room with this id --- " +
-                              room_id);
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Could not join room, there is no such room with this id --- " + room_id);
         }
-        std::cout << "JOIN2" << '\n';
 
         user::Settings settings = looking_id->second;
 
         settings.set_total(settings.total() + 1);
         settings.set_local_player(settings.local_player() + 1);
         // update settings in map
-        std::cout << "JOIN3" << '\n';
+
         id_sett_room_list.find(room_id)->second = settings;
-        id_name_player_list[{settings.local_player(), room_id}] = player_name;
-        std::cout << "JOIN4" << '\n';
+        pl_id_room_id_player_list.insert({{settings.local_player(), room_id}, player_name});
+
 
         *reply->mutable_settings() = settings;
-        std::cout << "JOIN5" << '\n';
+        std::cout << "Joining server - successfully - getting out of here\n";
 
         return Status::OK;
     }
@@ -162,21 +150,31 @@ class ServiceImpl final : public UserService::Service {
     Status GetPlayerName(ServerContext *context,
                          const GetPlayerRequest *request,
                          GetPlayerResponse *response) override {
+        std::cout << "GetPlayerName - 1 \n";
+
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
         int player_id = request->player_id();
         std::string room_id = request->room_id();
-        std::string name = id_name_player_list[{player_id, room_id}];
+        std::cout << "got player id = " << request->player_id() << std::endl;
+        std::cout << "got room id = " << request->room_id() << std::endl;
+        if (pl_id_room_id_player_list.find({player_id, room_id}) ==
+            pl_id_room_id_player_list.end()) {
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Could get player name with such id  --- " + std::to_string(player_id));
+        }
+        std::string name = pl_id_room_id_player_list[{player_id, room_id}];
         response->set_name(name);
+        std::cout << "GetPlayerName - 2 \n";
         return Status::OK;
     }
 
     Status GetMessage(ServerContext *context,
-    const user::Nothing *request,
-        user::Message *response) override {
-        if(messages.empty()){
+                      const user::Nothing *request,
+                      user::Message *response) override {
+        if (messages.empty()) {
             return Status::CANCELLED;
         }
         response->set_str(messages.back());
@@ -189,40 +187,34 @@ class ServiceImpl final : public UserService::Service {
         return Status::OK;
     }
 
-    Status  GetTotalPlayers(ServerContext *context,
-                            const user::Request *request,
-                            user::TotalPlayers *response) override {
-        std::cout << "GRP1 \n";
+    Status GetTotalPlayers(ServerContext *context,
+                           const user::Request *request,
+                           user::TotalPlayers *response) override {
+        std::cout << "GetTotalPlayers - 1 \n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
-        std::cout << "GRP2 \n";
 
         std::string room_id = request->room_id();
 
-        std::cout << "GRP3 \n";
-
-        std::cout << "room id = " << room_id << std::endl;
         if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
-            return Status(grpc::StatusCode::CANCELLED, "Could not join room, there is no such room with this id --- " +
-                room_id);
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Could not join room, there is no such room with this id --- " + room_id);
         }
-
-        std::cout << "GRP4 \n";
 
         auto found = id_sett_room_list.find(room_id);
         response->set_count(found->second.total());
-        std::cout << "GRP5 \n";
+
+        std::cout << "GetTotalPlayers - 2 \n";
 
         return Status::OK;
     }
 
-
 private:
-    const int ROOM_ID_LEN = 5;
+    const int ROOM_ID_LEN = 2;
     std::map<std::string, user::Settings> id_sett_room_list;
-    std::map<std::pair<int, std::string>, std::string> id_name_player_list;
+    std::map<std::pair<int, std::string>, std::string> pl_id_room_id_player_list;
     std::vector<user::Action> saved_data_for_messages;
     std::vector<std::string> messages;
     std::vector<std::string> players_names;

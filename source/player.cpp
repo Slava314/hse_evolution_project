@@ -64,14 +64,14 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
 
 void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
                                 const std::shared_ptr<Animal> &animal) {
-    assert(which_card.get() != nullptr);
-    assert(animal.get() != nullptr);
+//    assert(which_card.get() != nullptr);
+//    assert(animal.get() != nullptr);
     animals_on_board.push_back(animal);
     erase_card_from_hands(which_card);
 }
 
 void Player::put_card_as_animal(const std::shared_ptr<Animal> &animal) {
-    assert(animal.get() != nullptr);
+//    assert(animal.get() != nullptr);
     animals_on_board.push_back(animal);
 }
 
