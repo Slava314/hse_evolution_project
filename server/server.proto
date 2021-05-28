@@ -18,7 +18,7 @@ service UserService {
 
   rpc GetMessage(Nothing) returns (Message) {}
 
-  rpc GetDataAboutMove(Nothing) returns (Action) {}
+  rpc GetDataAboutMove(Request) returns (Action) {}
 
   rpc GetTotalPlayers(Request) returns(TotalPlayers){}
 
@@ -110,6 +110,7 @@ message PlayerAndRoom{
 
 message PlayAsAnimalAction{
   int32 player = 1;
+  string room_id = 2;
 }
 
 message PlayAsPropertyAction{

@@ -130,10 +130,25 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        if (id_sett_room_list.find(request->room_id()) == id_sett_room_list.end()) {
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Could not find room in HostHasStartedTheGame, there is no such room "
+                          "with this id --- " +
+                              request->room_id());
+        }
+
         user::Action message;
+
         message.set_player_id(request->player());
         *message.mutable_play_animal() = *request;
+
+        auto a = id_sett_room_list.find(request->room_id());
+        int total_players = a->second.total();
+
+        messages.push_back({"Player added new card on the board", total_players});
         saved_data_for_messages.push_back(message);
+
         return Status::OK;
     }
 
@@ -180,7 +195,7 @@ class ServiceImpl final : public UserService::Service {
     }
 
     Status GetDataAboutMove(ServerContext *context,
-                            const user::Nothing *request,
+                            const user::Request *request,
                             user::Action *response) override {
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -190,7 +205,6 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, the message vector is empty.");
         }
-//        response.
 
         return Status::OK;
     }
@@ -209,8 +223,10 @@ class ServiceImpl final : public UserService::Service {
         std::cout << "room id in GetTotalPlayers = " << room_id << std::endl;
 
         if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
-            return Status(grpc::StatusCode::CANCELLED,
-                          "Could not join room in GetTotalPlayers, there is no such room with this id --- " + room_id);
+            return Status(
+                grpc::StatusCode::CANCELLED,
+                "Could not join room in GetTotalPlayers, there is no such room with this id --- " +
+                    room_id);
         }
 
         auto found = id_sett_room_list.find(room_id);
@@ -237,10 +253,11 @@ class ServiceImpl final : public UserService::Service {
             std::cout << "getting room id  = " << x.first << std::endl;
         }
 
-//        if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
-//            return Status(grpc::StatusCode::CANCELLED,
-//                          "Could not find room in HostHasStartedTheGame, there is no such room with this id --- " + room_id);
-//        }
+        //                if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
+        //                    return Status(grpc::StatusCode::CANCELLED,
+        //                                  "Could not find room in HostHasStartedTheGame, there is
+        //                                  no such room with this id --- " + room_id);
+        //                }
 
         auto a = id_sett_room_list.find(room_id);
         int total_players = a->second.total();
@@ -261,7 +278,7 @@ class ServiceImpl final : public UserService::Service {
                           "Could not get message, message vector is empty ");
         }
 
-        if(messages.back().first == "Game has started") {
+        if (messages.back().first == "Game has started") {
             if (messages.back().second == 1) {
                 messages.pop_back();
                 return Status::OK;
@@ -270,6 +287,8 @@ class ServiceImpl final : public UserService::Service {
                 return Status::OK;
             }
         }
+        // by default?
+        return grpc::Status::CANCELLED;
     }
 
 private:

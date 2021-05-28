@@ -10,7 +10,6 @@
 
 class Player {
 public:
-    /// i will do it
     Player() = default;
     explicit Player(std::string name_);
 

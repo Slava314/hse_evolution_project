@@ -183,7 +183,7 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
 
 void JoinGameWindow::init_window() {
     room_field = TextField(20, font, "meow");
-    room_field.set_additional_text("Enter room name:");
+    room_field.set_additional_text("Enter room id:");
     room_field.set_position(
         sf::Vector2f((window.getSize().x - 2 * room_field.get_size().x) / 2.0 - FREE_SPACE,
                      (window.getSize().y - room_field.get_size().y) / 2.0));

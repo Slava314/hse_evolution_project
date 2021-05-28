@@ -105,6 +105,8 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
         user::PlayAsAnimalAction request;
         user::PlayAsAnimalAction response;
 
+        request.set_room_id(game.get_settings().get_room_id());
+        ///tell server who added the card
         request.set_player(cur_player);
         auto status = game.stub_->AddCardOnTheBoard(&context, request, &response);
         if (status.ok()) {
@@ -113,20 +115,21 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
             game.get_players()[cur_player].put_card_as_animal(card, new_animal);
             std::this_thread::sleep_for(250ms);
         } else {
-            // throw something?
+            // todo throw something?
         }
     } else {
         /// ask server to get_message and update other player's animals on the board and then
         /// redraw them
         grpc::Status status = grpc::Status::CANCELLED;
         while (!status.ok()) {
-            user::Nothing nothing;
-            user::Action action;
+            user::Request request;
+            user::Action response;
             auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-            status = game.stub_->GetDataAboutMove(&context, nothing, &action);
+            request.set_room_id(game.get_settings().get_room_id());
+            status = game.stub_->GetDataAboutMove(&context, request, &response);
             if (status.ok() == 1) {
-                int player = action.player_id();
-                auto l = action.mutable_play_animal();
+                int player = response.player_id();
+                auto l = response.mutable_play_animal();
                 std::shared_ptr<Animal> animal;
                 game.get_players()[l->player()].put_card_as_animal(animal);
                 break;
@@ -144,20 +147,23 @@ void DevelopmentPhase::add_animal() {
      * иначе - беру запрос от сервера и смотрю - кто походил и отрисовываю его уже
      */
 
-//    if(game.get_cur_player_index() == )
+    if(game.get_cur_player_index() == this->game.get_settings().get_local_player()){
+
+    }
+
     grpc::ClientContext context;
 
     std::chrono::time_point deadline =
-        std::chrono::system_clock::now() + std::chrono::milliseconds(300);
+        std::chrono::system_clock::now() + std::chrono::milliseconds(500);
     context.set_deadline(deadline);
 
     grpc::Status status = grpc::Status::CANCELLED;
 
     while (!status.ok()) {
-        user::Nothing nothing;
+        user::Request request;
         user::Action action;
         auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-        status = game.stub_->GetDataAboutMove(&context, nothing, &action);
+        status = game.stub_->GetDataAboutMove(&context, request, &action);
         if (status.ok() == 1) {
             int player = action.player_id();
             auto l = action.mutable_play_animal();
@@ -217,6 +223,8 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
         parse_message(message_from_server); //will call the right function for each message (player's action)
     }
 
+
+    // this means that it's local player's turn
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
