@@ -172,7 +172,6 @@ std::size_t Game::get_cur_player_index() const {
 Settings const &Game::get_settings() const {
     return settings;
 }
-
 void Game::create_room(const std::string &player_name_) {
     ClientContext context;
     CreateRoomRequest create_room_request;
@@ -273,3 +272,12 @@ void Game::initialize_with_settings(const Settings &settings_) {
 //        }
 //    }).detach();
 //}
+std::size_t Game::get_local_player_index() const {
+    return settings.get_local_player();
+}
+void Game::set_end_game(int i) {
+    end_of_game = i;
+}
+int Game::get_end_game() const {
+    return end_of_game;
+}

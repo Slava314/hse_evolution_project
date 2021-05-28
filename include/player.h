@@ -36,12 +36,17 @@ public:
 
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
 
+    std::size_t count_result() const;
+    const std::string &get_name() const;
+    std::size_t get_reset() const;
+
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
 
     std::vector<std::shared_ptr<Card>> cards_in_hands;
     std::vector<std::shared_ptr<Animal>> animals_on_board;
     std::string name;
+    std::size_t reset = 0;
     bool chose_to_end_phase = false;
 };
 

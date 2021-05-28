@@ -83,6 +83,6 @@ std::vector<std::string> &Settings::get_players_names(){
     return players_names;
 }
 
-void Settings::set_seed(int rand){
+void Settings::set_seed(int rand) {
     seed = rand;
 }

@@ -49,7 +49,7 @@ int Deck::need_card(const Player &player) {
 
 void Deck::cards_delivery(std::vector<Player> &players) {
     for (auto &player : players) {
-        auto need = need_card(player);
+        auto need = std::min(need_card(player), static_cast<int>(deck_of_cards.size()));
         while (need--) {
             player.add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();

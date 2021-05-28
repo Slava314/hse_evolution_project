@@ -509,3 +509,57 @@ void StartLocalGameWindow::draw() {
     }
     window.display();
 }
+
+void EndGameWindow::init_window() {
+    leaderboard = sf::Text("Results of the game:", font);
+    leaderboard.setCharacterSize(28);
+    leaderboard.setPosition((WINDOW_WIDTH - leaderboard.getLocalBounds().width) / 2, 350);
+
+    for (const auto &player : game.get_players()) {
+        results.emplace_back(player.get_name(), player.count_result(), player.get_reset());
+    }
+
+    auto comp = [&](const std::tuple<std::string, int, int> &a,
+                    const std::tuple<std::string, int, int> &b) {
+        if (std::get<1>(a) == std::get<1>(b)) {
+            return std::get<2>(a) < std::get<2>(b);
+        }
+        return std::get<1>(a) < std::get<1>(b);
+    };
+    std::sort(results.begin(), results.end(), comp);
+    for (int i = 0; i < results.size(); ++i) {
+        int ind = results.size() - i - 1;
+        leaders_name.push_back(sf::Text(std::get<0>(results[ind]), font));
+        leaders_name[i].setCharacterSize(28);
+        leaders_name[i].setPosition(WINDOW_WIDTH / 2 - 200, 400 + i * 50);
+        leaders_score.push_back(sf::Text(std::to_string(std::get<1>(results[ind])), font));
+        leaders_score[i].setCharacterSize(28);
+        leaders_score[i].setPosition(WINDOW_WIDTH / 2 + 200, 400 + i * 50);
+    }
+}
+void EndGameWindow::draw() {
+    window.clear();
+    for (int i = 0; i < leaders_name.size(); i++) {
+        window.draw(leaders_name[i]);
+        window.draw(leaders_score[i]);
+    }
+    window.draw(leaderboard);
+    window.display();
+}
+
+std::unique_ptr<Window> EndGameWindow::handle_events() {
+    while (window.isOpen()) {
+        sf::Event event{};
+        if (window.waitEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    return nullptr;
+                default:
+                    break;
+            }
+        }
+        draw();
+    }
+    assert(false);
+}

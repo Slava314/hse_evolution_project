@@ -12,7 +12,14 @@ void DevelopmentPhase::set_next_phase() {
 }
 
 void DevelopmentPhase::cards_delivery() {
+    if (game.get_end_game() == 1) {
+        game.set_end_game(2);
+        return;
+    }
     game.get_deck().cards_delivery(game.get_players());
+    if (game.get_deck_size() == 0) {
+        game.set_end_game(1);
+    }
 }
 
 // void DevelopmentPhase::cards_delivery() {

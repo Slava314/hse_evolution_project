@@ -38,6 +38,9 @@ public:
     Deck &get_deck();
     size_t get_deck_size();
     Settings const &get_settings() const;
+    std::size_t get_local_player_index() const;
+    void set_end_game(int i);
+    int get_end_game() const;
 
 
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
@@ -55,6 +58,7 @@ private:
     std::string player_name;
     std::string uniq_room_id;
     //    user::UserService::Stub stub_;
+    int end_of_game = 0;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

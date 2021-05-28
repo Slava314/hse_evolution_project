@@ -6,7 +6,6 @@
 
 class Settings {
 public:
-    void set_local_player(int i);  //?? why do i need this
 
     Settings() = default;
 
@@ -50,6 +49,7 @@ public:
     void set_room_id(const std::string &id);
     void set_total_players(int count);
     void set_seed(int rand);
+    void set_local_player(int i);
 
     void print_all() const;
 private:
