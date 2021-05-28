@@ -19,15 +19,17 @@ class Game {
 public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
-    explicit Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub = nullptr);
+    explicit Game(const Settings &settings_,
+                  std::unique_ptr<user::UserService::Stub> stub = nullptr);
     Game(Game &&game) = default;
     Game() = default;
 
     void initialize_with_settings(const Settings &settings);
 
     void create_room(const std::string &player_name_);
-    static Game join_room(const std::string &room_id,const  std::string &player_name);
+    static Game join_room(const std::string &room_id, const std::string &player_name);
     void start_game();
+    void start_game(Settings settings_);
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
 
@@ -41,7 +43,6 @@ public:
     std::size_t get_local_player_index() const;
     void set_end_game(int i);
     int get_end_game() const;
-
 
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
 

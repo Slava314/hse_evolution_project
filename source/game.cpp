@@ -59,7 +59,7 @@ void Game::apply_settings() {
     std::cout << "my own index = " << settings.get_local_player() << std::endl;
     settings.print_all();
 
-    //TODO - this room id does not initialize the needed field
+    // TODO - this room id does not initialize the needed field
 
     request.set_room_id(settings.get_room_id());
     auto status = stub_->GetTotalPlayers(&context, request, &response);
@@ -96,10 +96,22 @@ void Game::apply_settings() {
         players[i].set_name(response_.name());
         settings.set_name_in_players_name(response_.name());
         // setting names in vector in Settings
-//        settings.set_player_name(response_.name(), i);
+        //        settings.set_player_name(response_.name(), i);
     }
     std::cout << "GET PLAYERS = " << players.size() << std::endl;
     deck.set_random_gen(settings.get_seed());
+}
+
+void Game::start_game(Settings settings_) {
+    settings = settings_;
+    settings.set_local_player(0);
+    for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
+        players.emplace_back(settings.get_player_name(i));
+    }
+
+    deck.set_cards_info();
+    deck.generate_deck();
+    phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
 void Game::start_game() {
@@ -183,14 +195,13 @@ void Game::create_room(const std::string &player_name_) {
 
     user::Settings settings1;
 
-    std::cout << "SEED = " << settings.get_seed() <<  std::endl;
+    std::cout << "SEED = " << settings.get_seed() << std::endl;
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
     settings1.set_time_of_move(settings.get_time_of_move());
     settings1.set_local_player(settings.get_local_player());
     settings1.set_seed(settings.get_seed());
     settings1.set_total(settings.get_total());
-
 
     std::cout << "getting room id before creating room " << settings.get_room_id() << std::endl;
 

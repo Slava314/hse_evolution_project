@@ -70,10 +70,7 @@ public:
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
-        game.start_game();
-        //        game.start_game(
-        //            settings);  //важен порядок этих двух строчек, потом возможно надо будет
-        //            исправить
+        game.start_game(settings);  //важен порядок этих двух строчек, потом возможно надо будет
         init_window();
     }
     ~GameWindow() override = default;
