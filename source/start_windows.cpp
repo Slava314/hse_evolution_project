@@ -235,19 +235,20 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                             if (room_field.get_text() != "" && name_field.get_text() != "" &&
                                 number_of_players_field.get_text() != "" &&
                                 number_of_cards_field.get_text() != "" &&
-                                seconds_for_turn_field.get_text() != "" && already_initialized == false) {
+                                seconds_for_turn_field.get_text() != "" &&
+                                already_initialized == false) {
                                 settings = Settings(room_field.get_text(),
                                                     std::stoi(number_of_players_field.get_text()),
                                                     std::stoi(number_of_cards_field.get_text()),
                                                     std::stoi(seconds_for_turn_field.get_text()));
-//                                game(settings);
+                                //                                game(settings);
                                 game.initialize_with_settings(settings);
                                 already_initialized = true;
                             }
 
                             //                            game.create_room((std::move(name_field.get_text())));
 
-                            //todo - check that there are at least 2 players
+                            // todo - check that there are at least 2 players
 
                             if (room_id.getString() != "") {
                                 // TODO call grpc
@@ -395,17 +396,7 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                                     }
 
                                     window.close();
-
-                                    Game game(settings);
-
-//                                    game.create_room((std::string &)(std::move(
-//                                        players_names[game.get_settings().get_local_player()]
-//                                            .get_text())));
-
-                                    return std::make_unique<GameWindow>(std::move(game));
-
-                                    //                                    return
-                                    //                                    std::make_unique<GameWindow>(settings);
+                                    return std::make_unique<GameWindow>(settings);
                                 }
                             }
                         }
