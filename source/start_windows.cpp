@@ -390,19 +390,27 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                                 }
 
                                 if (cnt == number_of_players) {
+                                    std::cout << "NUMBER OF PLAYERS = " << number_of_players << std::endl;
+                                    std::cout << "GET TEXT 0= " << players_names[0].get_text() << std::endl;
+                                    std::cout << "GET TEXT 1= " << players_names[1].get_text() << std::endl;
+
                                     for (int i = 0; i < number_of_players; ++i) {
                                         settings.set_player_name(players_names[i].get_text(), i);
                                     }
 
+                                    std::cout << "I FELL \n";
+
                                     window.close();
 
-                                    Game game(settings);
+                                    std::cout << "I FELL 2\n";
+
+//                                    Game game(settings);
 
 //                                    game.create_room((std::string &)(std::move(
 //                                        players_names[game.get_settings().get_local_player()]
 //                                            .get_text())));
 
-                                    return std::make_unique<GameWindow>(std::move(game));
+                                    return std::make_unique<GameWindow>(settings);
 
                                     //                                    return
                                     //                                    std::make_unique<GameWindow>(settings);
