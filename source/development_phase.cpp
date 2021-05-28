@@ -132,12 +132,20 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
 }
 
 void DevelopmentPhase::add_animal() {
+    /*
+     * если ход мой - делаю ход и говорю серверу - вот сделался новый ход
+     * иначе - беру запрос от сервера и смотрю - кто походил и отрисовываю его уже
+     */
+
+//    if(game.get_cur_player_index() == )
     grpc::ClientContext context;
 
     std::chrono::time_point deadline =
         std::chrono::system_clock::now() + std::chrono::milliseconds(300);
     context.set_deadline(deadline);
+
     grpc::Status status = grpc::Status::CANCELLED;
+
     while (!status.ok()) {
         user::Nothing nothing;
         user::Action action;
@@ -170,8 +178,6 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 //    user::TotalPlayers response;
 //    request.set_room_id(game.get_settings().get_room_id());
 //    game.stub_->GetTotalPlayers(&context, request, &response);
-    std::cout <<"HOW MANY PLAYERS1 = " <<  game.get_settings().get_total() << std::endl;
-    std::cout <<"HOW MANY PLAYERS2 = " <<  game.get_players().size() << std::endl;
 
     // TODO check auto end turn
 
@@ -180,31 +186,34 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 
     int ans = get_view()->handle_event(window, event);
 
-//    grpc::ClientContext context;
-//    if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
-//        /// ask server to get_message and update other player's animals on the board and then
-//        /// redraw them
-//        grpc::Status status = grpc::Status::CANCELLED;
-//        std::string str;
-//        while (!status.ok()) {
-//            user::Nothing nothing;
-//            user::Message message;
-//            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-//            status = game.stub_->GetMessage(&context, nothing, &message);
-//            if (status.ok() == 1) {
-//                str = message.str();
-//                break;
-//            } else {
-//                std::this_thread::sleep_until(x);
-//                continue;
-//            }
-//        }
-//        parse_message(str); //will call the right function for each message (player's action)
-//    }
+    //todo - ask server - is it my turn - if yes - make move and tell server, else ask for other's players move
+
+    if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
+        /// ask server to get_message and update other player's animals on the board and then
+        /// redraw them
+        grpc::ClientContext context;
+        grpc::Status status = grpc::Status::CANCELLED;
+        std::string message_from_server;
+        while (!status.ok()) {
+            user::Nothing request;
+            user::Message response;
+            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
+            status = game.stub_->GetMessage(&context, request, &response);
+            if (status.ok() == 1) {
+                message_from_server = response.str();
+                break;
+            } else {
+                std::this_thread::sleep_until(x);
+                continue;
+            }
+        }
+        parse_message(message_from_server); //will call the right function for each message (player's action)
+    }
 
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
+
     //TODO - обработать пропуск хода и всего такого
 
     if (ans != 0) {

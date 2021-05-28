@@ -17,7 +17,6 @@ public:
              const int &size_deck_,
              const int &time_)
         : quantity_of_players(quantity_), size_of_deck(size_deck_), time_of_move(time_), seed(random()), total_players(1) {
-
     }
 
     Settings(int quantity_,
@@ -43,12 +42,14 @@ public:
     int get_seed() const;
     int get_total() const;
     std::string get_room_id() const;
+    std::vector<std::string> &get_players_names();
+
     void set_player_name(const std::string &name, std::size_t ind);
     const std::string &get_player_name(std::size_t ind) const;
     void set_name_in_players_name(const std::string &str);
     void set_room_id(const std::string &id);
     void set_total_players(int count);
-
+    void set_seed(int rand);
 
     void print_all() const;
 private:

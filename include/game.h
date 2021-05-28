@@ -21,6 +21,9 @@ public:
 
     explicit Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub = nullptr);
     Game(Game &&game) = default;
+    Game() = default;
+
+    void initialize_with_settings(const Settings &settings);
 
     void create_room(const std::string &player_name_);
     static Game join_room(const std::string &room_id,const  std::string &player_name);
@@ -39,10 +42,9 @@ public:
 
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
 
-    std::unique_ptr<user::UserService::Stub> stub_;
+    std::unique_ptr<user::UserService::Stub> stub_ = nullptr;
     //    Game() = default;
 private:
-    Game() = default;
     void apply_settings();
 
 private:

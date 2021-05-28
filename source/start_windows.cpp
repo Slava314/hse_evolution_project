@@ -4,6 +4,11 @@
 #include <string>
 #include "text_field.h"
 
+struct Error : public std::runtime_error {
+    explicit Error(const std::string &str) : std::runtime_error(str) {
+    }
+};
+
 namespace {
 void check_text_field(TextField &field, sf::RenderWindow &window) {
     if (field.is_clicked(sf::Mouse::getPosition(window))) {
@@ -135,8 +140,28 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                     Game game_ = Game::join_room(room_field.get_text(),
                                                                  name_field.get_text());
 
-                                    //TODO - ask server - has the game started already?
-//                                    window.close();
+                                    auto status = grpc::Status::CANCELLED;
+                                    auto end_time = std::chrono::steady_clock::now() +
+                                                    std::chrono::milliseconds(30000ms);
+                                    while (!status.ok()) {
+                                        auto x = std::chrono::steady_clock::now() +
+                                                 std::chrono::milliseconds(30ms);
+                                        grpc::ClientContext context;
+                                        user::Nothing request;
+                                        user::Nothing response;
+                                        status = game_.stub_->HasTheGameStartedAlready(
+                                            &context, request, &response);
+                                        if (!status.ok() and
+                                            std::chrono::steady_clock::now() >= end_time) {
+                                            throw Error(
+                                                "Response for joining room from server is too "
+                                                "long");
+                                        }
+                                        std::this_thread::sleep_until(x);
+                                    }
+
+                                    // TODO - ask server - has the game started already?
+                                    window.close();
                                     return std::make_unique<GameWindow>(std::move(game_));
                                 }
                             }
@@ -189,6 +214,9 @@ void JoinGameWindow::draw() {
 }
 
 std::unique_ptr<Window> MakeGameWindow::handle_events() {
+    Game game{};
+    bool already_initialized = false;
+    std::cout << "I AM IN HANDLE EVENTS IN MAKE GAME WINDOW\n";
     while (window.isOpen()) {
         sf::Event event{};
         if (window.waitEvent(event)) {
@@ -207,24 +235,44 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                             if (room_field.get_text() != "" && name_field.get_text() != "" &&
                                 number_of_players_field.get_text() != "" &&
                                 number_of_cards_field.get_text() != "" &&
-                                seconds_for_turn_field.get_text() != "") {
-                                settings =
-                                    Settings(room_field.get_text(),
-                                             std::stoi(number_of_players_field.get_text()),
-                                             std::stoi(number_of_cards_field.get_text()),
-                                             std::stoi(seconds_for_turn_field.get_text()));
+                                seconds_for_turn_field.get_text() != "" && already_initialized == false) {
+                                settings = Settings(room_field.get_text(),
+                                                    std::stoi(number_of_players_field.get_text()),
+                                                    std::stoi(number_of_cards_field.get_text()),
+                                                    std::stoi(seconds_for_turn_field.get_text()));
+//                                game(settings);
+                                game.initialize_with_settings(settings);
+                                already_initialized = true;
                             }
-                            Game game(settings);
 
-                            game.create_room((std::move(name_field.get_text())));
+                            //                            game.create_room((std::move(name_field.get_text())));
+
+                            //todo - check that there are at least 2 players
 
                             if (room_id.getString() != "") {
-                                //TODO call grpc
+                                // TODO call grpc
                                 window.close();
                                 // TODO - print to monitor
+                                grpc::ClientContext context;
+                                user::Request request;
+                                user::Nothing response;
+                                request.set_room_id(room_id.getString());
+                                auto status =
+                                    game.stub_->HostHasStartedTheGame(&context, request, &response);
+                                if (!status.ok()) {
+                                    std::cout << status.error_message() << std::endl;
+                                    throw Error(
+                                        "Could not tell server, that i have started the game");
+                                }
+                                std::this_thread::sleep_for(700ms);
                                 // game.get_settings().get_room_id();
+                                window.close();
                                 return std::make_unique<GameWindow>(std::move(game));
                             }
+
+                            game.create_room((std::move(name_field.get_text())));
+                            std::cout << "PRINTING ALL IN START GAME AFTER CREATE ROOM\n";
+                            game.get_settings().print_all();
                             room_id.setString("room id: " + game.get_settings().get_room_id());
                         }
                     }

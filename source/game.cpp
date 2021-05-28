@@ -59,16 +59,22 @@ void Game::apply_settings() {
     std::cout << "my own index = " << settings.get_local_player() << std::endl;
     settings.print_all();
 
+    //TODO - this room id does not initialize the needed field
+
     request.set_room_id(settings.get_room_id());
     auto status = stub_->GetTotalPlayers(&context, request, &response);
+
     if (!status.ok()) {
-        throw GameConnecting("Could not get total players, sadly");
+        std::cout << status.error_message() << std::endl;
+        throw GameConnecting("Could not get total players in apply_settings, sadly");
     }
+    std::cout << "GOT TOTAL PLAYERS IN apply_settings = " << response.count() << std::endl;
     settings.set_total_players(response.count());
     players.resize(settings.get_total());
 
     std::cout << "Getting total = " << settings.get_total() << std::endl;
     std::cout << "players size array = " << players.size() << std::endl;
+    settings.get_players_names().resize(0);
     /// initialize vector of players with their names
     for (int i = 0; i < players.size(); ++i) {
         std::cout << "index for player = " << i << std::endl;
@@ -84,7 +90,7 @@ void Game::apply_settings() {
         if (!status.ok()) {
             // TODO - throw something
             std::cout << status.error_message() << std::endl;
-            throw GameError("Could not get player name from server, sorry\n");
+            throw GameError("Could not get player name from server in apply_settings, sorry\n");
         }
         std::cout << "Got name = " << response_.name() << std::endl;
         players[i].set_name(response_.name());
@@ -173,18 +179,23 @@ void Game::create_room(const std::string &player_name_) {
     CreateRoomResponse create_room_response;
 
     create_room_request.set_player_name(player_name_);
+
+    settings.set_seed(random() % 100'000'000);
+
     user::Settings settings1;
 
+    std::cout << "SEED = " << settings.get_seed() <<  std::endl;
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
     settings1.set_time_of_move(settings.get_time_of_move());
     settings1.set_local_player(settings.get_local_player());
     settings1.set_seed(settings.get_seed());
     settings1.set_total(settings.get_total());
-    //    does not have room id now - will get it from response
+
+
     std::cout << "getting room id before creating room " << settings.get_room_id() << std::endl;
+
     *create_room_request.mutable_settings() = settings1;
-    std::cout << "getting room id after  " << create_room_request.settings().room_id() << std::endl;
 
     auto status = stub_->CreateRoom(&context, create_room_request, &create_room_response);
 
@@ -193,7 +204,10 @@ void Game::create_room(const std::string &player_name_) {
         throw GameConnecting("Could not create room, sad");
     }
 
+    std::cout << "getting room id after  " << create_room_response.id() << std::endl;
+
     settings.set_room_id(create_room_response.id());
+    std::cout << "checking settings room id field " << settings.get_room_id() << std::endl;
     settings.print_all();
 }
 
@@ -236,6 +250,14 @@ Game Game::join_room(const std::string &room_id, const std::string &player_name)
     settings1.print_all();
 
     return game;
+}
+void Game::initialize_with_settings(const Settings &settings_) {
+    settings = settings_;
+    if (stub_ == nullptr) {
+        stub_ = user::UserService::NewStub(  // check that it is valid stub
+            grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+    }
+    phase = std::make_unique<DevelopmentPhase>(*this);
 }
 
 // bool Game::send_request_to_server(std::function<grpc::Status(void)> func, unsigned int interval)

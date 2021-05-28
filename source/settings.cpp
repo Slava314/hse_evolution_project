@@ -34,6 +34,8 @@ void Settings::print_all()const {
     std::cout << "local_player = " << local_player <<std::endl;
     std::cout << "seed = " << seed <<std::endl;
     std::cout << "total = " << total_players << std::endl;
+    std::cout << "room id = " << room_id << std::endl;
+    std::cout << "----------------print all ------------------\n";
 
 }
 
@@ -77,3 +79,10 @@ void Settings::set_total_players(int count) {
     total_players = count;
 }
 
+std::vector<std::string> &Settings::get_players_names(){
+    return players_names;
+}
+
+void Settings::set_seed(int rand){
+    seed = rand;
+}

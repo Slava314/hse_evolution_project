@@ -21,6 +21,10 @@ service UserService {
   rpc GetDataAboutMove(Nothing) returns (Action) {}
 
   rpc GetTotalPlayers(Request) returns(TotalPlayers){}
+
+  rpc HostHasStartedTheGame(Request) returns (Nothing) {}
+
+  rpc HasTheGameStartedAlready(Nothing) returns (Nothing) {}
   //  rpc send_message(User) returns (Token) {}
   //
 }
