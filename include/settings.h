@@ -16,6 +16,7 @@ public:
              const int &size_deck_,
              const int &time_)
         : quantity_of_players(quantity_), size_of_deck(size_deck_), time_of_move(time_), seed(random()), total_players(1) {
+        players_names.resize(quantity_of_players);
     }
 
     Settings(int quantity_,
