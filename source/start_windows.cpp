@@ -143,6 +143,15 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                     auto status = grpc::Status::CANCELLED;
                                     auto end_time = std::chrono::steady_clock::now() +
                                                     std::chrono::milliseconds(30000ms);
+
+                                    grpc::ClientContext context_;
+                                    user::Request request_;
+                                    user::TotalPlayers response_;
+                                    request_.set_room_id(game_.get_settings().get_room_id());
+                                    auto status_ = game_.stub_->GetTotalPlayers(&context_, request_, &response_);
+                                    std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - JOIN = " << response_.count() << std::endl;
+
+
                                     // TODO - ask server - has the game started already?
                                     while (!status.ok()) {
                                         std::cout << "WAITING FOR START GAME\n";
@@ -253,6 +262,14 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                             // todo - check that there are at least 2 players
 
                             if (room_id.getString() != "") {
+//                                grpc::ClientContext context_;
+//                                user::Request request_;
+//                                user::TotalPlayers response_;
+//                                request_.set_room_id(settings.get_room_id());
+//                                auto status_ = game.stub_->GetTotalPlayers(&context_, request_, &response_);
+//                                std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - CREATE = " << response_.count() << std::endl;
+//
+
                                 // TODO call grpc
                                 window.close();
                                 // TODO - print to monitor
@@ -260,6 +277,7 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 user::Request request;
                                 user::Nothing response;
                                 request.set_room_id(room_id.getString());
+                                request.set_message("Game has started");
                                 auto status =
                                     game.stub_->HostHasStartedTheGame(&context, request, &response);
                                 if (!status.ok()) {

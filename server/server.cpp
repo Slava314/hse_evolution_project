@@ -132,6 +132,7 @@ class ServiceImpl final : public UserService::Service {
                              const user::PlayAsAnimalAction *request,
                              user::PlayAsAnimalAction *reply) override {
         std::cout << "AddCardOnTheBoard --------------- 1 \n";
+
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -149,10 +150,9 @@ class ServiceImpl final : public UserService::Service {
         message.set_player_id(request->player());
         *message.mutable_play_animal() = *request;
 
-        auto a = id_sett_room_list.find(request->room_id());
-        int total_players = a->second.total();
+        int total_players = id_sett_room_list[request->room_id()].total();
 
-        messages.push_back({"Player added new card on the board", total_players});
+        messages.push_back({request->message(), total_players});
         saved_data_for_messages.push_back({message, total_players});
 
         std::cout << "last message = " << messages.back().first << std::endl;
@@ -178,18 +178,25 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
         int player_id = request->player_id();
         std::string room_id = request->room_id();
+
         std::cout << "got player id = " << request->player_id() << std::endl;
         std::cout << "got room id = " << request->room_id() << std::endl;
+
         if (pl_id_room_id_player_list.find({player_id, room_id}) ==
             pl_id_room_id_player_list.end()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could get player name with such id  --- " + std::to_string(player_id));
         }
+
         std::string name = pl_id_room_id_player_list[{player_id, room_id}];
+
         response->set_name(name);
+
         std::cout << "GetPlayerName - 2 \n";
+
         return Status::OK;
     }
 
@@ -202,11 +209,13 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED, "messages vector is empty");
         }
         std::cout << "getting last message in vector = " << messages.back().first << std::endl;
-        messages.back().second--;
+        std::cout << "getting last message counter = " << messages.back().second << std::endl;
         response->set_str(messages.back().first);
         if (messages.back().second == 1) {
             messages.pop_back();
         }
+        messages.back().second--;
+
         return Status::OK;
     }
 
@@ -233,7 +242,7 @@ class ServiceImpl final : public UserService::Service {
         std::cout << "GetTotalPlayers - 1 \n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
-                          "Deadline exceeded or Client cancelled, abandoning.");
+                          "Deadline exceeded or Client cancelled in GetTotalPlayers, abandoning.");
         }
 
         std::string room_id = request->room_id();
@@ -260,28 +269,27 @@ class ServiceImpl final : public UserService::Service {
         std::cout << "I am in HostHasStartedTheGame\n";
 
         if (context->IsCancelled()) {
-            return Status(grpc::StatusCode::CANCELLED,
-                          "Deadline exceeded or Client cancelled, abandoning.");
+            return Status(
+                grpc::StatusCode::CANCELLED,
+                "Deadline exceeded or Client cancelled in HostHasStartedTheGame, abandoning.");
         }
 
         std::string room_id = request->room_id();
 
-        std::cout << "size of map with rooms = " << id_sett_room_list.size() << std::endl;
-
-        for (auto x : id_sett_room_list) {
-            std::cout << "getting room id  = " << x.first << std::endl;
+        for(auto x : id_sett_room_list){
+            std::cout << "game with id = " << x.first << std::endl;
         }
 
-        //                if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
-        //                    return Status(grpc::StatusCode::CANCELLED,
-        //                                  "Could not find room in HostHasStartedTheGame, there is
-        //                                  no such room with this id --- " + room_id);
-        //                }
+        if (id_sett_room_list.find(room_id) == id_sett_room_list.end()) {
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Could not find room in HostHasStartedTheGame, there is no such room "
+                          "with this id --- " +
+                              room_id);
+        }
 
         int total_players = id_sett_room_list[room_id].total();
-        std::cout << "total players in HostHasStartedTheGame = " << total_players << std::endl;
-        messages.push_back({"Game has started", total_players});
-        std::cout << "--------------------------------------------------------\n";
+        messages.push_back({request->message(), total_players});
+
         return Status::OK;
     }
 
@@ -306,7 +314,7 @@ class ServiceImpl final : public UserService::Service {
             std::cout << "MESSAGES BACK = " << messages.back().second << std::endl;
             if (messages.back().second <= 1) {
                 std::cout << "MESSAGES BACK POPPING= " << messages.back().second << std::endl;
-                messages.resize(0);
+                //                messages.resize(0);
             }
             return Status::OK;
         }

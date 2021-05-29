@@ -90,8 +90,8 @@ std::vector<std::vector<std::shared_ptr<Card>>> DevelopmentPhase::get_cards() {
 
 void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                                   std::shared_ptr<Animal> &new_animal) {
-    //    assert(card.get() != nullptr);
-    //    assert(new_animal.get() != nullptr);
+    assert(card.get() != nullptr);
+    assert(new_animal.get() != nullptr);
 
     grpc::ClientContext context;
 
@@ -107,6 +107,8 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
 
         request.set_room_id(game.get_settings().get_room_id());
         request.set_player(cur_player);
+        request.set_message("Player added new card on the board");
+
         auto status = game.stub_->AddCardOnTheBoard(&context, request, &response);
         if (status.ok()) {
             /// evrth is good, make move, make a little ping, to wait for
@@ -116,38 +118,11 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
         } else {
             // todo throw something?
         }
-    } /*else {
-        /// ask server to get_message and update other player's animals on the board and then
-        /// redraw them
-        grpc::Status status = grpc::Status::CANCELLED;
-        while (!status.ok()) {
-            user::Request request;
-            user::Action response;
-            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-            request.set_room_id(game.get_settings().get_room_id());
-            status = game.stub_->GetDataAboutMove(&context, request, &response);
-            if (status.ok() == 1) {
-                int player = response.player_id();
-                auto l = response.mutable_play_animal();
-                std::shared_ptr<Animal> animal;
-                game.get_players()[l->player()].put_card_as_animal(animal);
-                break;
-            } else {
-                std::this_thread::sleep_until(x);
-                continue;
-            }
-        }
-    }*/
+    }
 }
 
-/// it is used only if card was placed by another players and i need to add card to vector of
-/// animals to this specific player
 void DevelopmentPhase::add_animal() {
     std::cout << "CAME TO ADD_ANIMAL() --------------------- \n";
-    /*
-     * если ход мой - делаю ход и говорю серверу - вот сделался новый ход
-     * иначе - беру запрос от сервера и смотрю - кто походил и отрисовываю его уже
-     */
 
     grpc::ClientContext context;
 
@@ -163,7 +138,8 @@ void DevelopmentPhase::add_animal() {
         auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
         status = game.stub_->GetDataAboutMove(&context, request, &response);
         if (status.ok() == 1) {
-            std::cout << "getting message from server in add_animal() = " << response.player_id() << std::endl;
+            std::cout << "getting message from server in add_animal() = " << response.player_id()
+                      << std::endl;
             int player = response.player_id();
             std::shared_ptr<Animal> animal;
             game.get_players()[player].put_card_as_animal(animal);
@@ -174,10 +150,9 @@ void DevelopmentPhase::add_animal() {
         }
     }
     std::cout << "LEFT TO ADD_ANIMAL() --------------------- \n";
-
 }
 
-//TODO TODO TODO TODO TODO TODO TODO
+// TODO TODO TODO TODO TODO TODO TODO
 void DevelopmentPhase::parse_message(const std::string &str) {
     const std::string add_card("Player added new card on the board");
     if (str.compare(add_card) == true) {
@@ -187,12 +162,6 @@ void DevelopmentPhase::parse_message(const std::string &str) {
     }
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
-    //    grpc::ClientContext context;
-    //    user::Request request;
-    //    user::TotalPlayers response;
-    //    request.set_room_id(game.get_settings().get_room_id());
-    //    game.stub_->GetTotalPlayers(&context, request, &response);
-
     // TODO check auto end turn
 
     // TODO - придется парсить сообщение - какое действие нужно выполнить
@@ -200,16 +169,11 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 
     int ans = get_view()->handle_event(window, event);
 
-    // todo - ask server - is it my turn - if yes - make move and tell server, else ask for other's
-    // players move
-
     std::cout << "game.get_cur_player_index() = " << game.get_cur_player_index() << std::endl;
     std::cout << "game.get_settings().get_local_player() = "
               << game.get_settings().get_local_player() << std::endl;
 
     if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
-        /// ask server to get_message and update other player's animals on the board and then
-        /// redraw them
         grpc::ClientContext context;
         grpc::Status status = grpc::Status::CANCELLED;
         std::string message_from_server;
@@ -221,7 +185,8 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
             auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
             status = game.stub_->GetMessage(&context, request, &response);
             if (status.ok() == 1) {
-                std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str() << std::endl;
+                std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str()
+                          << std::endl;
                 message_from_server = response.str();
                 break;
             } else {
@@ -235,8 +200,6 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
                                              // (player's action)
     }
 
-    std::cout << "MOVING NEXT - check ans for phase in run_phase \n";
-    // this means that it's local player's turn
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }

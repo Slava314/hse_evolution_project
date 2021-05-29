@@ -25,7 +25,8 @@ service UserService {
   rpc HostHasStartedTheGame(Request) returns (Nothing) {}
 
   rpc HasTheGameStartedAlready(Nothing) returns (Nothing) {}
-  //  rpc send_message(User) returns (Token) {}
+
+  rpc SendMessage(Message) returns (Nothing) {}
   //
 }
 
@@ -42,6 +43,7 @@ message User {
 message Request {
   int32 player_id = 1;
   string room_id = 2;
+  string message = 3;
 }
 
 message Response {
@@ -111,6 +113,7 @@ message PlayerAndRoom{
 message PlayAsAnimalAction{
   int32 player = 1;
   string room_id = 2;
+  string message = 3;
 }
 
 message PlayAsPropertyAction{
@@ -127,12 +130,14 @@ message Action {
 
   oneof ActionData {
     PlayAsAnimalAction play_animal = 3;
-    PlayAsPropertyAction play_animal_properties  = 4;
+    PlayAsPropertyAction play_animal_properties = 4;
   }
 }
 
 message Message{
-  string str = 1;
+  int32 player_id = 1;
+  string room_id = 2;
+  string str = 3;
 }
 
 message TotalPlayers{
