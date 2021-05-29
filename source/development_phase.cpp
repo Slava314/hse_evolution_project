@@ -96,7 +96,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     grpc::ClientContext context;
 
     std::chrono::time_point deadline =
-        std::chrono::system_clock::now() + std::chrono::milliseconds(300);
+        std::chrono::system_clock::now() + std::chrono::milliseconds(30000);
     context.set_deadline(deadline);
 
     /// his turn to make move
@@ -106,7 +106,6 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
         user::PlayAsAnimalAction response;
 
         request.set_room_id(game.get_settings().get_room_id());
-        ///tell server who added the card
         request.set_player(cur_player);
         auto status = game.stub_->AddCardOnTheBoard(&context, request, &response);
         if (status.ok()) {
@@ -117,7 +116,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
         } else {
             // todo throw something?
         }
-    } else {
+    } /*else {
         /// ask server to get_message and update other player's animals on the board and then
         /// redraw them
         grpc::Status status = grpc::Status::CANCELLED;
@@ -138,59 +137,61 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
                 continue;
             }
         }
-    }
+    }*/
 }
 
+/// it is used only if card was placed by another players and i need to add card to vector of
+/// animals to this specific player
 void DevelopmentPhase::add_animal() {
+    std::cout << "CAME TO ADD_ANIMAL() --------------------- \n";
     /*
      * если ход мой - делаю ход и говорю серверу - вот сделался новый ход
      * иначе - беру запрос от сервера и смотрю - кто походил и отрисовываю его уже
      */
 
-    if(game.get_cur_player_index() == this->game.get_settings().get_local_player()){
-
-    }
-
     grpc::ClientContext context;
 
     std::chrono::time_point deadline =
-        std::chrono::system_clock::now() + std::chrono::milliseconds(500);
+        std::chrono::system_clock::now() + std::chrono::milliseconds(3000);
     context.set_deadline(deadline);
 
     grpc::Status status = grpc::Status::CANCELLED;
 
     while (!status.ok()) {
         user::Request request;
-        user::Action action;
+        user::Action response;
         auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-        status = game.stub_->GetDataAboutMove(&context, request, &action);
+        status = game.stub_->GetDataAboutMove(&context, request, &response);
         if (status.ok() == 1) {
-            int player = action.player_id();
-            auto l = action.mutable_play_animal();
+            std::cout << "getting message from server in add_animal() = " << response.player_id() << std::endl;
+            int player = response.player_id();
             std::shared_ptr<Animal> animal;
-            game.get_players()[l->player()].put_card_as_animal(animal);
+            game.get_players()[player].put_card_as_animal(animal);
             break;
         } else {
             std::this_thread::sleep_until(x);
             continue;
         }
     }
+    std::cout << "LEFT TO ADD_ANIMAL() --------------------- \n";
+
 }
 
-
-void DevelopmentPhase::parse_message(const std::string &str)  {
+//TODO TODO TODO TODO TODO TODO TODO
+void DevelopmentPhase::parse_message(const std::string &str) {
     const std::string add_card("Player added new card on the board");
-    if(str.compare(add_card) == true){
+    if (str.compare(add_card) == true) {
         //вызвать нужную функцию, которая обратится к серверу и отрисует нужную карту
-       add_animal(); //сам разберется кто?
+        add_animal();  //сам разберется кто?
+        std::cout << "GETTIN MESSAGE FROM PARSE = " << add_card << std::endl;
     }
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
-//    grpc::ClientContext context;
-//    user::Request request;
-//    user::TotalPlayers response;
-//    request.set_room_id(game.get_settings().get_room_id());
-//    game.stub_->GetTotalPlayers(&context, request, &response);
+    //    grpc::ClientContext context;
+    //    user::Request request;
+    //    user::TotalPlayers response;
+    //    request.set_room_id(game.get_settings().get_room_id());
+    //    game.stub_->GetTotalPlayers(&context, request, &response);
 
     // TODO check auto end turn
 
@@ -199,7 +200,12 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 
     int ans = get_view()->handle_event(window, event);
 
-    //todo - ask server - is it my turn - if yes - make move and tell server, else ask for other's players move
+    // todo - ask server - is it my turn - if yes - make move and tell server, else ask for other's
+    // players move
+
+    std::cout << "game.get_cur_player_index() = " << game.get_cur_player_index() << std::endl;
+    std::cout << "game.get_settings().get_local_player() = "
+              << game.get_settings().get_local_player() << std::endl;
 
     if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
         /// ask server to get_message and update other player's animals on the board and then
@@ -208,28 +214,34 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
         grpc::Status status = grpc::Status::CANCELLED;
         std::string message_from_server;
         while (!status.ok()) {
+            std::cout << "SENDING REQ TO SERVER\n";
+
             user::Nothing request;
             user::Message response;
             auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
             status = game.stub_->GetMessage(&context, request, &response);
             if (status.ok() == 1) {
+                std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str() << std::endl;
                 message_from_server = response.str();
                 break;
             } else {
+                std::cout << status.error_message() << std::endl;
                 std::this_thread::sleep_until(x);
                 continue;
             }
         }
-        parse_message(message_from_server); //will call the right function for each message (player's action)
+        std::cout << "I AM NEXT TO PARSE-------------------------\n";
+        parse_message(message_from_server);  // will call the right function for each message
+                                             // (player's action)
     }
 
-
+    std::cout << "MOVING NEXT - check ans for phase in run_phase \n";
     // this means that it's local player's turn
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
 
-    //TODO - обработать пропуск хода и всего такого
+    // TODO - обработать пропуск хода и всего такого
 
     if (ans != 0) {
         if (ans == 2) {

@@ -71,9 +71,6 @@ void Game::apply_settings() {
     std::cout << "GOT TOTAL PLAYERS IN apply_settings = " << response.count() << std::endl;
     settings.set_total_players(response.count());
     players.resize(settings.get_total());
-
-    std::cout << "Getting total = " << settings.get_total() << std::endl;
-    std::cout << "players size array = " << players.size() << std::endl;
     settings.get_players_names().resize(0);
     /// initialize vector of players with their names
     for (int i = 0; i < players.size(); ++i) {

@@ -114,10 +114,15 @@ class ServiceImpl final : public UserService::Service {
         settings.set_local_player(settings.local_player() + 1);
         // update settings in map
 
-        id_sett_room_list.find(room_id)->second = settings;
+        id_sett_room_list[room_id] = settings;
         pl_id_room_id_player_list.insert({{settings.local_player(), room_id}, player_name});
 
         *reply->mutable_settings() = settings;
+        std::cout << "TOTAL PLAYERS IN JOIN = " << settings.total()
+                  << "--------------------------\n";
+        std::cout << "TOTAL PLAYERS IN JOIN = " << id_sett_room_list[room_id].total()
+                  << "--------------------------\n";
+
         std::cout << "Joining server - successfully - getting out of here\n";
 
         return Status::OK;
@@ -126,6 +131,7 @@ class ServiceImpl final : public UserService::Service {
     Status AddCardOnTheBoard(ServerContext *context,
                              const user::PlayAsAnimalAction *request,
                              user::PlayAsAnimalAction *reply) override {
+        std::cout << "AddCardOnTheBoard --------------- 1 \n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -147,7 +153,10 @@ class ServiceImpl final : public UserService::Service {
         int total_players = a->second.total();
 
         messages.push_back({"Player added new card on the board", total_players});
-        saved_data_for_messages.push_back(message);
+        saved_data_for_messages.push_back({message, total_players});
+
+        std::cout << "last message = " << messages.back().first << std::endl;
+        std::cout << "AddCardOnTheBoard --------------- 2 \n";
 
         return Status::OK;
     }
@@ -187,25 +196,34 @@ class ServiceImpl final : public UserService::Service {
     Status GetMessage(ServerContext *context,
                       const user::Nothing *request,
                       user::Message *response) override {
+        std::cout << "I am in GetMessage\n";
+
         if (messages.empty()) {
-            return Status::CANCELLED;
+            return Status(grpc::StatusCode::CANCELLED, "messages vector is empty");
         }
+        std::cout << "getting last message in vector = " << messages.back().first << std::endl;
+        messages.back().second--;
         response->set_str(messages.back().first);
+        if (messages.back().second == 1) {
+            messages.pop_back();
+        }
         return Status::OK;
     }
 
     Status GetDataAboutMove(ServerContext *context,
                             const user::Request *request,
                             user::Action *response) override {
+        std::cout << "I am in GetDataAboutMove\n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
-        if (messages.empty() == true) {
+        if (messages.empty() or saved_data_for_messages.empty()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, the message vector is empty.");
         }
 
+        response->set_player_id(saved_data_for_messages.back().first.player_id());
         return Status::OK;
     }
 
@@ -229,8 +247,7 @@ class ServiceImpl final : public UserService::Service {
                     room_id);
         }
 
-        auto found = id_sett_room_list.find(room_id);
-        response->set_count(found->second.total());
+        response->set_count(id_sett_room_list[room_id].total());
 
         std::cout << "GetTotalPlayers - 2 \n";
 
@@ -240,6 +257,8 @@ class ServiceImpl final : public UserService::Service {
     Status HostHasStartedTheGame(ServerContext *context,
                                  const user::Request *request,
                                  user::Nothing *response) override {
+        std::cout << "I am in HostHasStartedTheGame\n";
+
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -259,33 +278,37 @@ class ServiceImpl final : public UserService::Service {
         //                                  no such room with this id --- " + room_id);
         //                }
 
-        auto a = id_sett_room_list.find(room_id);
-        int total_players = a->second.total();
-        messages.push_back({"Game has started", total_players - 1});
+        int total_players = id_sett_room_list[room_id].total();
+        std::cout << "total players in HostHasStartedTheGame = " << total_players << std::endl;
+        messages.push_back({"Game has started", total_players});
+        std::cout << "--------------------------------------------------------\n";
         return Status::OK;
     }
 
     Status HasTheGameStartedAlready(ServerContext *context,
                                     const user::Nothing *request,
                                     user::Nothing *response) override {
+        std::cout << "I am in HasTheGameStartedAlready\n";
+
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
 
         if (messages.empty()) {
+            std::cout << "MESSAGES IN EMPTY\n";
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, message vector is empty ");
         }
 
         if (messages.back().first == "Game has started") {
-            if (messages.back().second == 1) {
-                messages.pop_back();
-                return Status::OK;
-            } else {
-                messages.back().second--;
-                return Status::OK;
+            messages.back().second--;
+            std::cout << "MESSAGES BACK = " << messages.back().second << std::endl;
+            if (messages.back().second <= 1) {
+                std::cout << "MESSAGES BACK POPPING= " << messages.back().second << std::endl;
+                messages.resize(0);
             }
+            return Status::OK;
         }
         // by default?
         return grpc::Status::CANCELLED;
@@ -295,7 +318,7 @@ private:
     const int ROOM_ID_LEN = 2;
     std::map<std::string, user::Settings> id_sett_room_list;
     std::map<std::pair<int, std::string>, std::string> pl_id_room_id_player_list;
-    std::vector<user::Action> saved_data_for_messages;
+    std::vector<std::pair<user::Action, int>> saved_data_for_messages;
     std::vector<std::pair<std::string, int>> messages;
     std::vector<std::string> players_names;
 };

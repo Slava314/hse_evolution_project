@@ -143,7 +143,9 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                     auto status = grpc::Status::CANCELLED;
                                     auto end_time = std::chrono::steady_clock::now() +
                                                     std::chrono::milliseconds(30000ms);
+                                    // TODO - ask server - has the game started already?
                                     while (!status.ok()) {
+                                        std::cout << "WAITING FOR START GAME\n";
                                         auto x = std::chrono::steady_clock::now() +
                                                  std::chrono::milliseconds(30ms);
                                         grpc::ClientContext context;
@@ -159,9 +161,9 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                         }
                                         std::this_thread::sleep_until(x);
                                     }
-
-                                    // TODO - ask server - has the game started already?
+                                    std::this_thread::sleep_for(500ms);
                                     window.close();
+                                    std::cout << "OUT FROM HANDLE EVENTS AND RETURNING GAMEWINDOW\n";
                                     return std::make_unique<GameWindow>(std::move(game_));
                                 }
                             }

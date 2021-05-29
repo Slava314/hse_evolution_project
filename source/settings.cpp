@@ -28,6 +28,7 @@ void Settings::set_local_player(int i) {
 //}
 
 void Settings::print_all()const {
+    std::cout << "----------------print all ------------------\n";
     std::cout << "quantity of players = " << quantity_of_players <<std::endl;
     std::cout << "size_of_deck = " << size_of_deck <<std::endl;
     std::cout << "time of move = " << time_of_move <<std::endl;
