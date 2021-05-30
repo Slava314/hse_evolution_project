@@ -22,50 +22,6 @@ void DevelopmentPhase::cards_delivery() {
     }
 }
 
-// void DevelopmentPhase::cards_delivery() {
-////        game.get_deck().cards_delivery(game.get_players());
-//    //    grpc::ClientContext context;
-//    //    user::GiveCardFromDeck give_card_from_deck;
-//    //    user::Nothing nothing;
-//    //    game.stub_->GiveCardFDeck(&context, give_card_from_deck, &nothing);
-//    //
-//    //    for (int i = 0; i < game.get_players().size(); ++i) {
-//    //        auto player = game.get_players()[i];
-//    //        int needed = game.get_deck().need_card(player);
-//    //        give_card_from_deck.set_quantity(needed);
-//    //
-//    give_card_from_deck.mutable_player_and_room()->set_player_id(game.get_settings().get_local_player());
-//    //
-//    give_card_from_deck.mutable_player_and_room()->set_room_id(game.get_settings().get_room_id());
-//    //        game.stub_->GiveCardFDeck(&context, give_card_from_deck, &nothing);
-//    //
-//    //    }
-//    for (int i = 0; i < game.get_players().size(); i++) {
-//        std::cout << "-----------------------" << std::endl;
-//
-//        std::cout << "GAME & in phase    " << &game << std::endl;
-//        std::cout << "get-players PHASE  ---- " << &game.get_players() << std::endl;
-//        std::cout << std::endl;
-//
-//        std::cout << "player eq = " << i << std::endl;
-//
-//        auto player = game.get_players()[i];
-//        std::cout << "player address IN PHASE " << &player << std::endl;
-//        if (i == game.get_settings().get_local_player()) {
-//            game.get_deck().cards_delivery(player);
-//            std::cout << std::endl;
-//        } else {
-//            int need = game.get_deck().need_card(player);
-//            while (need--) {
-//                game.get_deck().get_deck_cards().pop_back();
-//            }
-//        }
-//        std::cout << "owning cards = " << player.get_cards_in_hands().size() << std::endl;
-//        std::cout << "||||||||||||||||||||||||" << std::endl;
-//
-//    }
-//
-//}
 
 bool DevelopmentPhase::is_running_first_time() const {
     return start_of_phase;
@@ -151,37 +107,6 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
         std::cout << "LEFT TO ADD_ANIMAL() to another animal --------------------- \n";
     }
 }
-
-// void DevelopmentPhase::add_animal() {
-//    std::cout << "CAME TO ADD_ANIMAL() --------------------- \n";
-//
-//    grpc::ClientContext context;
-//
-//    std::chrono::time_point deadline =
-//        std::chrono::system_clock::now() + std::chrono::milliseconds(3000);
-//    context.set_deadline(deadline);
-//
-//    grpc::Status status = grpc::Status::CANCELLED;
-//
-//    while (!status.ok()) {
-//        user::Request request;
-//        user::Action response;
-//        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
-//        status = game.stub_->GetDataAboutMove(&context, request, &response);
-//        if (status.ok() == 1) {
-//            std::cout << "getting message from server in add_animal() = " << response.player_id()
-//                      << std::endl;
-//            int player = response.player_id();
-//            std::shared_ptr<Animal> animal;
-//            game.get_players()[player].put_card_as_animal(animal);
-//            break;
-//        } else {
-//            std::this_thread::sleep_until(x);
-//            continue;
-//        }
-//    }
-//    std::cout << "LEFT TO ADD_ANIMAL() --------------------- \n";
-//}
 
 // TODO TODO TODO TODO TODO TODO TODO
 void DevelopmentPhase::parse_message(const std::string &str) {
