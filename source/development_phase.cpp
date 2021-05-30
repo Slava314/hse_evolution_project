@@ -50,6 +50,8 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
     //    assert(new_animal.get() != nullptr);
 
     if (card != nullptr and new_animal != nullptr) {
+        std::cout << "CAME TO ADD_ANIMAL() to ME --------------------- \n";
+
         grpc::ClientContext context;
 
         std::chrono::time_point deadline =
@@ -79,19 +81,21 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
     } else {
         std::cout << "CAME TO ADD_ANIMAL() to another players --------------------- \n";
 
-        grpc::ClientContext context;
 
-        std::chrono::time_point deadline =
-            std::chrono::system_clock::now() + std::chrono::milliseconds(3000);
-        context.set_deadline(deadline);
 
         grpc::Status status = grpc::Status::CANCELLED;
 
         while (!status.ok()) {
+            grpc::ClientContext context;
+            std::chrono::time_point deadline =
+                std::chrono::system_clock::now() + std::chrono::milliseconds(30000);
+            context.set_deadline(deadline);
             user::Request request;
             user::Action response;
+
             auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
             status = game.stub_->GetDataAboutMove(&context, request, &response);
+            std::cout << status.ok() << std::endl;
             if (status.ok() == 1) {
                 std::cout << "getting message from server in add_animal() = "
                           << response.player_id() << std::endl;
@@ -133,11 +137,13 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 ////        ans = get_view()->handle_event(window, event);
 //    }
 
-    ans = get_view()->handle_event(window, event);
-
     std::cout << "game.get_cur_player_index() = " << game.get_cur_player_index() << std::endl;
     std::cout << "game.get_settings().get_local_player() = "
               << game.get_settings().get_local_player() << std::endl;
+
+
+    ans = get_view()->handle_event(window, event);
+    if(ans == -1) return;
 
     grpc::ClientContext context;
     user::Nothing request;
@@ -148,6 +154,7 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     if(!status.ok()){
         return;
     }
+    std::cout << "changing player\n";
 
 
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {

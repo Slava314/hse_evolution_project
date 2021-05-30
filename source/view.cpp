@@ -28,7 +28,7 @@ void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_
 
 int DevelopmentPhaseView::parse_message(const std::string &str, GameWindow &window, const sf::Event &event)const  {
     const std::string add_card("Player added new card on the board");
-    if (str.compare(add_card) == true) {
+    if (str == add_card) {
         //вызвать нужную функцию, которая обратится к серверу и отрисует нужную карту
         add_animal(window); //сам разберется кто?
         std::cout << "GETTIN MESSAGE FROM PARSE = " << add_card << std::endl;
@@ -48,7 +48,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
       std::string message_from_server;
       auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000ms);
 
-//      while (!status.ok()) {
+      while (!status.ok()) {
           std::cout << "SENDING REQ TO SERVER in handle_event\n";
           auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(60ms);
           grpc::ClientContext context;
@@ -65,19 +65,20 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
               std::cout << "MESSAGE FROM SERVER = " << message_from_server << std::endl;
               std::cout << "I AM NEXT TO PARSE------------------------- in handle_event \n";
               code =  parse_message(message_from_server, window, event);
-//              break;
+              break;
           } else {
               std::cout << status.error_message() << std::endl;
               std::this_thread::sleep_until(x);
               code = -1;
           }
-//      }
+      }
     };
 
     if (phase.get_game().get_cur_player_index() != phase.get_game().get_settings().get_local_player()) {
         std::thread thread(f);
         thread.join();
         if(code != -1){
+            std::cout << "CODE FROM PARSE = " << code << std::endl;
             return code;
         }
     }

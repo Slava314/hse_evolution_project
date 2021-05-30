@@ -239,12 +239,12 @@ class ServiceImpl final : public UserService::Service {
                             user::Action *response) override {
         std::unique_lock l(mutex);
 
-        std::cout << "I am in GetDataAboutMove\n";
+        std::cout << "I am in GetDataAboutMove -------- \n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
-        if (messages.empty() or saved_data_for_messages.empty()) {
+        if (saved_data_for_messages.empty()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, the message vector is empty.");
         }
@@ -256,6 +256,8 @@ class ServiceImpl final : public UserService::Service {
         } else {
             saved_data_for_messages.back().second--;
         }
+
+        std::cout << "I am in GetDataAboutMove -------- \n";
 
         return Status::OK;
     }
