@@ -33,6 +33,7 @@ service UserService {
 
 message Nothing{
   google.protobuf.Any message = 1;
+  int32 player_id = 2;
 }
 
 message User {

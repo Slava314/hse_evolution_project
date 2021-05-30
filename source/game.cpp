@@ -26,11 +26,8 @@ using user::UserService;
 
 Game::Game(const Settings &settings_, std::unique_ptr<user::UserService::Stub> stub)
     : settings(settings_) {
-    //    std::cout <<"PRINTIN ALL IN GAME CONSTRUCTOR\n";
-    //    settings_.print_all();
-    //    settings.print_all();
     if (stub_ == nullptr) {
-        stub_ = user::UserService::NewStub(  // check that it is valid stub
+        stub_ = user::UserService::NewStub(
             grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
     } else {
         stub_ = std::move(stub);
@@ -64,8 +61,8 @@ void Game::apply_settings() {
     user::TotalPlayers response_;
     request_.set_room_id(settings.get_room_id());
     auto status_ = stub_->GetTotalPlayers(&context_, request_, &response_);
-    std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - APPLY-SETTINGS = " << response_.count() << std::endl;
-
+    std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - APPLY-SETTINGS = "
+              << response_.count() << std::endl;
 
     request.set_room_id(settings.get_room_id());
     auto status = stub_->GetTotalPlayers(&context, request, &response);
@@ -84,7 +81,6 @@ void Game::apply_settings() {
     /// initialize vector of players with their names
     for (int i = 0; i < players.size(); ++i) {
         std::cout << "index for player = " << i << std::endl;
-        // ask server about name
         ClientContext context_;
         user::GetPlayerRequest request_;
         user::GetPlayerResponse response_;
@@ -120,7 +116,8 @@ void Game::start_game() {
     //    settings.set_local_player(0);
     deck.set_cards_info();
 
-    std::cout << "quantity of players in start_game = " << settings.get_quantity_of_players() << std::endl;
+    std::cout << "quantity of players in start_game = " << settings.get_quantity_of_players()
+              << std::endl;
 
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
