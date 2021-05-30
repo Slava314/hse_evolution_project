@@ -82,6 +82,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
         }
     }
 
+    std::cout << "WAITING FOR MOVE - player = " << phase.get_game().get_cur_player_index() << std::endl;
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
@@ -105,7 +106,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             return 1;
         }
     }
-    return 0;
+    return -1;
 }
 
 int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
@@ -133,7 +134,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
             }
         }
     }
-    return 0;
+    return -1;
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();

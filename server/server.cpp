@@ -13,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <mutex>
 #include "proto-src/server.grpc.pb.h"
 
 using grpc::Channel;
@@ -47,6 +48,8 @@ class ServiceImpl final : public UserService::Service {
     Status CreateRoom(ServerContext *context,
                       const CreateRoomRequest *request,
                       CreateRoomResponse *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "Creating server - successfully\n";
 
         if (context->IsCancelled()) {
@@ -94,6 +97,8 @@ class ServiceImpl final : public UserService::Service {
     Status JoinRoom(ServerContext *context,
                     const JoinRoomRequest *request,
                     JoinRoomResponse *reply) override {
+        std::unique_lock l(mutex);
+
         std::cout << "Joining server - successfully\n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -126,6 +131,8 @@ class ServiceImpl final : public UserService::Service {
     Status AddCardOnTheBoard(ServerContext *context,
                              const user::PlayAsAnimalAction *request,
                              user::PlayAsAnimalAction *reply) override {
+        std::unique_lock l(mutex);
+
         std::cout << "AddCardOnTheBoard --------------- 1 \n";
 
         if (context->IsCancelled()) {
@@ -167,6 +174,8 @@ class ServiceImpl final : public UserService::Service {
     Status GetPlayerName(ServerContext *context,
                          const GetPlayerRequest *request,
                          GetPlayerResponse *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "GetPlayerName - 1 \n";
 
         if (context->IsCancelled()) {
@@ -195,7 +204,12 @@ class ServiceImpl final : public UserService::Service {
     Status GetMessage(ServerContext *context,
                       const user::Nothing *request,
                       user::Message *response) override {
+         std::unique_lock l(mutex);
+
         std::cout << "I am in GetMessage\n";
+
+        std::cout << "playerd id doing this request = " << request->player_id() << std::endl;
+
 
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -205,7 +219,7 @@ class ServiceImpl final : public UserService::Service {
         if (messages.empty()) {
             return Status(grpc::StatusCode::CANCELLED, "messages vector is empty in GetMessage");
         }
-        std::cout << "playerd id doing this request = " << request->player_id() << std::endl;
+
         std::cout << "getting last message in vector = " << messages.back().first << std::endl;
         std::cout << "getting last message counter = " << messages.back().second << std::endl;
 
@@ -217,13 +231,14 @@ class ServiceImpl final : public UserService::Service {
             messages.back().second--;
         }
 
-
         return Status::OK;
     }
 
     Status GetDataAboutMove(ServerContext *context,
                             const user::Request *request,
                             user::Action *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "I am in GetDataAboutMove\n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -248,6 +263,8 @@ class ServiceImpl final : public UserService::Service {
     Status GetTotalPlayers(ServerContext *context,
                            const user::Request *request,
                            user::TotalPlayers *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "GetTotalPlayers - 1 \n";
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -273,6 +290,8 @@ class ServiceImpl final : public UserService::Service {
     Status HostHasStartedTheGame(ServerContext *context,
                                  const user::Request *request,
                                  user::Nothing *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "I am in HostHasStartedTheGame\n";
 
         if (context->IsCancelled()) {
@@ -299,6 +318,8 @@ class ServiceImpl final : public UserService::Service {
     Status HasTheGameStartedAlready(ServerContext *context,
                                     const user::Nothing *request,
                                     user::Nothing *response) override {
+        std::unique_lock l(mutex);
+
         std::cout << "I am in HasTheGameStartedAlready\n";
 
         if (context->IsCancelled()) {
@@ -324,6 +345,29 @@ class ServiceImpl final : public UserService::Service {
         return grpc::Status::CANCELLED;
     }
 
+    Status AllPlayersGotMessage(ServerContext *context,
+                                const user::Nothing *request,
+                                user::Nothing *response) override {
+        std::unique_lock l(mutex);
+
+        std::cout << "I am in AllPlayersGotMessage\n";
+
+        std::cout << "local players asking = " << request->player_id() << std::endl;
+
+        if (context->IsCancelled()) {
+            return Status(grpc::StatusCode::CANCELLED,
+                          "Deadline exceeded or Client cancelled, abandoning.");
+        }
+
+        std::cout << "I am in AllPlayersGotMessage - OUT\n";
+
+        if (messages.empty()) {
+            return Status::OK;
+        } else {
+            return Status::CANCELLED;
+        }
+    }
+
 private:
     const int ROOM_ID_LEN = 2;
     std::map<std::string, user::Settings> id_sett_room_list;
@@ -331,6 +375,7 @@ private:
     std::vector<std::pair<user::Action, int>> saved_data_for_messages;
     std::vector<std::pair<std::string, int>> messages;
     std::vector<std::string> players_names;
+    std::mutex mutex;
 };
 
 void RunServer() {

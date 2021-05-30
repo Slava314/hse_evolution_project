@@ -14,7 +14,7 @@ service UserService {
 
   rpc GiveCardFDeck(GiveCardFromDeck) returns (Nothing) {}
 
-  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){}
+  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){ }
 
   rpc GetMessage(Nothing) returns (Message) {}
 
@@ -27,6 +27,8 @@ service UserService {
   rpc HasTheGameStartedAlready(Nothing) returns (Nothing) {}
 
   rpc SendMessage(Message) returns (Nothing) {}
+
+  rpc AllPlayersGotMessage(Nothing) returns (Nothing) {}
   //
 }
 

@@ -137,8 +137,8 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
             auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
             status = game.stub_->GetDataAboutMove(&context, request, &response);
             if (status.ok() == 1) {
-                std::cout << "getting message from server in add_animal() = " << response.player_id()
-                          << std::endl;
+                std::cout << "getting message from server in add_animal() = "
+                          << response.player_id() << std::endl;
                 int player = response.player_id();
                 std::shared_ptr<Animal> animal;
                 game.get_players()[player].put_card_as_animal(animal);
@@ -152,7 +152,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
     }
 }
 
-//void DevelopmentPhase::add_animal() {
+// void DevelopmentPhase::add_animal() {
 //    std::cout << "CAME TO ADD_ANIMAL() --------------------- \n";
 //
 //    grpc::ClientContext context;
@@ -198,48 +198,33 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     // TODO - придется парсить сообщение - какое действие нужно выполнить
     // he cant make any moves - should skip him
 
-
     static int ans = -1;
-    auto f = [&]() { ans = get_view()->handle_event(window, event); };
-    std::thread thread(f);
-    while (ans == -1) {
-        std::cout << ans;
-        std::thread(f);
-    }
-    thread.join();
+
+    std::thread thread;
+//    while (ans == -1) {
+//        std::cout << ans;
+//        std::thread thread([&]() { ans = get_view()->handle_event(window, event); });
+//        thread.join();
+////        ans = get_view()->handle_event(window, event);
+//    }
+
+    ans = get_view()->handle_event(window, event);
 
     std::cout << "game.get_cur_player_index() = " << game.get_cur_player_index() << std::endl;
     std::cout << "game.get_settings().get_local_player() = "
               << game.get_settings().get_local_player() << std::endl;
 
-//    if (game.get_cur_player_index() != game.get_settings().get_local_player()) {
-//        grpc::Status status = grpc::Status::CANCELLED;
-//        std::string message_from_server;
-//        auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000ms);
-//
-//        while (!status.ok()) {
-//            std::cout << "SENDING REQ TO SERVER\n";
-//            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(30ms);
-//            grpc::ClientContext context;
-//            user::Nothing request;
-//            user::Message response;
-//            status = game.stub_->GetMessage(&context, request, &response);
-//            if (status.ok() and std::chrono::steady_clock::now() < end_time) {
-//                std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str()
-//                          << std::endl;
-//                message_from_server = response.str();
-//                break;
-//            } else {
-//                std::cout << status.error_message() << std::endl;
-//                std::this_thread::sleep_until(x);
-//            }
-//        }
-//        std::cout << "I AM NEXT TO PARSE-------------------------\n";
-//        parse_message(message_from_server);  // will call the right function for each message
-//                                             // (player's action)
-//    }
+    grpc::ClientContext context;
+    user::Nothing request;
+    user::Nothing response;
+    request.set_player_id(game.get_local_player_index());
+    auto status = game.stub_->AllPlayersGotMessage(&context, request, &response);
 
-    //has others read the message
+    if(!status.ok()){
+        return;
+    }
+
+
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
@@ -272,6 +257,6 @@ std::size_t DevelopmentPhase::get_cur_player_index() const {
 Player &DevelopmentPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }
- Game const &DevelopmentPhase::get_game() {
+Game const &DevelopmentPhase::get_game() {
     return game;
 }
