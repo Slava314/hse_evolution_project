@@ -28,12 +28,20 @@ void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_
 
 int DevelopmentPhaseView::parse_message(const std::string &str, GameWindow &window, const sf::Event &event)const  {
     const std::string add_card("Player added new card on the board");
+    const std::string add_property("Player added property to animal");
+
     if (str == add_card) {
-        //вызвать нужную функцию, которая обратится к серверу и отрисует нужную карту
         add_animal(window); //сам разберется кто?
-        std::cout << "GETTIN MESSAGE FROM PARSE = " << add_card << std::endl;
+        std::cout << "GETTING MESSAGE FROM PARSE = " << add_card << std::endl;
         return 1;
     }
+
+    if(str == add_property){
+//        add_property(selected_animal, window);
+        std::cout << "GETTING MESSAGE FROM PARSE = " << add_property << std::endl;
+        return 1;
+    }
+
     return -1;
 }
 

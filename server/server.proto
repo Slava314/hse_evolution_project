@@ -14,7 +14,7 @@ service UserService {
 
   rpc GiveCardFDeck(GiveCardFromDeck) returns (Nothing) {}
 
-  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){ }
+  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){}
 
   rpc GetMessage(Nothing) returns (Message) {}
 
@@ -29,6 +29,8 @@ service UserService {
   rpc SendMessage(Message) returns (Nothing) {}
 
   rpc AllPlayersGotMessage(Nothing) returns (Nothing) {}
+
+  rpc AddPropertyToAnimal(AddPropertyToAnimal) returns (AddPropertyToAnimal) {}
   //
 }
 
@@ -51,19 +53,7 @@ message Request {
 
 message Response {
   User user = 1;
-  repeated User users = 2; //array of users
-  repeated Error errors = 3; //array of errors if such happened
-}
-
-message Token {
-  string token = 1;
-  bool valid = 2;
-  repeated Error errors = 3; //array of errors if such happened
-}
-
-message Error {//todo add to messages?
-  int32 code = 1;
-  string description = 2;
+  repeated User users = 2;
 }
 
 message JoinRoomRequest{
@@ -123,8 +113,11 @@ message PlayAsPropertyAction{
 
 }
 
-message AskHowManyPlayersTotalInGame{
-  int32 how_many = 1;
+
+message AddPropertyToAnimal{
+  int32 players = 1;
+  string room_id = 2;
+  string message = 3;
 }
 
 message Action {
@@ -134,7 +127,12 @@ message Action {
   oneof ActionData {
     PlayAsAnimalAction play_animal = 3;
     PlayAsPropertyAction play_animal_properties = 4;
+    AddPropertyToAnimal add_property = 5;
   }
+}
+
+message AskHowManyPlayersTotalInGame{
+  int32 how_many = 1;
 }
 
 message Message{
