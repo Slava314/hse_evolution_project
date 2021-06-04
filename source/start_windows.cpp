@@ -167,7 +167,8 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                             std::cout << status.ok() << std::endl;
                                             std::cout << status.error_code() << std::endl;
                                             std::cout << "JOINING4\n";
-                                            std::cout << "GAME HAS STARTED in handle_events() in START GAME\n";
+                                            std::cout << "GAME HAS STARTED in handle_events() in "
+                                                         "START GAME\n";
                                         }
                                         std::this_thread::sleep_until(x);
                                     }
@@ -175,7 +176,8 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
 
                                     std::this_thread::sleep_for(500ms);
                                     window.close();
-                                    std::cout << "OUT FROM HANDLE EVENTS AND RETURNING GAMEWINDOW\n";
+                                    std::cout
+                                        << "OUT FROM HANDLE EVENTS AND RETURNING GAMEWINDOW\n";
                                     return std::make_unique<GameWindow>(std::move(game_));
                                 }
                             }

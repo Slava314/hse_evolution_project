@@ -21,7 +21,7 @@ public:
     void set_cards_info();
     int need_card(const Player &player);
 private:
-    static const int CARDS_TYPE = 3;
+    static const int CARDS_TYPE = 7;
     std::vector<std::pair<Properties, int>> cards_info;
     std::vector<std::shared_ptr<Card>> deck_of_cards;
     //TODO initialoze random with seed

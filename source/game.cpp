@@ -17,10 +17,8 @@ using user::GetPlayerResponse;
 using user::JoinRoomRequest;
 using user::JoinRoomResponse;
 
-using user::Error;
 using user::Request;
 using user::Response;
-using user::Token;
 using user::User;
 using user::UserService;
 
@@ -46,55 +44,62 @@ size_t Game::get_deck_size() {
 void Game::apply_settings() {
     std::cout << "APPLYING SETTINGS \n";
 
+    if(stub_ != nullptr) {
+        ClientContext context;
+        user::Request request;
+        user::TotalPlayers response;
+
+        settings.print_all();
+
+        // TODO - this room id does not initialize the needed field
+
+        grpc::ClientContext context_;
+        user::Request request_;
+        user::TotalPlayers response_;
+        request_.set_room_id(settings.get_room_id());
+        auto status_ = stub_->GetTotalPlayers(&context_, request_, &response_);
+        std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - APPLY-SETTINGS = "
+                  << response_.count() << std::endl;
+
+        request.set_room_id(settings.get_room_id());
+        auto status = stub_->GetTotalPlayers(&context, request, &response);
+
+        if (!status.ok()) {
+            std::cout << status.error_message() << std::endl;
+            throw GameConnecting("Could not get total players in apply_settings, sadly");
+        }
+
+        std::cout << "GOT TOTAL PLAYERS IN apply_settings = " << response.count() << std::endl;
+
+        settings.set_total_players(response.count());
+        players.resize(settings.get_total());
+        settings.get_players_names().resize(0);
+
+        /// initialize vector of players with their names
+        for (int i = 0; i < players.size(); ++i) {
+            std::cout << "index for player = " << i << std::endl;
+            ClientContext context_;
+            user::GetPlayerRequest request_;
+            user::GetPlayerResponse response_;
+            request_.set_player_id(i);
+            request_.set_room_id(settings.get_room_id());
+            auto status = stub_->GetPlayerName(&context_, request_, &response_);
+            if (!status.ok()) {
+                std::cout << status.error_message() << std::endl;
+                throw GameError("Could not get player name from server in apply_settings, sorry\n");
+            }
+            players[i].set_name(response_.name());
+            settings.set_name_in_players_name(response_.name());
+        }
+    } else {
+        players.resize(settings.get_quantity_of_players());
+        Settings settings_for_game;
+        settings_for_game.set_seed(rand());
+        settings = settings_for_game;
+    }
+
     deck = Deck(settings.get_seed(), settings.get_size_of_deck());
 
-    ClientContext context;
-    user::Request request;
-    user::TotalPlayers response;
-
-    settings.print_all();
-
-    // TODO - this room id does not initialize the needed field
-
-    grpc::ClientContext context_;
-    user::Request request_;
-    user::TotalPlayers response_;
-    request_.set_room_id(settings.get_room_id());
-    auto status_ = stub_->GetTotalPlayers(&context_, request_, &response_);
-    std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - APPLY-SETTINGS = "
-              << response_.count() << std::endl;
-
-    request.set_room_id(settings.get_room_id());
-    auto status = stub_->GetTotalPlayers(&context, request, &response);
-
-    if (!status.ok()) {
-        std::cout << status.error_message() << std::endl;
-        throw GameConnecting("Could not get total players in apply_settings, sadly");
-    }
-
-    std::cout << "GOT TOTAL PLAYERS IN apply_settings = " << response.count() << std::endl;
-
-    settings.set_total_players(response.count());
-    players.resize(settings.get_total());
-    settings.get_players_names().resize(0);
-
-    /// initialize vector of players with their names
-    for (int i = 0; i < players.size(); ++i) {
-        std::cout << "index for player = " << i << std::endl;
-        ClientContext context_;
-        user::GetPlayerRequest request_;
-        user::GetPlayerResponse response_;
-        request_.set_player_id(i);
-        request_.set_room_id(settings.get_room_id());
-        auto status = stub_->GetPlayerName(&context_, request_, &response_);
-        if (!status.ok()) {
-            // TODO - throw something
-            std::cout << status.error_message() << std::endl;
-            throw GameError("Could not get player name from server in apply_settings, sorry\n");
-        }
-        players[i].set_name(response_.name());
-        settings.set_name_in_players_name(response_.name());
-    }
     std::cout << "GET PLAYERS = " << players.size() << std::endl;
     deck.set_random_gen(settings.get_seed());
 }

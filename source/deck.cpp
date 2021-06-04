@@ -18,6 +18,18 @@ void Deck::generate_deck() {
                 case Properties::STOMPER:
                     deck_of_cards.push_back(
                         std::make_shared<Stomper>(Properties(Properties::STOMPER)));
+                case Properties::RUNNING:
+                    deck_of_cards.push_back(
+                        std::make_shared<Running>(Properties(Properties::RUNNING)));
+                case Properties::MIMICRY:
+                    deck_of_cards.push_back(
+                        std::make_shared<Mimicry>(Properties(Properties::MIMICRY)));
+                case Properties::SWIMMINGS:
+                    deck_of_cards.push_back(
+                        std::make_shared<Swimmings>(Properties(Properties::SWIMMINGS)));
+                case Properties::TAIL_LOSS:
+                    deck_of_cards.push_back(
+                        std::make_shared<Tail_Loss>(Properties(Properties::TAIL_LOSS)));
                     break;
                 default:
                     continue;
@@ -58,14 +70,6 @@ void Deck::cards_delivery(std::vector<Player> &players) {
 }
 
 void Deck::cards_delivery(Player &player) {
-    //    for (auto &player : players) {
-    //        auto need = need_card(player);
-    //        while (need--) {
-    //            player.add_card_in_hands(deck_of_cards.back());
-    //            deck_of_cards.pop_back();
-    //        }
-    //    }
-
     auto need = need_card(player);
     while (need--) {
         player.add_card_in_hands(deck_of_cards.back());
@@ -90,4 +94,8 @@ void Deck::set_cards_info() {
     cards_info[0] = {Properties::FAT_TISSUE, 8};
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};
+    cards_info[3] = {Properties::RUNNING, 8};
+    cards_info[4] = {Properties::MIMICRY, 8};
+    cards_info[5] = {Properties::SWIMMINGS, 8};
+    cards_info[6] = {Properties::TAIL_LOSS, 8};
 }

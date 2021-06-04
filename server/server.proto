@@ -30,7 +30,7 @@ service UserService {
 
   rpc AllPlayersGotMessage(Nothing) returns (Nothing) {}
 
-  rpc AddPropertyToAnimal(AddPropertyToAnimal) returns (AddPropertyToAnimal) {}
+  rpc AddPropertyToAnimal(AddProperty) returns (AddProperty) {}
   //
 }
 
@@ -114,7 +114,7 @@ message PlayAsPropertyAction{
 }
 
 
-message AddPropertyToAnimal{
+message AddProperty{
   int32 players = 1;
   string room_id = 2;
   string message = 3;
@@ -127,7 +127,7 @@ message Action {
   oneof ActionData {
     PlayAsAnimalAction play_animal = 3;
     PlayAsPropertyAction play_animal_properties = 4;
-    AddPropertyToAnimal add_property = 5;
+    AddProperty add_property = 5;
   }
 }
 

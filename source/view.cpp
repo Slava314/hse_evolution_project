@@ -2,7 +2,6 @@
 #include <thread>
 #include "phase.h"
 #include "window.h"
-#include <thread>
 
 void DevelopmentPhaseView::start_development_phase(GameWindow &window) const {
     cards_delivery(window);
@@ -15,6 +14,14 @@ void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
     window.recalc_cards();
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
+    std::cout << "name = " << phase.get_cur_player().get_name() << std::endl;
+    std::cout << &window.get_selected_card()
+              << " property = " << window.get_selected_card()->property << std::endl;
+    std::cout << "all cards in hands = \n";
+    for (auto x : phase.get_cur_player().get_cards_in_hands()) {
+        std::cout << "adress = " << x << " property = " << x->property << std::endl;
+    }
+
     auto new_animal = std::make_shared<Animal>(phase.get_cur_player());
     phase.add_animal(window.get_selected_card(), new_animal);
     window.play_animal(new_animal);
@@ -26,18 +33,20 @@ void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_
     window.add_property_to_animal(selected_animal);
 }
 
-int DevelopmentPhaseView::parse_message(const std::string &str, GameWindow &window, const sf::Event &event)const  {
+int DevelopmentPhaseView::parse_message(const std::string &str,
+                                        GameWindow &window,
+                                        const sf::Event &event) const {
     const std::string add_card("Player added new card on the board");
     const std::string add_property("Player added property to animal");
 
     if (str == add_card) {
-        add_animal(window); //сам разберется кто?
+        add_animal(window);  //сам разберется кто?
         std::cout << "GETTING MESSAGE FROM PARSE = " << add_card << std::endl;
         return 1;
     }
 
-    if(str == add_property){
-//        add_property(selected_animal, window);
+    if (str == add_property) {
+        //        add_property(selected_animal, window);
         std::cout << "GETTING MESSAGE FROM PARSE = " << add_property << std::endl;
         return 1;
     }
@@ -50,48 +59,55 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
         start_development_phase(window);
     }
 
-    auto code = - 1;
-    auto f = [&](){
-      grpc::Status status = grpc::Status::CANCELLED;
-      std::string message_from_server;
-      auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000ms);
+    if (phase.get_game().stub_ != nullptr) {
+        auto code = -1;
+        auto f = [&]() {
+            grpc::Status status = grpc::Status::CANCELLED;
+            std::string message_from_server;
+            auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000ms);
 
-      while (!status.ok()) {
-          std::cout << "SENDING REQ TO SERVER in handle_event\n";
-          auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(60ms);
-          grpc::ClientContext context;
-          user::Nothing request;
-          user::Message response;
-          request.set_player_id(phase.get_game().get_cur_player_index());
-          status = phase.get_game().stub_->GetMessage(&context, request, &response);
-          if (status.ok() and std::chrono::steady_clock::now() < end_time) {
-              std::cout << "cur player = " << phase.get_game().get_cur_player_index() << std::endl;
-              std::cout << "local player = " << phase.get_game().get_settings().get_local_player() << std::endl;
-              std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str()
-                        << std::endl;
-              message_from_server = response.str();
-              std::cout << "MESSAGE FROM SERVER = " << message_from_server << std::endl;
-              std::cout << "I AM NEXT TO PARSE------------------------- in handle_event \n";
-              code =  parse_message(message_from_server, window, event);
-              break;
-          } else {
-              std::cout << status.error_message() << std::endl;
-              std::this_thread::sleep_until(x);
-              code = -1;
-          }
-      }
-    };
+            while (!status.ok()) {
+                std::cout << "SENDING REQ TO SERVER in handle_event\n";
+                auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(60ms);
+                grpc::ClientContext context;
+                user::Nothing request;
+                user::Message response;
+                request.set_player_id(phase.get_game().get_cur_player_index());
+                status = phase.get_game().stub_->GetMessage(&context, request, &response);
+                if (status.ok() and std::chrono::steady_clock::now() < end_time) {
+                    std::cout << "cur player = " << phase.get_game().get_cur_player_index()
+                              << std::endl;
+                    std::cout << "local player = "
+                              << phase.get_game().get_settings().get_local_player() << std::endl;
+                    std::cout << "I GOT A MESSAGE AND GETTING OUT OF RUN PHASE = " << response.str()
+                              << std::endl;
+                    message_from_server = response.str();
+                    std::cout << "MESSAGE FROM SERVER = " << message_from_server << std::endl;
+                    std::cout << "I AM NEXT TO PARSE------------------------- in handle_event \n";
+                    code = parse_message(message_from_server, window, event);
+                    break;
+                } else {
+                    std::cout << status.error_message() << std::endl;
+                    std::this_thread::sleep_until(x);
+                    code = -1;
+                }
+            }
+        };
 
-    if (phase.get_game().get_cur_player_index() != phase.get_game().get_settings().get_local_player()) {
-        std::thread thread(f);
-        thread.join();
-        if(code != -1){
-            std::cout << "CODE FROM PARSE = " << code << std::endl;
-            return code;
+        if (phase.get_game().get_cur_player_index() !=
+            phase.get_game().get_settings().get_local_player()) {
+            std::thread thread(f);
+            thread.join();
+            if (code != -1) {
+                std::cout << "CODE FROM PARSE = " << code << std::endl;
+                return code;
+            }
         }
     }
 
-    std::cout << "WAITING FOR MOVE - player = " << phase.get_game().get_cur_player_index() << std::endl;
+//    std::cout << "WAITING FOR MOVE - player = " << phase.get_game().get_cur_player_index()
+//              << std::endl;
+
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
@@ -115,7 +131,11 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             return 1;
         }
     }
-    return -1;
+    if (phase.get_game().stub_ != nullptr) {
+        return -1;
+    } else {
+        return 0;
+    }
 }
 
 int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {

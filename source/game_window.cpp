@@ -389,6 +389,9 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
 }
 
 std::shared_ptr<Card> const &GameWindow::get_selected_card() const {
+    std::cout << "selected card = \n";
+    std::cout << &selected_card << std::endl;
+    std::cout << selected_card->property << std::endl;
     return selected_card;
 }
 

@@ -33,7 +33,6 @@ using user::GetPlayerResponse;
 using user::JoinRoomRequest;
 using user::JoinRoomResponse;
 
-using user::Error;
 using user::Request;
 using user::Response;
 using user::User;

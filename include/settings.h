@@ -58,7 +58,7 @@ private:
     int size_of_deck;
     int time_of_move;
     int local_player = 0;
-    int seed;
+    int seed = rand();
     int total_players;
     std::vector<std::string> players_names;
     std::string room_id;
