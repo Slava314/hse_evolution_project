@@ -70,7 +70,14 @@ public:
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
-        game.start_game(settings);  //важен порядок этих двух строчек, потом возможно надо будет
+        file = fs.open("card.png");
+        str = std::string(file.begin(), file.end());
+        card_texture.loadFromMemory(str.data(), str.size());
+        card_texture.setSmooth(true);
+        sprite.setTexture(card_texture);
+        sprite.setScale(CARD_WIDTH / sprite.getGlobalBounds().width,
+                        CARD_HEIGHT / sprite.getGlobalBounds().height);
+        game.start_game(settings);
         init_window();
     }
     ~GameWindow() override = default;
@@ -110,6 +117,8 @@ private:
     void draw() override;
     Game game;
     sf::Font font;
+    sf::Texture card_texture;
+    sf::Sprite sprite;
 
     TextButton end_turn;
     sf::RectangleShape deck_shape;
