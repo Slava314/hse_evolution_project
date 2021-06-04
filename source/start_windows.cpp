@@ -144,40 +144,27 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                     auto end_time = std::chrono::steady_clock::now() +
                                                     std::chrono::milliseconds(300000ms);
 
-                                    std::cout << "JOINING1\n";
-                                    // TODO - ask server - has the game started already?
                                     while (!status.ok()) {
-                                        std::cout << "WAITING FOR START GAME\n";
                                         auto x = std::chrono::steady_clock::now() +
                                                  std::chrono::milliseconds(30ms);
                                         grpc::ClientContext context;
                                         user::Nothing request;
                                         user::Nothing response;
-                                        std::cout << "JOINING2\n";
                                         status = game_.stub_->HasTheGameStartedAlready(
                                             &context, request, &response);
-                                        std::cout << "JOINING3\n";
                                         if (!status.ok() and
                                             std::chrono::steady_clock::now() >= end_time) {
-                                            std::cout << "JOINING3.5\n";
                                             throw Error(
                                                 "Response for joining room from server is too "
                                                 "long");
                                         } else {
-                                            std::cout << status.ok() << std::endl;
-                                            std::cout << status.error_code() << std::endl;
-                                            std::cout << "JOINING4\n";
-                                            std::cout << "GAME HAS STARTED in handle_events() in "
-                                                         "START GAME\n";
+                                            //nothing
                                         }
                                         std::this_thread::sleep_until(x);
                                     }
-                                    std::cout << "JOINING5\n";
 
                                     std::this_thread::sleep_for(500ms);
                                     window.close();
-                                    std::cout
-                                        << "OUT FROM HANDLE EVENTS AND RETURNING GAMEWINDOW\n";
                                     return std::make_unique<GameWindow>(std::move(game_));
                                 }
                             }
@@ -232,7 +219,6 @@ void JoinGameWindow::draw() {
 std::unique_ptr<Window> MakeGameWindow::handle_events() {
     Game game{};
     bool already_initialized = false;
-    std::cout << "I AM IN HANDLE EVENTS IN MAKE GAME WINDOW\n";
     while (window.isOpen()) {
         sf::Event event{};
         if (window.waitEvent(event)) {
@@ -266,7 +252,6 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
 
                             if (room_id.getString() != "") {
                                 window.close();
-                                // TODO - print to monitor
 
                                 grpc::ClientContext context;
                                 user::Request request;
@@ -276,7 +261,6 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 auto status =
                                     game.stub_->HostHasStartedTheGame(&context, request, &response);
                                 if (!status.ok()) {
-                                    std::cout << status.error_message() << std::endl;
                                     throw Error(
                                         "Could not tell server, that i have started the game");
                                 }
@@ -287,7 +271,6 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                             }
 
                             game.create_room((std::move(name_field.get_text())));
-                            std::cout << "PRINTING ALL IN START GAME AFTER CREATE ROOM\n";
                             game.get_settings().print_all();
                             room_id.setString("room id: " + game.get_settings().get_room_id());
                         }
