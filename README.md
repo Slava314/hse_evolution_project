@@ -13,7 +13,7 @@ If you do not want to do it, grpc will install globally after what there is no e
 
 After installing you should build gRPC, Protocol Buffers and Aseil you should build it
 
-`$ cd grpc`
+$` cd grpc`$
 
 `$ mkdir -p cmake/build`
 
