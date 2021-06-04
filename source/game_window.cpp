@@ -62,7 +62,7 @@ void GameWindow::draw() {
     for (auto name : players_names) {
         window.draw(name);
     }
-    window.draw(deck_shape);
+    window.draw(sprite);
     window.draw(deck_text);
     window.draw(turn_of);
     instruction.setPosition(WINDOW_WIDTH - instruction.getLocalBounds().width - 10, 0);
@@ -95,7 +95,7 @@ void GameWindow::init_window() {
     turn_of.setFont(font);
     turn_of.setCharacterSize(28);
 
-    instruction.setString("hello");
+    instruction.setString("Add new animal or property to animal");
     instruction.setFont(font);
     instruction.setCharacterSize(28);
 
@@ -131,18 +131,18 @@ void GameWindow::init_window() {
 void GameWindow::make_deck_shape() {
     deck_shape.setSize({CARD_WIDTH, CARD_HEIGHT});
     deck_shape.setFillColor(CARD_COLOR);
-    deck_shape.setOutlineThickness(5);
-    deck_shape.setOutlineColor(CARD_OUTLINE_COLOR);
     deck_shape.setPosition((WINDOW_WIDTH - CARD_WIDTH) / 2.0 - 100,
                            (WINDOW_HEIGHT - CARD_HEIGHT) / 2.0 - 150);
 
     deck_text.setString("deck: " + std::to_string(game.get_deck_size()));
     deck_text.setFont(font);
-    deck_text.setCharacterSize(28);
+    deck_text.setCharacterSize(24);
+    deck_text.setFillColor(sf::Color::Black);
 
     deck_text.setPosition(
         deck_shape.getPosition().x + (CARD_WIDTH - deck_text.getGlobalBounds().width) / 2.0f,
         deck_shape.getPosition().y);
+    sprite.setPosition(deck_shape.getPosition());
 }
 
 void GameWindow::recalc_cards() {
@@ -156,14 +156,15 @@ void GameWindow::recalc_cards() {
             }
         }
         if (!exist) {
-            CardButton new_button(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT));
+            CardButton new_button(sf::Vector2f(CARD_WIDTH, CARD_HEIGHT), card_texture);
             new_button.set_color(CARD_COLOR);
-            new_button.set_outline_thickness(5);
             new_button.set_outline_color(CARD_OUTLINE_COLOR);
             new_button.set_object(card);
             Properties prop = card->get_info().first;
             new_button.set_text(get_name(prop), font);
             new_button.set_text_size(20);
+            new_button.set_sprite_scale(CARD_WIDTH, CARD_HEIGHT);
+            new_button.set_text_color(sf::Color::Black);
             player_cards_buttons.push_back(new_button);
         }
     }
@@ -186,15 +187,16 @@ void GameWindow::add_animal_shape(const std::shared_ptr<Animal> &new_animal, int
 
         sf::Text("properties: " +
                      std::to_string(game.get_players()[id].count_animal_properties(new_animal)),
-                 font));
+                 font),
+        card_texture);
 
     new_animal_shape.set_color(CARD_COLOR);
-    new_animal_shape.set_outline_thickness(5);
-    new_animal_shape.set_outline_color(CARD_OUTLINE_COLOR);
     new_animal_shape.set_text_size(22);
     new_animal_shape.set_active(false);
     new_animal_shape.set_object(new_animal);
-    new_animal_shape.property_button->set_color({0, 0, 0, 0});
+    new_animal_shape.get_property_button()->set_color({0, 0, 0, 0});
+    new_animal_shape.set_sprite_scale(CARD_WIDTH, CARD_HEIGHT);
+    new_animal_shape.set_text_color(sf::Color::Black);
     player_animals_buttons[id].push_back(new_animal_shape);
 }
 
@@ -369,10 +371,15 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
                                                     .count_animal_properties(animal)),
 
                 font);
+            player_animals_buttons[game.get_cur_player_index()][index].set_text_color(
+                sf::Color::Black);
             player_animals_buttons[game.get_cur_player_index()][index].set_text_size(22);
         }
-        for (auto &player_animal_button : player_animals_buttons[game.get_cur_player_index()]) {
-            player_animal_button.set_active(false);
+
+        for (int i = 0; i < player_animals_buttons.size(); ++i) {
+            for (auto &player_animal_button : player_animals_buttons[i]) {
+                player_animal_button.activate();
+            }
         }
 
         for (auto &player_cards_button : player_cards_buttons) {
@@ -404,15 +411,17 @@ void GameWindow::make_food() {
             std::string str =
                 "properties: " + std::to_string(game.get_players()[k].count_animal_properties(
                                      player_animals_buttons[k][i].get_object()));
-            str += "\n   food: ";
+            str += "\n\n\n\n\n\n   food: ";
             str += std::to_string(player_animals_buttons[k][i].get_object()->get_owning_food()) +
                    "/" +
                    std::to_string(player_animals_buttons[k][i].get_object()->get_food_needed());
             player_animals_buttons[k][i].set_text(str, font);
             player_animals_buttons[k][i].set_text_size(22);
+            player_animals_buttons[k][i].set_text_color(sf::Color::Black);
             player_animals_buttons[k][i].set_active(true);
         }
     }
+    instruction.setString("Feed animal or use property of animal");
 }
 
 bool GameWindow::check_food() {
@@ -437,6 +446,7 @@ void GameWindow::click_food() {
                 player_animal_button.deactivate();
             }
         }
+        instruction.setString("Choose animal to feed");
     } else {
         food.set_outline_thickness(0);
         food_clicked = false;
@@ -445,6 +455,7 @@ void GameWindow::click_food() {
                 player_animal_button.activate();
             }
         }
+        instruction.setString("Feed animal or use property of animal");
     }
 }
 bool const &GameWindow::get_food_clicked() const {
@@ -467,6 +478,7 @@ void GameWindow::feed_animal(const std::shared_ptr<Animal> &animal) {
             }
         }
     }
+    instruction.setString("Feed animal or use property of animal on board");
 }
 
 void GameWindow::recalc_animals() {
@@ -489,7 +501,7 @@ void GameWindow::change_player() {
 std::shared_ptr<AnimalButton> GameWindow::get_clicked_property_animal() {
     for (auto player_animals : player_animals_buttons) {
         for (auto animal : player_animals) {
-            if (animal.property_button->is_clicked(sf::Mouse::getPosition(window))) {
+            if (animal.get_property_button()->is_clicked(sf::Mouse::getPosition(window))) {
                 return std::make_shared<AnimalButton>(animal);
             }
         }

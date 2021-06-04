@@ -146,10 +146,26 @@ std::shared_ptr<Animal> const &AnimalButton::get_object() const {
 void AnimalButton::set_position(const sf::Vector2f &position_) {
     TextButton::set_position(position_);
     property_button->set_position(position_);
+    sprite.setPosition(position_);
 }
 void AnimalButton::draw(sf::RenderWindow &window) const {
-    TextButton::draw(window);
+    window.draw(sprite);
+    window.draw(TextButton::text);
     property_button->draw(window);
+}
+std::shared_ptr<Button> &AnimalButton::get_property_button() {
+    return property_button;
+}
+void AnimalButton::set_sprite_scale(int x, int y) {
+    sprite.setScale(x / sprite.getGlobalBounds().width, y / sprite.getGlobalBounds().height);
+}
+void AnimalButton::activate() {
+    TextButton::activate();
+    sprite.setColor({255, 255, 255, 255});
+}
+void AnimalButton::deactivate() {
+    TextButton::deactivate();
+    sprite.setColor({255, 255, 255, 150});
 }
 
 void CardButton::set_object(const std::shared_ptr<Card> &obj) {
@@ -158,6 +174,26 @@ void CardButton::set_object(const std::shared_ptr<Card> &obj) {
 std::shared_ptr<Card> const &CardButton::get_object() const {
     return object;
 }
+void CardButton::draw(sf::RenderWindow &window) const {
+    window.draw(sprite);
+    window.draw(TextButton::text);
+}
+void CardButton::set_position(const sf::Vector2f &position_) {
+    TextButton::set_position(position_);
+    sprite.setPosition(position_);
+}
+void CardButton::set_sprite_scale(int x, int y) {
+    sprite.setScale(x / sprite.getGlobalBounds().width, y / sprite.getGlobalBounds().height);
+}
+void CardButton::activate() {
+    TextButton::activate();
+    sprite.setColor({255, 255, 255, 255});
+}
+void CardButton::deactivate() {
+    TextButton::deactivate();
+    sprite.setColor({255, 255, 255, 150});
+}
+
 Properties PropertyButton::get_property() {
     return prop;
 }
