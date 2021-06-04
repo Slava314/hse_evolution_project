@@ -12,12 +12,19 @@ Before installing gRPC you can choose a directory to hold locally installed pack
 If you do not want to do it, grpc will install globally after what there is no easy way to uninstall gRPC
 
 After installing you should build gRPC, Protocol Buffers and Aseil you should build it
+
 `$ cd grpc`
+
 `$ mkdir -p cmake/build`
+
 `$ pushd cmake/build`
+
 `$ cmake -DgRPC_INSTALL=ON \`
+
 `      -DgRPC_BUILD_TESTS=OFF \`
+
 `      -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \`
+
 `      ../..`
 `$ make -j`
 `$ make install`
