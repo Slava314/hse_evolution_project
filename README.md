@@ -19,13 +19,7 @@ After installing you should build gRPC, Protocol Buffers and Aseil you should bu
 
 `$ pushd cmake/build`
 
-`$ cmake -DgRPC_INSTALL=ON \`
-
- `   -DgRPC_BUILD_TESTS=OFF \`
-
-   `   -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \`
-
-     ` ../..`
+`$ cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF  -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR  ../..`
       
 `$ make -j`
 
@@ -37,9 +31,7 @@ After installing you should build gRPC, Protocol Buffers and Aseil you should bu
 
 `$ pushd third_party/abseil-cpp/cmake/build`
 
-`$ cmake -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
-      -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE \
-      ../..`
+`$ cmake -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE ../..`
       
 `$ make -j`
 
