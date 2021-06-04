@@ -5,8 +5,6 @@
 #include <vector>
 
 struct Settings {
-    void set_local_player(int i);
-
 public:
     Settings() = default;
     Settings(std::string room_name_, int quantity_of_players_, int size_of_deck_, int time_of_move_)
@@ -22,6 +20,8 @@ public:
     int get_time_of_move() const;
     void set_player_name(const std::string &name, std::size_t ind);
     const std::string &get_player_name(std::size_t ind) const;
+    void set_local_player(int i);
+    std::size_t get_local_player() const;
 
 private:
     std::string room_name;

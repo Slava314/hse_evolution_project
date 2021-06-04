@@ -52,8 +52,14 @@ public:
         auto file = fs.open("times.ttf");
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
-        game.start_game(
-            settings);  //важен порядок этих двух строчек, потом возможно надо будет исправить
+        file = fs.open("card.png");
+        str = std::string(file.begin(), file.end());
+        card_texture.loadFromMemory(str.data(), str.size());
+        card_texture.setSmooth(true);
+        sprite.setTexture(card_texture);
+        sprite.setScale(CARD_WIDTH / sprite.getGlobalBounds().width,
+                        CARD_HEIGHT / sprite.getGlobalBounds().height);
+        game.start_game(settings);
         init_window();
     }
     ~GameWindow() override = default;
@@ -64,7 +70,7 @@ public:
     void init_window();
     void make_deck_shape();
     void add_animal_shape(const std::shared_ptr<Animal> &new_animal, int id);
-    void set_animals_position(bool with_new_place);
+    void set_animals_position();
     void set_players_names_positions();
     void recalc_animals();
     sf::RenderWindow &get_window();
@@ -93,14 +99,19 @@ private:
     void draw() override;
     Game game;
     sf::Font font;
+    sf::Texture card_texture;
+    sf::Sprite sprite;
 
     TextButton end_turn;
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
+    sf::Text turn_of;
+    sf::Text instruction;
+    TextButton play_animal_button;
+    TextButton feed_animal_button;
     std::vector<CardButton> player_cards_buttons;
     std::vector<std::vector<AnimalButton>> player_animals_buttons;
     std::shared_ptr<Card> selected_card = nullptr;
-    Button place_for_new_animal;
     TextButton food;
     bool food_clicked = false;
     std::vector<sf::Text> players_names;
@@ -233,6 +244,32 @@ private:
     TextField field_for_number_of_players;
     TextButton start_button;
     Settings settings;
+
+    void init_window();
+    void draw() override;
+};
+
+class EndGameWindow : public Window {
+public:
+    EndGameWindow(Game game_) : game(std::move(game_)) {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "End game",
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        init_window();
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    ~EndGameWindow() override = default;
+
+private:
+    Game game;
+    std::vector<std::tuple<std::string, int, int>> results;
+    std::vector<sf::Text> leaders_name;
+    std::vector<sf::Text> leaders_score;
+    sf::Text leaderboard;
 
     void init_window();
     void draw() override;
