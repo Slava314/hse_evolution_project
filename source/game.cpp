@@ -42,8 +42,6 @@ size_t Game::get_deck_size() {
 }
 
 void Game::apply_settings() {
-    std::cout << "APPLYING SETTINGS \n";
-
     if(stub_ != nullptr) {
         ClientContext context;
         user::Request request;
@@ -58,18 +56,13 @@ void Game::apply_settings() {
         user::TotalPlayers response_;
         request_.set_room_id(settings.get_room_id());
         auto status_ = stub_->GetTotalPlayers(&context_, request_, &response_);
-        std::cout << "ASK SERVER HOW MANY PLAYERS IN START WINDOW - APPLY-SETTINGS = "
-                  << response_.count() << std::endl;
 
         request.set_room_id(settings.get_room_id());
         auto status = stub_->GetTotalPlayers(&context, request, &response);
 
         if (!status.ok()) {
-            std::cout << status.error_message() << std::endl;
             throw GameConnecting("Could not get total players in apply_settings, sadly");
         }
-
-        std::cout << "GOT TOTAL PLAYERS IN apply_settings = " << response.count() << std::endl;
 
         settings.set_total_players(response.count());
         players.resize(settings.get_total());
@@ -77,7 +70,6 @@ void Game::apply_settings() {
 
         /// initialize vector of players with their names
         for (int i = 0; i < players.size(); ++i) {
-            std::cout << "index for player = " << i << std::endl;
             ClientContext context_;
             user::GetPlayerRequest request_;
             user::GetPlayerResponse response_;
@@ -85,7 +77,6 @@ void Game::apply_settings() {
             request_.set_room_id(settings.get_room_id());
             auto status = stub_->GetPlayerName(&context_, request_, &response_);
             if (!status.ok()) {
-                std::cout << status.error_message() << std::endl;
                 throw GameError("Could not get player name from server in apply_settings, sorry\n");
             }
             players[i].set_name(response_.name());
@@ -99,8 +90,6 @@ void Game::apply_settings() {
     }
 
     deck = Deck(settings.get_seed(), settings.get_size_of_deck());
-
-    std::cout << "GET PLAYERS = " << players.size() << std::endl;
     deck.set_random_gen(settings.get_seed());
 }
 
@@ -118,12 +107,7 @@ void Game::start_game(Settings settings_) {
 
 void Game::start_game() {
     apply_settings();
-    //    settings.set_local_player(0);
     deck.set_cards_info();
-
-    std::cout << "quantity of players in start_game = " << settings.get_quantity_of_players()
-              << std::endl;
-
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
@@ -168,7 +152,6 @@ void Game::create_room(const std::string &player_name_) {
 
     user::Settings settings1;
 
-    std::cout << "SEED = " << settings.get_seed() << std::endl;
     settings1.set_quantity_of_players(settings.get_quantity_of_players());
     settings1.set_size_of_deck(settings.get_size_of_deck());
     settings1.set_time_of_move(settings.get_time_of_move());
@@ -181,7 +164,6 @@ void Game::create_room(const std::string &player_name_) {
     auto status = stub_->CreateRoom(&context, create_room_request, &create_room_response);
 
     if (!status.ok()) {
-        std::cout << status.error_message() << std::endl;
         throw GameConnecting("Could not create room, sad");
     }
 
@@ -190,7 +172,6 @@ void Game::create_room(const std::string &player_name_) {
 }
 
 Game Game::join_room(const std::string &room_id, const std::string &player_name) {
-    std::cout << "JOIN\n";
     ClientContext context;
     JoinRoomRequest join_room_request;
     JoinRoomResponse join_room_response;
@@ -207,7 +188,6 @@ Game Game::join_room(const std::string &room_id, const std::string &player_name)
     auto status = stub_->JoinRoom(&context, join_room_request, &join_room_response);
 
     if (!status.ok()) {
-        std::cout << status.error_message() << std::endl;
         throw GameConnecting("Could not join room, sad");
     }
 
@@ -221,12 +201,7 @@ Game Game::join_room(const std::string &room_id, const std::string &player_name)
 
     Game game(settings1, std::move(stub_));
     game.settings.set_room_id(room_id);
-
-    std::cout << "get local players in join room = " << join_room_response.settings().local_player()
-              << std::endl;
-
     settings1.print_all();
-
     return game;
 }
 
@@ -238,20 +213,6 @@ void Game::initialize_with_settings(const Settings &settings_) {
     }
     phase = std::make_unique<DevelopmentPhase>(*this);
 }
-
-// bool Game::send_request_to_server(std::function<grpc::Status(void)> func, unsigned int interval)
-// {
-//    std::thread([func, interval]() {
-//        while (true) {
-//            auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(interval);
-//            func();
-//            if(r.ok() == 1){
-//                break;
-//            }
-//            std::this_thread::sleep_until(x);
-//        }
-//    }).detach();
-//}
 
 std::size_t Game::get_local_player_index() const {
     return settings.get_local_player();

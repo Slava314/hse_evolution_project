@@ -47,8 +47,6 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
                                   const std::shared_ptr<Animal> &new_animal = nullptr) {
     if (game.stub_ != nullptr) {
         if (card != nullptr and new_animal != nullptr) {
-            std::cout << "CAME TO ADD_ANIMAL() to ME --------------------- \n";
-
             grpc::ClientContext context;
 
             std::chrono::time_point deadline =
@@ -76,10 +74,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
                 }
             }
         } else {
-            std::cout << "CAME TO ADD_ANIMAL() to another players --------------------- \n";
-
             grpc::Status status = grpc::Status::CANCELLED;
-
             while (!status.ok()) {
                 grpc::ClientContext context;
                 std::chrono::time_point deadline =
@@ -90,10 +85,7 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
 
                 auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(INTERVAL);
                 status = game.stub_->GetDataAboutMove(&context, request, &response);
-                std::cout << status.ok() << std::endl;
                 if (status.ok() == 1) {
-                    std::cout << "getting message from server in add_animal() = "
-                              << response.player_id() << std::endl;
                     int player = response.player_id();
                     //                    std::shared_ptr<Animal>
                     //                    animal(game.get_players()[player]);
@@ -105,7 +97,6 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card = nullptr,
                     continue;
                 }
             }
-            std::cout << "LEFT TO ADD_ANIMAL() to another animal --------------------- \n";
         }
     } else {
         assert(card.get() != nullptr);
@@ -119,29 +110,11 @@ void DevelopmentPhase::parse_message(const std::string &str) {
     if (str.compare(add_card) == true) {
         //вызвать нужную функцию, которая обратится к серверу и отрисует нужную карту
         add_animal();  //сам разберется кто?
-        std::cout << "GETTIN MESSAGE FROM PARSE = " << add_card << std::endl;
     }
 }
 
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
-    // TODO check auto end turn
-
-    // TODO - придется парсить сообщение - какое действие нужно выполнить
-    // he cant make any moves - should skip him
-
     static int ans = -1;
-
-    std::thread thread;
-    //    while (ans == -1) {
-    //        std::cout << ans;
-    //        std::thread thread([&]() { ans = get_view()->handle_event(window, event); });
-    //        thread.join();
-    ////        ans = get_view()->handle_event(window, event);
-    //    }
-
-    //    std::cout << "game.get_cur_player_index() = " << game.get_cur_player_index() << std::endl;
-    //    std::cout << "game.get_settings().get_local_player() = "
-    //              << game.get_settings().get_local_player() << std::endl;
 
     ans = get_view()->handle_event(window, event);
     if (game.stub_ != nullptr and ans == -1) {
@@ -159,13 +132,10 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
             return;
         }
     }
-    //    std::cout << "changing player\n";
 
     if (game.get_deck_size() == 0 and get_cur_player().get_cards_in_hands().size() == 0) {
         ans = 2;
     }
-
-    // TODO - обработать пропуск хода и всего такого
 
     if (ans != 0) {
         if (ans == 2) {
