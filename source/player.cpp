@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
+Player::Player(std::string name_) : name(std::move(name_)) {
     cards_in_hands.resize(0);
     animals_on_board.resize(0);
 }
@@ -45,6 +45,7 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
     assert(which_card.get() != nullptr);
     assert(to_which_card.get() != nullptr);
     try {
+        // todo - обработать запрос, если есть такое свойство - то дать гую понять,что это плохо
         for (auto &it : animals_on_board) {
             if (it.get() == to_which_card.get()) {
                 if (it->get_properties().find(static_cast<const Prop>(adding.second)) ==
@@ -63,10 +64,15 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
 
 void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
                                 const std::shared_ptr<Animal> &animal) {
-    assert(which_card.get() != nullptr);
-    assert(animal.get() != nullptr);
+    //    assert(which_card.get() != nullptr);
+    //    assert(animal.get() != nullptr);
     animals_on_board.push_back(animal);
     erase_card_from_hands(which_card);
+}
+
+void Player::put_card_as_animal(const std::shared_ptr<Animal> &animal) {
+    //    assert(animal.get() != nullptr);
+    animals_on_board.push_back(animal);
 }
 
 std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {

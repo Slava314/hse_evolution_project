@@ -10,9 +10,8 @@
 
 class Player {
 public:
-    /// i will do it
     Player() = default;
-    explicit Player(std::string name_, int id_);
+    explicit Player(std::string name_);
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
     using Prop = Properties;
@@ -23,6 +22,7 @@ public:
     void add_card_in_hands(const std::shared_ptr<Card> &card);
     void put_card_as_animal(const std::shared_ptr<Card> &which_card,
                             const std::shared_ptr<Animal> &animal);
+    void put_card_as_animal(const std::shared_ptr<Animal> &animal);
     void use_card_as_property(const std::shared_ptr<Card> &which_card,
                               const std::shared_ptr<Animal> &to_which_card);
 
@@ -47,7 +47,6 @@ private:
     std::string name;
     std::size_t reset = 0;
     bool chose_to_end_phase = false;
-    int uniq_id;  // server will identify player with this id
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

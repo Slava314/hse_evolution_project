@@ -125,6 +125,7 @@ void GameWindow::init_window() {
         new_name.setCharacterSize(28);
         players_names.push_back(new_name);
     }
+
     set_players_names_positions();
 }
 
@@ -147,6 +148,9 @@ void GameWindow::make_deck_shape() {
 
 void GameWindow::recalc_cards() {
     player_cards_buttons.clear();
+
+    std::cout << "-----------recalc_cards------------" << std::endl;
+
     auto cards = game.get_players()[game.get_cur_player_index()].get_cards_in_hands();
     for (const auto &card : cards) {
         bool exist = false;
@@ -170,6 +174,8 @@ void GameWindow::recalc_cards() {
     }
     set_cards_position();
     make_deck_shape();
+
+    std::cout << "-----------recalc_cards------------ OUT" << std::endl;
 }
 
 void GameWindow::set_cards_position() {
@@ -390,6 +396,9 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
 }
 
 std::shared_ptr<Card> const &GameWindow::get_selected_card() const {
+    std::cout << "selected card = \n";
+    std::cout << &selected_card << std::endl;
+    std::cout << selected_card->property << std::endl;
     return selected_card;
 }
 
@@ -526,6 +535,7 @@ void GameWindow::use_property(std::shared_ptr<AnimalButton>, Properties prop) {
 void GameWindow::set_players_names_positions() {
     std::size_t player = game.get_local_player_index();
     // local player
+    std::cout << "getting players name size = " << players_names.size() << std::endl;
     players_names[player].setPosition(
         (WINDOW_WIDTH - players_names[player].getGlobalBounds().width) / 2, WINDOW_HEIGHT - 520);
 
@@ -547,6 +557,7 @@ void GameWindow::set_players_names_positions() {
         players_names[player].setPosition((450 - players_names[player].getGlobalBounds().width) / 2,
                                           200);
     }
+    std::cout << "OUT SET PLAYERS NAMES POSITION    " << std::endl;
 }
 
 void PropertyWindow::draw() {

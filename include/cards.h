@@ -41,4 +41,29 @@ public:
     }
 };
 
+struct Running : Card {
+public:
+    explicit Running(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct Mimicry : Card {
+public:
+    explicit Mimicry(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct Swimmings : Card {
+public:
+    explicit Swimmings(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct Tail_Loss : Card {
+public:
+    explicit Tail_Loss(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+
 #endif  // EVOLUTION_PROJECT_INCLUDE_CARDS_H_

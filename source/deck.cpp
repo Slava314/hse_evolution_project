@@ -4,7 +4,7 @@
 #include <vector>
 #include "properties.h"
 
-void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
+void Deck::generate_deck() {
     for (auto card : cards_info) {
         while (card.second--) {
             switch (card.first) {
@@ -18,6 +18,18 @@ void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
                 case Properties::STOMPER:
                     deck_of_cards.push_back(
                         std::make_shared<Stomper>(Properties(Properties::STOMPER)));
+                case Properties::RUNNING:
+                    deck_of_cards.push_back(
+                        std::make_shared<Running>(Properties(Properties::RUNNING)));
+                case Properties::MIMICRY:
+                    deck_of_cards.push_back(
+                        std::make_shared<Mimicry>(Properties(Properties::MIMICRY)));
+                case Properties::SWIMMINGS:
+                    deck_of_cards.push_back(
+                        std::make_shared<Swimmings>(Properties(Properties::SWIMMINGS)));
+                case Properties::TAIL_LOSS:
+                    deck_of_cards.push_back(
+                        std::make_shared<Tail_Loss>(Properties(Properties::TAIL_LOSS)));
                     break;
                 default:
                     continue;
@@ -25,22 +37,24 @@ void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
         }
     }
 
-    auto rnd = std::default_random_engine{};
-    std::shuffle(deck_of_cards.begin(), deck_of_cards.end(), rnd);
+    std::shuffle(deck_of_cards.begin(), deck_of_cards.end(), random_gen);
 }
 
 int Deck::get_deck_size() const {
     return deck_of_cards.size();
 }
 
-int need_card(Player const &player) {
+int Deck::need_card(const Player &player) {
     if (player.get_animals_on_board().empty() and player.get_cards_in_hands().empty()) {
-        return 6;
+        return FULL_GET_CARDS;
     } else {
         if (player.get_animals_on_board().size() + player.get_cards_in_hands().size() + 1 > 6) {
-            return std::max(static_cast<unsigned long>(0), 6 - player.get_cards_in_hands().size());
+            auto n = std::max(static_cast<unsigned long>(0),
+                              FULL_GET_CARDS - player.get_cards_in_hands().size());
+            return (n > get_deck_size() ? get_deck_size() : n);
         } else {
-            return player.get_animals_on_board().size() + 1;
+            auto n = player.get_animals_on_board().size() + ADDING_CARDS;
+            return (n > get_deck_size() ? get_deck_size() : n);
         }
     }
 }
@@ -54,6 +68,34 @@ void Deck::cards_delivery(std::vector<Player> &players) {
         }
     }
 }
+
+void Deck::cards_delivery(Player &player) {
+    auto need = need_card(player);
+    while (need--) {
+        player.add_card_in_hands(deck_of_cards.back());
+        deck_of_cards.pop_back();
+    }
+}
 std::vector<std::shared_ptr<Card>> Deck::get_deck_cards() {
     return deck_of_cards;
+}
+
+Deck::Deck(const int &seed, const int &size) {
+    random_gen.seed(seed);
+    deck_size = size;
+}
+
+void Deck::set_random_gen(int seed) {
+    random_gen = std::mt19937(seed);
+}
+void Deck::set_cards_info() {
+    cards_info.resize(CARDS_TYPE);
+
+    cards_info[0] = {Properties::FAT_TISSUE, 8};
+    cards_info[1] = {Properties::BIG, 8};
+    cards_info[2] = {Properties::STOMPER, 8};
+    cards_info[3] = {Properties::RUNNING, 8};
+    cards_info[4] = {Properties::MIMICRY, 8};
+    cards_info[5] = {Properties::SWIMMINGS, 8};
+    cards_info[6] = {Properties::TAIL_LOSS, 8};
 }
