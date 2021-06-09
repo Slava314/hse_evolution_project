@@ -2,7 +2,7 @@
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 
 ///
-///Source of this code - https://github.com/aantron/better-enums
+/// Source of this code - https://github.com/aantron/better-enums
 ///
 
 #include <cstddef>
@@ -26,10 +26,13 @@
 #define MAP6(m, x, ...) m(x) IDENTITY(MAP5(m, __VA_ARGS__))
 #define MAP7(m, x, ...) m(x) IDENTITY(MAP6(m, __VA_ARGS__))
 #define MAP8(m, x, ...) m(x) IDENTITY(MAP7(m, __VA_ARGS__))
+#define MAP9(m, x, ...) m(x) IDENTITY(MAP8(m, __VA_ARGS__))
+#define MAP10(m, x, ...) m(x) IDENTITY(MAP9(m, __VA_ARGS__))
+#define MAP11(m, x, ...) m(x) IDENTITY(MAP10(m, __VA_ARGS__))
 
-#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, count, ...) count
+#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, count, ...) count
 
-#define COUNT(...) IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1))
+#define COUNT(...) IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
 
 struct ignore_assign {
     explicit ignore_assign(int value) : _value(value) {
@@ -102,8 +105,18 @@ struct ignore_assign {
         }                                                                              \
     };
 
-
-ENUM(Properties, DEFAULT = 0, FAT_TISSUE, BIG, STOMPER);
-//ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН);
+ENUM(Properties,
+     DEFAULT = 0,
+     FAT_TISSUE,
+     BIG,
+     STOMPER,
+     CARNIVOROUS,
+     SWIMMINGS,
+     RUNNING,
+     BURROWING,
+     CAMOUFLAGE,
+     SHARP_VISION);
+// ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН, ХИЩНИК, ВОДОПЛАВАЮЩЕЕ, БЫСТРОЕ,
+// НОРНОЕ, КАМУФЛЯЖ, ОСТРОЕ ЗРЕНИЕ);
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
