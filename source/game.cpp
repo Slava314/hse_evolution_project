@@ -34,11 +34,17 @@ void Game::start_game(Settings settings_) {
     }
     // временное решение по генерации, пока нет настроек и больше карт
 
-    constexpr int N = 3;
+    constexpr int N = 9;
     std::vector<std::pair<Properties, int>> cards_info(N);
     cards_info[0] = {Properties::FAT_TISSUE, 8};
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};
+    cards_info[3] = {Properties::SWIMMINGS, 8};
+    cards_info[4] = {Properties::RUNNING, 8};
+    cards_info[5] = {Properties::CARNIVOROUS, 8};
+    cards_info[6] = {Properties::BURROWING, 8};
+    cards_info[7] = {Properties::CAMOUFLAGE, 8};
+    cards_info[8] = {Properties::SHARP_VISION, 8};
     deck.generate_deck(cards_info);
     phase = std::make_unique<DevelopmentPhase>(*this);
 }

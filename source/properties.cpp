@@ -9,6 +9,18 @@
         return "BIG";
     if (i == 3)
         return "STOMPER";
+    if (i == 4)
+        return "SWIMMINGS";
+    if (i == 5)
+        return "RUNNING";
+    if (i == 6)
+        return "CARNIVOROUS";
+    if (i == 7)
+        return "BURROWING";
+    if (i == 8)
+        return "CAMOUFLAGE";
+    if (i == 9)
+        return "SHARP_VISION";
     return "NOT VALID";
 }
 
