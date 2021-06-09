@@ -1,12 +1,11 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
-
+#include <iostream>
 #include <string>
 #include <iostream>
 
 std::string get_name(const int i);
 std::string get_rus_name(const int i);
-
 
 enum Properties {
     DEFAULT,
@@ -15,6 +14,10 @@ enum Properties {
     STOMPER,
     SWIMMINGS,
     RUNNING,
+    CARNIVOROUS,
+    BURROWING,
+    CAMOUFLAGE,
+    SHARP_VISION,
     MIMICRY,
     TAIL_LOSS,
     POISONOUS,
@@ -24,9 +27,6 @@ enum Properties {
     SYMBIOSYS,
     PIRACY,
     COOPERATION,
-    BURROWING,
-    CAMOUFLAGE,
-    SHARP_VISION,
     PARASITE
 };
 

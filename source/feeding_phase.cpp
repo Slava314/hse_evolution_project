@@ -42,12 +42,21 @@ bool FeedingPhase::is_end_of_phase() const {
 }
 
 void FeedingPhase::attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim) {
-    if (victim->could_be_attacked(attacker)) {
-        attacker->increase_owning_food();
-        attacker->increase_owning_food();
-        victim->get_owner().handle_animal_death(victim);
+    if (attacker->can_use_property(Properties::CARNIVOROUS)) {
+        if (victim->get_properties().find(Properties::RUNNING) != victim->get_properties().end()) {
+            int dice = rand() % 7;
+            if (dice <= 3) {
+                return;
+            }
+        }
+        if (victim->could_be_attacked(attacker)) {
+            attacker->increase_owning_food();
+            attacker->increase_owning_food();
+            victim->get_owner().handle_animal_death(victim);
+            attacker->set_property_is_used(Properties::CARNIVOROUS, true);
+        }
     } else {
-        // заморозить свойство "хищник"
+        throw std::logic_error("THIS ANIMAL HAD ALREADY ATTACKED IN THIS PHASE");
     }
 }
 void FeedingPhase::kill_animals() {

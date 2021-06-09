@@ -41,29 +41,40 @@ public:
     }
 };
 
-struct Running : Card {
-public:
-    explicit Running(const Properties &prop) : Card(prop, 0) {
-    }
-};
-
-struct Mimicry : Card {
-public:
-    explicit Mimicry(const Properties &prop) : Card(prop, 0) {
-    }
-};
-
 struct Swimmings : Card {
 public:
     explicit Swimmings(const Properties &prop) : Card(prop, 0) {
     }
 };
 
-struct Tail_Loss : Card {
+struct Running : Card {
 public:
-    explicit Tail_Loss(const Properties &prop) : Card(prop, 0) {
+    explicit Running(const Properties &prop) : Card(prop, 0) {
     }
 };
 
+struct Carnivorous : Card {
+public:
+    explicit Carnivorous(const Properties &prop) : Card(prop, 1) {
+    }
+};
+
+struct Burrowing : Card {
+public:
+    explicit Burrowing(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct Camouflage : Card {
+public:
+    explicit Camouflage(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct SharpVision : Card {
+public:
+    explicit SharpVision(const Properties &prop) : Card(prop, 0) {
+    }
+};
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_CARDS_H_

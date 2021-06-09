@@ -164,7 +164,7 @@ void GameWindow::recalc_cards() {
             new_button.set_object(card);
             Properties prop = card->get_info().first;
             new_button.set_text(get_name(prop), font);
-            new_button.set_text_size(20);
+            new_button.set_text_size(16);
             new_button.set_sprite_scale(CARD_WIDTH, CARD_HEIGHT);
             new_button.set_text_color(sf::Color::Black);
             player_cards_buttons.push_back(new_button);
