@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
+Player::Player(std::string name_) : name(std::move(name_)) {
     cards_in_hands.resize(0);
     animals_on_board.resize(0);
 }
@@ -49,11 +49,10 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
             if (it.get() == to_which_card.get()) {
                 if (it->get_properties().find(static_cast<const Prop>(adding.second)) ==
                     it->get_properties().end()) {
-                    erase_card_from_hands(which_card);  // delete only if can insert property
+                    erase_card_from_hands(which_card);
                     to_which_card->get_properties().insert(adding.first);
                     to_which_card->increase_food_needed(adding.second);
-                }  // else{} - throw like an exeption for GUI - to look for another animal or
-                // another card with property
+                }
             }
         }
     } catch (...) {
@@ -63,10 +62,15 @@ void Player::use_card_as_property(const std::shared_ptr<Card> &which_card,
 
 void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
                                 const std::shared_ptr<Animal> &animal) {
-    assert(which_card.get() != nullptr);
-    assert(animal.get() != nullptr);
+    //    assert(which_card.get() != nullptr);
+    //    assert(animal.get() != nullptr);
     animals_on_board.push_back(animal);
     erase_card_from_hands(which_card);
+}
+
+void Player::put_card_as_animal(const std::shared_ptr<Animal> &animal) {
+    //    assert(animal.get() != nullptr);
+    animals_on_board.push_back(animal);
 }
 
 std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {

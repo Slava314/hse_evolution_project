@@ -114,3 +114,6 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
 std::size_t FeedingPhase::get_cur_player_index() const {
     return cur_player_index;
 }
+Game const& FeedingPhase::get_game() {
+    return game;
+}

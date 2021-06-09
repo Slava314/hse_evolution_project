@@ -45,6 +45,24 @@ private:
 
 class GameWindow : public Window {
 public:
+    //<<<<<<< HEAD
+    GameWindow(Game &&game_) : game(std::move(game_)) {
+        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game_window",
+                      //=======
+                      //    GameWindow(Settings settings) {
+                      //        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game",
+                      //>>>>>>> origin/master
+                      sf::Style::Titlebar | sf::Style::Close);
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+        game.start_game();
+        //        game.start_game(
+        //            settings);  //важен порядок этих двух строчек, потом возможно надо будет
+        //            исправить
+        init_window();
+    }
     GameWindow(Settings settings) {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game",
                       sf::Style::Titlebar | sf::Style::Close);

@@ -25,10 +25,65 @@ void DevelopmentPhaseView::add_property(const std::shared_ptr<Animal> &selected_
     window.add_property_to_animal(selected_animal);
 }
 
+int DevelopmentPhaseView::parse_message(const std::string &str,
+                                        GameWindow &window,
+                                        const sf::Event &event) const {
+    const std::string add_card("Player added new card on the board");
+    const std::string add_property("Player added property to animal");
+
+    if (str == add_card) {
+        add_animal(window);  //сам разберется кто?
+        return 1;
+    }
+
+    if (str == add_property) {
+        //        add_property(selected_animal, window);
+        return 1;
+    }
+
+    return -1;
+}
+
 int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
     if (phase.is_running_first_time()) {
         start_development_phase(window);
     }
+
+    if (phase.get_game().stub_ != nullptr) {
+        auto code = -1;
+        auto f = [&]() {
+            grpc::Status status = grpc::Status::CANCELLED;
+            std::string message_from_server;
+            auto end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000ms);
+
+            while (!status.ok()) {
+                auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(60ms);
+                grpc::ClientContext context;
+                user::Nothing request;
+                user::Message response;
+                request.set_player_id(phase.get_game().get_cur_player_index());
+                status = phase.get_game().stub_->GetMessage(&context, request, &response);
+                if (status.ok() and std::chrono::steady_clock::now() < end_time) {
+                    message_from_server = response.str();
+                    code = parse_message(message_from_server, window, event);
+                    break;
+                } else {
+                    std::this_thread::sleep_until(x);
+                    code = -1;
+                }
+            }
+        };
+
+        if (phase.get_game().get_cur_player_index() !=
+            phase.get_game().get_settings().get_local_player()) {
+            std::thread thread(f);
+            thread.join();
+            if (code != -1) {
+                return code;
+            }
+        }
+    }
+
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
@@ -52,7 +107,11 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             return 1;
         }
     }
-    return 0;
+    if (phase.get_game().stub_ != nullptr) {
+        return -1;
+    } else {
+        return 0;
+    }
 }
 
 int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) const {
@@ -80,7 +139,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
             }
         }
     }
-    return 0;
+    return -1;
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();

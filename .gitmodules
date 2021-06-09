@@ -1,3 +1,6 @@
 [submodule "cmrc"]
 	path = cmrc
 	url = https://github.com/vector-of-bool/cmrc.git
+[submodule "grpc-cmake-example"]
+	path = grpc-cmake-example
+	url = https://github.com/IvanSafonov/grpc-cmake-example.git

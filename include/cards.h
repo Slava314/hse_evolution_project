@@ -76,4 +76,5 @@ public:
     explicit SharpVision(const Properties &prop) : Card(prop, 0) {
     }
 };
+
 #endif  // EVOLUTION_PROJECT_INCLUDE_CARDS_H_
