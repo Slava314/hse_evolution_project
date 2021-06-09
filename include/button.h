@@ -62,38 +62,66 @@ public:
 
     sf::Text const &get_text() const;
 
-private:
+protected:
     sf::Text text;
 };
 
 class CardButton : public TextButton {
 public:
-    explicit CardButton(const sf::Vector2f &shape_) : TextButton(shape_) {
+    explicit CardButton(const sf::Vector2f &shape_, const sf::Texture &texture)
+        : TextButton(shape_), sprite(texture) {
     }
-    explicit CardButton(const sf::Vector2f &shape_, sf::Text text_)
-        : TextButton(shape_, std::move(text_)) {
+    explicit CardButton(const sf::Vector2f &shape_, sf::Text text_, const sf::Texture &texture)
+        : TextButton(shape_, std::move(text_)), sprite(texture) {
     }
 
+    void draw(sf::RenderWindow &window) const override;
     void set_object(const std::shared_ptr<Card> &obj);
     std::shared_ptr<Card> const &get_object() const;
+    void set_sprite_scale(int x, int y);
+    void set_position(const sf::Vector2f &position_) override;
+    void activate() override;
+    void deactivate() override;
 
 private:
     std::shared_ptr<Card> object;
+    sf::Sprite sprite;
 };
 
 class AnimalButton : public TextButton {
 public:
-    explicit AnimalButton(const sf::Vector2f &shape_) : TextButton(shape_) {
+    explicit AnimalButton(const sf::Vector2f &shape_, const sf::Texture &texture)
+        : TextButton(shape_), sprite(texture) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
-    explicit AnimalButton(const sf::Vector2f &shape_, sf::Text text_)
-        : TextButton(shape_, std::move(text_)) {
+    explicit AnimalButton(const sf::Vector2f &shape_, sf::Text text_, const sf::Texture &texture)
+        : TextButton(shape_, std::move(text_)), sprite(texture) {
+        property_button = std::make_unique<Button>(Button({shape_.x, shape_.y / 5}));
     }
 
     void set_object(const std::shared_ptr<Animal> &obj);
+    void set_position(const sf::Vector2f &position_) override;
+    void draw(sf::RenderWindow &window) const override;
     std::shared_ptr<Animal> const &get_object() const;
+    std::shared_ptr<Button> &get_property_button();
+    void set_sprite_scale(int x, int y);
+    void activate() override;
+    void deactivate() override;
 
 private:
+    std::shared_ptr<Button> property_button;
     std::shared_ptr<Animal> object;
+    sf::Sprite sprite;
+};
+
+class PropertyButton : public TextButton {
+public:
+    PropertyButton(Properties prop_) : TextButton(), prop(prop_) {
+    }
+    Properties get_property();
+
+private:
+    Properties prop;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_BUTTON_H

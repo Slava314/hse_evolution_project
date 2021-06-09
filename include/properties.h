@@ -1,122 +1,32 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
 #define EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_
-
-///
-/// Source of this code - https://github.com/aantron/better-enums
-///
-
-#include <cstddef>
-#include <cstring>
+#include <iostream>
 #include <string>
-#include <unordered_map>
 
-#define MAP(macro, ...) IDENTITY(APPLY(CHOOSE_MAP_START, COUNT(__VA_ARGS__))(macro, __VA_ARGS__))
+std::string get_name(const int i);
+std::string get_rus_name(const int i);
 
-#define CHOOSE_MAP_START(count) MAP##count
-
-#define APPLY(macro, ...) IDENTITY(macro(__VA_ARGS__))
-
-#define IDENTITY(x) x
-
-#define MAP1(m, x) m(x)
-#define MAP2(m, x, ...) m(x) IDENTITY(MAP1(m, __VA_ARGS__))
-#define MAP3(m, x, ...) m(x) IDENTITY(MAP2(m, __VA_ARGS__))
-#define MAP4(m, x, ...) m(x) IDENTITY(MAP3(m, __VA_ARGS__))
-#define MAP5(m, x, ...) m(x) IDENTITY(MAP4(m, __VA_ARGS__))
-#define MAP6(m, x, ...) m(x) IDENTITY(MAP5(m, __VA_ARGS__))
-#define MAP7(m, x, ...) m(x) IDENTITY(MAP6(m, __VA_ARGS__))
-#define MAP8(m, x, ...) m(x) IDENTITY(MAP7(m, __VA_ARGS__))
-#define MAP9(m, x, ...) m(x) IDENTITY(MAP8(m, __VA_ARGS__))
-#define MAP10(m, x, ...) m(x) IDENTITY(MAP9(m, __VA_ARGS__))
-#define MAP11(m, x, ...) m(x) IDENTITY(MAP10(m, __VA_ARGS__))
-
-#define EVALUATE_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, count, ...) count
-
-#define COUNT(...) IDENTITY(EVALUATE_COUNT(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
-
-struct ignore_assign {
-    explicit ignore_assign(int value) : _value(value) {
-    }
-    operator int() const {
-        return _value;
-    }
-
-    const ignore_assign &operator=(int dummy) const {
-        return *this;
-    }
-
-    int _value;
+enum Properties {
+    DEFAULT,
+    FAT_TISSUE,
+    BIG,
+    STOMPER,
+    SWIMMINGS,
+    RUNNING,
+    CARNIVOROUS,
+    BURROWING,
+    CAMOUFLAGE,
+    SHARP_VISION,
+    MIMICRY,
+    TAIL_LOSS,
+    POISONOUS,
+    COMMUNICATION,
+    HEBERNATION_ABILITY,
+    SCAVENGER,
+    SYMBIOSYS,
+    PIRACY,
+    COOPERATION,
+    PARASITE
 };
-
-#define IGNORE_ASSIGN_SINGLE(expression) (ignore_assign) expression,
-#define IGNORE_ASSIGN(...) IDENTITY(MAP(IGNORE_ASSIGN_SINGLE, __VA_ARGS__))
-
-#define STRINGIZE_SINGLE(expression) #expression,
-#define STRINGIZE(...) IDENTITY(MAP(STRINGIZE_SINGLE, __VA_ARGS__))
-
-#define ENUM(EnumName, ...)                                                            \
-    struct EnumName {                                                                  \
-        enum _enumerated { __VA_ARGS__ };                                              \
-                                                                                       \
-        _enumerated _value;                                                            \
-                                                                                       \
-        EnumName(_enumerated value) : _value(value) {                                  \
-        }                                                                              \
-                                                                                       \
-        EnumName(_enumerated &value) : _value(value) {                                 \
-        }                                                                              \
-                                                                                       \
-        operator _enumerated() const {                                                 \
-            return _value;                                                             \
-        }                                                                              \
-                                                                                       \
-        const char *_to_string() const {                                               \
-            for (size_t index = 0; index < _count; ++index) {                          \
-                if (_values()[index] == _value)                                        \
-                    return _names()[index];                                            \
-            }                                                                          \
-            return NULL;                                                               \
-        }                                                                              \
-        static const size_t _count = IDENTITY(COUNT(__VA_ARGS__));                     \
-                                                                                       \
-        static const int *_values() {                                                  \
-            static const int values[] = {IDENTITY(IGNORE_ASSIGN(__VA_ARGS__))};        \
-            return values;                                                             \
-        }                                                                              \
-                                                                                       \
-        static const char *const *_names() {                                           \
-            static const char *const raw_names[] = {IDENTITY(STRINGIZE(__VA_ARGS__))}; \
-                                                                                       \
-            static char *processed_names[_count];                                      \
-            static bool initialized = false;                                           \
-                                                                                       \
-            if (!initialized) {                                                        \
-                for (size_t index = 0; index < _count; ++index) {                      \
-                    size_t length = std::strcspn(raw_names[index], " =\t\n\r");        \
-                                                                                       \
-                    processed_names[index] = new char[length + 1];                     \
-                                                                                       \
-                    std::strncpy(processed_names[index], raw_names[index], length);    \
-                    processed_names[index][length] = '\0';                             \
-                }                                                                      \
-            }                                                                          \
-                                                                                       \
-            return processed_names;                                                    \
-        }                                                                              \
-    };
-
-ENUM(Properties,
-     DEFAULT = 0,
-     FAT_TISSUE,
-     BIG,
-     STOMPER,
-     CARNIVOROUS,
-     SWIMMINGS,
-     RUNNING,
-     BURROWING,
-     CAMOUFLAGE,
-     SHARP_VISION);
-// ENUM(RProp, ДЕФОЛТНЫЙ = 0, ЖИРОВОЙ_ЗАПАС, БОЛЬШОЙ, ТОПОТУН, ХИЩНИК, ВОДОПЛАВАЮЩЕЕ, БЫСТРОЕ,
-// НОРНОЕ, КАМУФЛЯЖ, ОСТРОЕ ЗРЕНИЕ);
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PROPERTIES_H_

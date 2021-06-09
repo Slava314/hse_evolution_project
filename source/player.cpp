@@ -1,10 +1,19 @@
 #include "player.h"
 #include <cassert>
-#include <utility>
 #include <stdexcept>
+#include <utility>
+
+Player::Player(std::string name_, int id_) : name(std::move(name_)), uniq_id(id_) {
+    cards_in_hands.resize(0);
+    animals_on_board.resize(0);
+}
 
 std::string &Player::get_name() {
     return name;
+}
+
+void Player::set_name(std::string name_) {
+    name = name_;
 }
 
 const std::vector<std::shared_ptr<Animal>> &Player::get_animals_on_board() const {
@@ -60,8 +69,7 @@ void Player::put_card_as_animal(const std::shared_ptr<Card> &which_card,
     erase_card_from_hands(which_card);
 }
 
-std::pair<Player::Prop, int> Player::get_card_info(
-    const std::shared_ptr<Card> &looking_card) {
+std::pair<Player::Prop, int> Player::get_card_info(const std::shared_ptr<Card> &looking_card) {
     try {
         for (const auto &card : cards_in_hands) {
             if (card.get() == looking_card.get()) {
@@ -72,7 +80,7 @@ std::pair<Player::Prop, int> Player::get_card_info(
     } catch (...) {
         throw std::logic_error("DID NOT FIND CARD IN HANDS");
     }
-    return {Properties(static_cast<Properties::_enumerated>(0)), -1};
+    return {Properties(static_cast<Properties>(0)), -1};
 }
 
 void Player::kill_animal(const std::shared_ptr<Animal> &animal) {
@@ -83,6 +91,7 @@ void Player::kill_animal(const std::shared_ptr<Animal> &animal) {
 void Player::handle_animal_death(const std::shared_ptr<Animal> &animal) {
     for (size_t i = 0; i < animals_on_board.size(); ++i) {
         if (animal == animals_on_board[i]) {
+            reset += animal->get_properties().size() + 1;
             animals_on_board.erase(animals_on_board.begin() + i);
             return;
         }
@@ -101,4 +110,18 @@ size_t Player::count_animal_properties(const std::shared_ptr<Animal> &animal) {
         throw std::logic_error("DID NOT FIND ANIMAL ON THE BOARD");
     }
     return 1;
+}
+std::size_t Player::count_result() const {
+    std::size_t sum = 0;
+    for (const auto &animal : animals_on_board) {
+        sum += animal->get_food_needed() + 1;
+        sum += animal->get_properties().size();
+    }
+    return sum;
+}
+const std::string &Player::get_name() const {
+    return name;
+}
+std::size_t Player::get_reset() const {
+    return reset;
 }

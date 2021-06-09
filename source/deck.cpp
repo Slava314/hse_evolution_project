@@ -4,7 +4,7 @@
 #include <vector>
 #include "properties.h"
 
-void Deck::generate_deck(std::vector<std::pair<Properties::_enumerated, int>> &cards_info) {
+void Deck::generate_deck(std::vector<std::pair<Properties, int>> &cards_info) {
     for (auto card : cards_info) {
         while (card.second--) {
             switch (card.first) {
@@ -47,7 +47,7 @@ int need_card(Player const &player) {
 
 void Deck::cards_delivery(std::vector<Player> &players) {
     for (auto &player : players) {
-        auto need = need_card(player);
+        auto need = std::min(need_card(player), static_cast<int>(deck_of_cards.size()));
         while (need--) {
             player.add_card_in_hands(deck_of_cards.back());
             deck_of_cards.pop_back();

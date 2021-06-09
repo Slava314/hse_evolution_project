@@ -6,18 +6,19 @@
 #include <utility>
 #include "animal.h"
 #include "cards.h"
+#include "properties.h"
 
 class Player {
 public:
-    explicit Player(std::string name_) : name(std::move(name_)) {
-        cards_in_hands.resize(0);
-        animals_on_board.resize(0);
-    }
+    /// i will do it
+    Player() = default;
+    explicit Player(std::string name_, int id_);
 
     using BoardAnimals = std::vector<std::shared_ptr<Animal>>;
-    using Prop = Properties::_enumerated;
+    using Prop = Properties;
 
     [[nodiscard]] std::string &get_name();
+    void set_name(std::string name_);
 
     void add_card_in_hands(const std::shared_ptr<Card> &card);
     void put_card_as_animal(const std::shared_ptr<Card> &which_card,
@@ -33,13 +34,20 @@ public:
     size_t count_animal_properties(const std::shared_ptr<Animal> &animal);
 
     void handle_animal_death(std::shared_ptr<Animal> const &animal);
+
+    std::size_t count_result() const;
+    const std::string &get_name() const;
+    std::size_t get_reset() const;
+
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
 
     std::vector<std::shared_ptr<Card>> cards_in_hands;
     std::vector<std::shared_ptr<Animal>> animals_on_board;
     std::string name;
+    std::size_t reset = 0;
     bool chose_to_end_phase = false;
+    int uniq_id;  // server will identify player with this id
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

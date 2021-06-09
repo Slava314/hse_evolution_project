@@ -12,7 +12,14 @@ void DevelopmentPhase::set_next_phase() {
 }
 
 void DevelopmentPhase::cards_delivery() {
+    if (game.get_end_game() == 1) {
+        game.set_end_game(2);
+        return;
+    }
     game.get_deck().cards_delivery(game.get_players());
+    if (game.get_deck_size() == 0) {
+        game.set_end_game(1);
+    }
 }
 
 bool DevelopmentPhase::is_running_first_time() const {
@@ -40,9 +47,9 @@ void DevelopmentPhase::add_animal(const std::shared_ptr<Card> &card,
     game.get_players()[cur_player_index].put_card_as_animal(card, new_animal);
 }
 void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
-    //TODO check auto end turn
+    // TODO check auto end turn
     int ans = get_view()->handle_event(window, event);
-    if(ans != 0){
+    if (ans != 0) {
         if (ans == 2) {
             end_turn[cur_player_index] = 1;
             sum += 1;
@@ -59,11 +66,11 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
     }
 }
 DevelopmentPhase::DevelopmentPhase(Game &game_) : game(game_), cur_player_index(0) {
-    end_turn.resize(2, 0);
+    end_turn.resize(game.get_players().size(), 0);
 }
 std::size_t DevelopmentPhase::get_cur_player_index() const {
     return cur_player_index;
 }
-Player& DevelopmentPhase::get_cur_player() {
+Player &DevelopmentPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }

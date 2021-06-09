@@ -1,16 +1,17 @@
 #include "view.h"
-#include "cards.h"
+#include <thread>
 #include "phase.h"
 #include "window.h"
 
 void DevelopmentPhaseView::start_development_phase(GameWindow &window) const {
     cards_delivery(window);
+    window.recalc_cards();
     phase.set_start_of_phase(false);
 }
 
 void DevelopmentPhaseView::cards_delivery(GameWindow &window) const {
     phase.cards_delivery();
-    window.add_cards();
+    window.recalc_cards();
 }
 void DevelopmentPhaseView::add_animal(GameWindow &window) const {
     auto new_animal = std::make_shared<Animal>(phase.get_cur_player());
@@ -33,11 +34,16 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
         if (window.check_end_turn()) {
             return 2;
         }
+        if (const auto &clicked_property_animal = window.get_clicked_property_animal();
+            clicked_property_animal != nullptr) {
+            window.show_properties(clicked_property_animal, false);
+            return 0;
+        }
         if (const auto &clicked_card = window.get_clicked_card(); clicked_card != nullptr) {
             window.click_card(clicked_card);
             return 0;
         }
-        if (window.check_new_animal()) {
+        if (window.get_selected_card() != nullptr && window.check_new_animal()) {
             add_animal(window);
             return 1;
         }
@@ -58,6 +64,11 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
         if (window.check_end_turn()) {
             return 2;
         }
+        if (const auto &clicked_property_animal = window.get_clicked_property_animal();
+            clicked_property_animal != nullptr) {
+            window.show_properties(clicked_property_animal, true);
+            return 0;
+        }
         if (window.check_food()) {
             window.click_food();
             return 0;
@@ -73,6 +84,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();
+    window.recalc_cards();
     phase.set_start_of_phase(false);
 }
 void FeedingPhaseView::feed_animal(const std::shared_ptr<Animal> &animal,
