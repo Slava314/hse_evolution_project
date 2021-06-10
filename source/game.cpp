@@ -43,9 +43,6 @@ size_t Game::get_deck_size() {
 
 void Game::apply_settings() {
     if(stub_ != nullptr) {
-        ClientContext context;
-        user::Request request;
-        user::TotalPlayers response;
 
         settings.print_all();
 
@@ -55,16 +52,12 @@ void Game::apply_settings() {
         user::Request request_;
         user::TotalPlayers response_;
         request_.set_room_id(settings.get_room_id());
-        auto status_ = stub_->GetTotalPlayers(&context_, request_, &response_);
-
-        request.set_room_id(settings.get_room_id());
-        auto status = stub_->GetTotalPlayers(&context, request, &response);
+        auto status = stub_->GetTotalPlayers(&context_, request_, &response_);
 
         if (!status.ok()) {
             throw GameConnecting("Could not get total players in apply_settings, sadly");
         }
-
-        settings.set_total_players(response.count());
+        settings.set_total_players(response_.count());
         players.resize(settings.get_total());
         settings.get_players_names().resize(0);
 
@@ -99,20 +92,7 @@ void Game::start_game(Settings settings_) {
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
         players.emplace_back(settings.get_player_name(i));
     }
-    // временное решение по генерации, пока нет настроек и больше карт
 
-    constexpr int N = 9;
-    std::vector<std::pair<Properties, int>> cards_info(N);
-    cards_info[0] = {Properties::FAT_TISSUE, 8};
-    cards_info[1] = {Properties::BIG, 8};
-    cards_info[2] = {Properties::STOMPER, 8};
-    cards_info[3] = {Properties::SWIMMINGS, 8};
-    cards_info[4] = {Properties::RUNNING, 8};
-    cards_info[5] = {Properties::CARNIVOROUS, 8};
-    cards_info[6] = {Properties::BURROWING, 8};
-    cards_info[7] = {Properties::CAMOUFLAGE, 8};
-    cards_info[8] = {Properties::SHARP_VISION, 8};
-    deck.generate_deck(cards_info);
     deck.set_cards_info();
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);

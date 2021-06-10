@@ -158,7 +158,7 @@ std::unique_ptr<Window> JoinGameWindow::handle_events() {
                                                 "Response for joining room from server is too "
                                                 "long");
                                         } else {
-                                            //nothing
+                                            // nothing
                                         }
                                         std::this_thread::sleep_until(x);
                                     }
@@ -248,7 +248,22 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                                 already_initialized = true;
                             }
 
-                            // todo - check that there are at least 2 players
+                            if (game.stub_ != nullptr) {
+                                grpc::ClientContext context;
+                                user::Request request;
+                                user::TotalPlayers response;
+                                request.set_room_id(settings.get_room_id());
+                                auto status =
+                                    game.stub_->GetTotalPlayers(&context, request, &response);
+
+                                if (!status.ok()) {
+                                    throw Error(
+                                        "Could not get total players in apply_settings, sadly");
+                                }
+                                if (response.count() < 2) {
+                                    return nullptr;
+                                }
+                            }
 
                             if (room_id.getString() != "") {
                                 window.close();

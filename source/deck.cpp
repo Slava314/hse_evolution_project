@@ -29,15 +29,7 @@ void Deck::generate_deck() {
                         std::make_shared<Swimmings>(Properties(Properties::SWIMMINGS)));
                 case Properties::TAIL_LOSS:
                     deck_of_cards.push_back(
-                        std::make_shared<Tail_Loss>(Properties(Properties::TAIL_LOSS)));
-                    break;
-                case Properties::SWIMMINGS:
-                    deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::SWIMMINGS)));
-                    break;
-                case Properties::RUNNING:
-                    deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::RUNNING)));
+                        std::make_shared<TailLoss>(Properties(Properties::TAIL_LOSS)));
                     break;
                 case Properties::CARNIVOROUS:
                     deck_of_cards.push_back(
@@ -118,8 +110,10 @@ void Deck::set_cards_info() {
     cards_info[0] = {Properties::FAT_TISSUE, 8};
     cards_info[1] = {Properties::BIG, 8};
     cards_info[2] = {Properties::STOMPER, 8};
-    cards_info[3] = {Properties::RUNNING, 8};
-    cards_info[4] = {Properties::MIMICRY, 8};
-    cards_info[5] = {Properties::SWIMMINGS, 8};
-    cards_info[6] = {Properties::TAIL_LOSS, 8};
+    cards_info[3] = {Properties::SWIMMINGS, 8};
+    cards_info[4] = {Properties::RUNNING, 8};
+    cards_info[5] = {Properties::CARNIVOROUS, 8};
+    cards_info[6] = {Properties::BURROWING, 8};
+    cards_info[7] = {Properties::CAMOUFLAGE, 8};
+    cards_info[8] = {Properties::SHARP_VISION, 8};
 }

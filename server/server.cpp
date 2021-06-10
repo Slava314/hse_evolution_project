@@ -47,13 +47,12 @@ class ServiceImpl final : public UserService::Service {
     Status CreateRoom(ServerContext *context,
                       const CreateRoomRequest *request,
                       CreateRoomResponse *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
-        // TODO - print the id of the room
+
+        std::unique_lock l(mutex);
 
         std::string room_id;
         while (1) {
@@ -91,12 +90,13 @@ class ServiceImpl final : public UserService::Service {
     Status JoinRoom(ServerContext *context,
                     const JoinRoomRequest *request,
                     JoinRoomResponse *reply) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        std::unique_lock l(mutex);
+
         std::string room_id = request->room_name();
         std::string player_name = request->player_name();
 
@@ -123,12 +123,12 @@ class ServiceImpl final : public UserService::Service {
     Status AddCardOnTheBoard(ServerContext *context,
                              const user::PlayAsAnimalAction *request,
                              user::PlayAsAnimalAction *reply) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        std::unique_lock l(mutex);
 
         if (id_sett_room_list.find(request->room_id()) == id_sett_room_list.end()) {
             return Status(grpc::StatusCode::CANCELLED,
@@ -160,12 +160,12 @@ class ServiceImpl final : public UserService::Service {
     Status GetPlayerName(ServerContext *context,
                          const GetPlayerRequest *request,
                          GetPlayerResponse *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        std::unique_lock l(mutex);
 
         int player_id = request->player_id();
         std::string room_id = request->room_id();
@@ -186,12 +186,12 @@ class ServiceImpl final : public UserService::Service {
     Status GetMessage(ServerContext *context,
                       const user::Nothing *request,
                       user::Message *response) override {
-         std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        std::unique_lock l(mutex);
 
         if (messages.empty()) {
             return Status(grpc::StatusCode::CANCELLED, "messages vector is empty in GetMessage");
@@ -211,8 +211,6 @@ class ServiceImpl final : public UserService::Service {
     Status GetDataAboutMove(ServerContext *context,
                             const user::Request *request,
                             user::Action *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -221,6 +219,7 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, the message vector is empty.");
         }
+        std::unique_lock l(mutex);
 
         response->set_player_id(saved_data_for_messages.back().first.player_id());
 
@@ -236,12 +235,12 @@ class ServiceImpl final : public UserService::Service {
     Status GetTotalPlayers(ServerContext *context,
                            const user::Request *request,
                            user::TotalPlayers *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled in GetTotalPlayers, abandoning.");
         }
+
+        std::unique_lock l(mutex);
 
         std::string room_id = request->room_id();
 
@@ -260,13 +259,13 @@ class ServiceImpl final : public UserService::Service {
     Status HostHasStartedTheGame(ServerContext *context,
                                  const user::Request *request,
                                  user::Nothing *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(
                 grpc::StatusCode::CANCELLED,
                 "Deadline exceeded or Client cancelled in HostHasStartedTheGame, abandoning.");
         }
+
+        std::unique_lock l(mutex);
 
         std::string room_id = request->room_id();
 
@@ -286,8 +285,6 @@ class ServiceImpl final : public UserService::Service {
     Status HasTheGameStartedAlready(ServerContext *context,
                                     const user::Nothing *request,
                                     user::Nothing *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
@@ -297,6 +294,8 @@ class ServiceImpl final : public UserService::Service {
             return Status(grpc::StatusCode::CANCELLED,
                           "Could not get message, message vector is empty ");
         }
+
+        std::unique_lock l(mutex);
 
         if (messages.back().first == "Game has started") {
             if (messages.back().second == 1) {
@@ -313,12 +312,13 @@ class ServiceImpl final : public UserService::Service {
     Status AllPlayersGotMessage(ServerContext *context,
                                 const user::Nothing *request,
                                 user::Nothing *response) override {
-        std::unique_lock l(mutex);
-
         if (context->IsCancelled()) {
             return Status(grpc::StatusCode::CANCELLED,
                           "Deadline exceeded or Client cancelled, abandoning.");
         }
+
+        std::unique_lock l(mutex);
+
         if (messages.empty()) {
             return Status::OK;
         } else {

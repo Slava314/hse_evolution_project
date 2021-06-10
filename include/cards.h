@@ -77,4 +77,16 @@ public:
     }
 };
 
+struct TailLoss : Card {
+public:
+    explicit TailLoss(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
+struct Mimicry : Card {
+public:
+    explicit Mimicry(const Properties &prop) : Card(prop, 0) {
+    }
+};
+
 #endif  // EVOLUTION_PROJECT_INCLUDE_CARDS_H_
