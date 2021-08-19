@@ -1,20 +1,35 @@
 #ifndef EVOLUTION_PROJECT_INCLUDE_GAME_H_
 #define EVOLUTION_PROJECT_INCLUDE_GAME_H_
+#include <grpc++/grpc++.h>
+#include <grpc/grpc.h>
+#include <grpcpp/channel.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/create_channel.h>
+#include <grpcpp/security/credentials.h>
+#include <grpcpp/server_context.h>
 #include <memory>
 #include <vector>
 #include "bot.h"
 #include "deck.h"
 #include "phase.h"
 #include "player.h"
+#include "server.grpc.pb.h"
 #include "settings.h"
 
 class Game {
 public:
     using PlayerCards = std::vector<std::shared_ptr<Card>>;
 
-    Game(struct Settings settings_);
-    Game();
+    explicit Game(const Settings &settings_,
+                  std::unique_ptr<user::UserService::Stub> stub = nullptr);
+    Game(Game &&game) = default;
+    Game() = default;
 
+    void initialize_with_settings(const Settings &settings);
+
+    void create_room(const std::string &player_name_);
+    static Game join_room(const std::string &room_id, const std::string &player_name);
+    void start_game();
     void start_game(Settings settings_);
     [[nodiscard]] std::unique_ptr<Phase> const &get_phase() const;
     void set_phase(std::unique_ptr<Phase> new_phase);
@@ -33,11 +48,21 @@ public:
     int get_players_ended_turn() const;
     std::unique_ptr<Bot> const &get_bot() const;
 
+    bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
+
+    std::unique_ptr<user::UserService::Stub> stub_ = nullptr;
+    //    Game() = default;
 private:
-    std::unique_ptr<Phase> phase;
-    std::vector<Player> players;
+    void apply_settings();
+
+private:
     Deck deck;
     Settings settings;
+    std::unique_ptr<Phase> phase;
+    std::vector<Player> players;
+    std::string player_name;
+    std::string uniq_room_id;
+    //    user::UserService::Stub stub_;
     int end_of_game = 0;
     int players_ended_turn = 0;
     std::unique_ptr<Bot> bot;
