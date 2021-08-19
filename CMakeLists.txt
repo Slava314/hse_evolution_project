@@ -53,7 +53,11 @@ add_executable(${PROJECT_NAME}
         source/cards.cpp
         source/start_windows.cpp
         source/properties.cpp
-        source/text_field.cpp source/settings.cpp
+        source/text_field.cpp
+        source/settings.cpp
+        source/text_field.cpp
+        source/settings.cpp
+        source/bot.cpp
         ${PROTO_SRCS}
         ${GRPC_SRCS})
 

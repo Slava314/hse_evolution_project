@@ -12,7 +12,7 @@ class Player;
 class Animal {
 public:
     void set_property_is_used(Properties property, bool value);
-    void use_property(Properties properties, FeedingPhase &phase);
+    void use_property(Properties property, FeedingPhase &phase);
     bool can_use_property(Properties property);
     using Prop = Properties;
     [[nodiscard]] std::unordered_multiset<Animal::Prop> &get_properties();

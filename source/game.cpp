@@ -216,3 +216,13 @@ void Game::set_end_game(int i) {
 int Game::get_end_game() const {
     return end_of_game;
 }
+void Game::set_players_ended_turn(int value) {
+    players_ended_turn = value;
+}
+int Game::get_players_ended_turn() const {
+    return players_ended_turn;
+}
+std::unique_ptr<Bot> const &Game::get_bot() const {
+    return bot;
+}
+

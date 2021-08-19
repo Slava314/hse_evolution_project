@@ -9,6 +9,7 @@
 #include <grpcpp/server_context.h>
 #include <memory>
 #include <vector>
+#include "bot.h"
 #include "deck.h"
 #include "phase.h"
 #include "player.h"
@@ -43,6 +44,9 @@ public:
     std::size_t get_local_player_index() const;
     void set_end_game(int i);
     int get_end_game() const;
+    void set_players_ended_turn(int value);
+    int get_players_ended_turn() const;
+    std::unique_ptr<Bot> const &get_bot() const;
 
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
 
@@ -60,6 +64,8 @@ private:
     std::string uniq_room_id;
     //    user::UserService::Stub stub_;
     int end_of_game = 0;
+    int players_ended_turn = 0;
+    std::unique_ptr<Bot> bot;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_

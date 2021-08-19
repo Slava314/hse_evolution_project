@@ -8,6 +8,10 @@ std::unique_ptr<View> DevelopmentPhase::get_view() {
 }
 
 void DevelopmentPhase::set_next_phase() {
+    game.set_players_ended_turn(0);
+    for (auto &player : game.get_players()) {
+        player.set_ended_turn(false);
+    }
     game.set_phase(std::make_unique<FeedingPhase>(game));
 }
 
@@ -139,18 +143,35 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 
     if (ans != 0) {
         if (ans == 2) {
-            end_turn[cur_player_index] = 1;
-            sum += 1;
-            if (sum == game.get_players().size()) {
+            game.get_players()[cur_player_index].set_ended_turn(true);
+            game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+            if (game.get_players_ended_turn() == game.get_players().size()) {
                 set_next_phase();
                 return;
             }
         }
         cur_player_index = (cur_player_index + 1) % game.get_players().size();
-        while (end_turn[cur_player_index] == 1) {
+        while (game.get_players()[cur_player_index].get_ended_turn()) {
             cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
+    } else {
+        int ans = get_view()->handle_event(window, event);
+        if (ans != 0) {
+            if (ans == 2) {
+                game.get_players()[cur_player_index].set_ended_turn(true);
+                game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+                if (game.get_players_ended_turn() == game.get_players().size()) {
+                    set_next_phase();
+                    return;
+                }
+            }
+            cur_player_index = (cur_player_index + 1) % game.get_players().size();
+            while (game.get_players()[cur_player_index].get_ended_turn()) {
+                cur_player_index = (cur_player_index + 1) % game.get_players().size();
+            }
+            window.change_player();
+        }
     }
 }
 
@@ -163,6 +184,11 @@ std::size_t DevelopmentPhase::get_cur_player_index() const {
 Player &DevelopmentPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }
+
 Game const &DevelopmentPhase::get_game() {
     return game;
+}
+
+std::string DevelopmentPhase::get_name() const {
+    return "DevelopmentPhase";
 }
