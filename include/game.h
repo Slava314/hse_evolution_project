@@ -2,6 +2,7 @@
 #define EVOLUTION_PROJECT_INCLUDE_GAME_H_
 #include <memory>
 #include <vector>
+#include "bot.h"
 #include "deck.h"
 #include "phase.h"
 #include "player.h"
@@ -28,6 +29,9 @@ public:
     std::size_t get_local_player_index() const;
     void set_end_game(int i);
     int get_end_game() const;
+    void set_players_ended_turn(int value);
+    int get_players_ended_turn() const;
+    std::unique_ptr<Bot> const &get_bot() const;
 
 private:
     std::unique_ptr<Phase> phase;
@@ -35,6 +39,8 @@ private:
     Deck deck;
     Settings settings;
     int end_of_game = 0;
+    int players_ended_turn = 0;
+    std::unique_ptr<Bot> bot;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_
