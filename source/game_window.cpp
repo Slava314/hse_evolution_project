@@ -125,6 +125,7 @@ void GameWindow::init_window() {
         new_name.setCharacterSize(28);
         players_names.push_back(new_name);
     }
+
     set_players_names_positions();
 }
 
@@ -147,6 +148,7 @@ void GameWindow::make_deck_shape() {
 
 void GameWindow::recalc_cards() {
     player_cards_buttons.clear();
+
     auto cards = game.get_players()[game.get_cur_player_index()].get_cards_in_hands();
     for (const auto &card : cards) {
         bool exist = false;

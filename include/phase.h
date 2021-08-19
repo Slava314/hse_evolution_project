@@ -2,14 +2,19 @@
 #define EVOLUTION_PROJECT_SOURCE_PHASE_H_
 
 #include <SFML/Window/Event.hpp>
+#include <chrono>
+#include <functional>
 #include <memory>
+#include <thread>
 #include <vector>
 #include "animal.h"
 #include "cards.h"
 #include "game_fwd.h"
+#include "server.grpc.pb.h"
 #include "view_fwd.h"
 #include "window_fwd.h"
 
+using namespace std::chrono_literals;
 class Phase {
 public:
     virtual std::unique_ptr<View> get_view() = 0;
@@ -17,6 +22,8 @@ public:
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
     virtual std::string get_name() const = 0;
     virtual ~Phase() = default;
+
+    const int INTERVAL = 100;
 };
 
 class DevelopmentPhase : public Phase {
@@ -32,15 +39,20 @@ public:
     void set_start_of_phase(bool start);
 
     void cards_delivery();
-    void add_animal(const std::shared_ptr<Card> &card, std::shared_ptr<Animal> &new_animal);
+    void add_animal(const std::shared_ptr<Card> &card, const std::shared_ptr<Animal> &new_animal);
     void give_property_to_animal(const std::shared_ptr<Card> &card,
                                  const std::shared_ptr<Animal> &new_animal);
+
+    Game const& get_game();
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     void run_phase(GameWindow &window, sf::Event event) override;
     std::string get_name() const override;
+    void parse_message(const std::string &str);
     ~DevelopmentPhase() override = default;
 
+private:
+//    void add_animal();
 private:
     Game &game;
     int cur_player_index;
@@ -61,6 +73,8 @@ public:
     [[nodiscard]] bool is_end_of_phase() const;
 
     void kill_animals();
+
+    Game const & get_game();
 
     void decrease_food_balance();
     size_t get_food_balance() const;

@@ -1,0 +1,146 @@
+syntax = "proto3";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/any.proto";
+
+package user;
+
+
+service UserService {
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse) {}
+
+  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
+
+  rpc GetPlayerName(GetPlayerRequest) returns (GetPlayerResponse) {}
+
+  rpc GiveCardFDeck(GiveCardFromDeck) returns (Nothing) {}
+
+  rpc AddCardOnTheBoard(PlayAsAnimalAction) returns (PlayAsAnimalAction){}
+
+  rpc GetMessage(Nothing) returns (Message) {}
+
+  rpc GetDataAboutMove(Request) returns (Action) {}
+
+  rpc GetTotalPlayers(Request) returns(TotalPlayers){}
+
+  rpc HostHasStartedTheGame(Request) returns (Nothing) {}
+
+  rpc HasTheGameStartedAlready(Nothing) returns (Nothing) {}
+
+  rpc SendMessage(Message) returns (Nothing) {}
+
+  rpc AllPlayersGotMessage(Nothing) returns (Nothing) {}
+
+  rpc AddPropertyToAnimal(AddProperty) returns (AddProperty) {}
+  //
+}
+
+
+message Nothing{
+  google.protobuf.Any message = 1;
+  int32 player_id = 2;
+}
+
+message User {
+  int32 room_code = 1;
+  string name = 2;
+}
+
+message Request {
+  int32 player_id = 1;
+  string room_id = 2;
+  string message = 3;
+}
+
+message Response {
+  User user = 1;
+  repeated User users = 2;
+}
+
+message JoinRoomRequest{
+  string room_name = 1;
+  string player_name = 2;
+}
+
+message JoinRoomResponse{
+  Settings settings = 1;
+}
+
+message CreateRoomRequest{
+  string player_name = 1;
+  Settings settings = 2;
+}
+
+message CreateRoomResponse{
+  string id = 1;
+}
+
+message Settings{
+  int32 quantity_of_players = 1;
+  int32 size_of_deck = 2;
+  int32 time_of_move = 3;
+  int32 local_player = 4;
+  int32 seed = 5;
+  int32 total = 6;
+  string room_id = 7;
+}
+
+message GetPlayerRequest{
+  int32 player_id = 1;
+  string room_id = 2;
+}
+
+message GetPlayerResponse{
+  string name = 1;
+}
+
+message GiveCardFromDeck{
+  PlayerAndRoom player_and_room = 1;
+  int32 quantity = 2;
+}
+
+message PlayerAndRoom{
+  int32 player_id = 1;
+  string room_id = 2;
+}
+
+message PlayAsAnimalAction{
+  int32 player = 1;
+  string room_id = 2;
+  string message = 3;
+}
+
+message PlayAsPropertyAction{
+
+}
+
+
+message AddProperty{
+  int32 players = 1;
+  string room_id = 2;
+  string message = 3;
+}
+
+message Action {
+  int32 player_id = 1;
+  uint64 unixtimestam = 2;
+
+  oneof ActionData {
+    PlayAsAnimalAction play_animal = 3;
+    PlayAsPropertyAction play_animal_properties = 4;
+    AddProperty add_property = 5;
+  }
+}
+
+message AskHowManyPlayersTotalInGame{
+  int32 how_many = 1;
+}
+
+message Message{
+  int32 player_id = 1;
+  string room_id = 2;
+  string str = 3;
+}
+
+message TotalPlayers{
+  int32 count = 1;
+}

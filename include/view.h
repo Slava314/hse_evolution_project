@@ -8,7 +8,7 @@ class View {
 public:
     virtual int handle_event(GameWindow &window, const sf::Event &event) const = 0;
     virtual ~View() = default;
-};
+    };
 
 class DevelopmentPhaseView : public View {
 public:
@@ -19,6 +19,7 @@ public:
     void start_development_phase(GameWindow &window) const;
 
     void cards_delivery(GameWindow &window) const;
+    int parse_message(const std::string &str, GameWindow &window, const sf::Event &event) const ;
 
     void add_animal(GameWindow &window) const;
     void add_property(const std::shared_ptr<Animal> &selected_animal, GameWindow &window) const;
