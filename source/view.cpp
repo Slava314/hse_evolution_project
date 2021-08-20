@@ -87,6 +87,7 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
+            phase.get_game().get_log()->add_action_end_turn(phase.get_cur_player().get_name());
             return 2;
         }
         if (const auto &clicked_property_animal = window.get_clicked_property_animal();
@@ -100,10 +101,12 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
         }
         if (window.get_selected_card() != nullptr && window.check_new_animal()) {
             add_animal(window);
+            phase.get_game().get_log()->add_action_new_animal(phase.get_cur_player().get_name());
             return 1;
         }
         if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
             add_property(clicked_animal, window);
+            phase.get_game().get_log()->add_action_new_property(phase.get_cur_player().get_name(), window.get_selected_card()->property);
             return 1;
         }
     }
@@ -121,6 +124,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left) {
         if (window.check_end_turn()) {
+            phase.get_game().get_log()->add_action_end_turn(phase.get_cur_player().get_name());
             return 2;
         }
         if (const auto &clicked_property_animal = window.get_clicked_property_animal();
@@ -135,9 +139,11 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
         if (window.get_food_clicked()) {
             if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
                 feed_animal(clicked_animal, window);
+                phase.get_game().get_log()->add_action_feeding(phase.get_cur_player().get_name());
                 return 1;
             }
         }
+        //// при использовании свойств не забыть кинуть в log
     }
     return -1;
 }

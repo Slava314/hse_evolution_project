@@ -143,9 +143,9 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 
     if (ans != 0) {
         if (ans == 2) {
-            end_turn[cur_player_index] = 1;
-            sum += 1;
-            if (sum == game.get_players().size()) {
+            game.get_players()[cur_player_index].set_ended_turn(true);
+            game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+            if (game.get_players_ended_turn() == game.get_players().size()) {
                 set_next_phase();
                 return;
             }

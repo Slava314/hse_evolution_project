@@ -88,38 +88,24 @@ void FeedingPhase::set_start_of_phase(bool start) {
 }
 void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
     // TODO check auto end turn
-    if (game.get_players()[cur_player_index].get_is_bot()) {
-        game.get_bot()->make_move(game);
-        if (game.get_players_ended_turn() == game.get_players().size()) {
-            kill_animals();
-            set_next_phase();
-            window.recalc_animals();
-            return;
+
+    int ans = get_view()->handle_event(window, event);
+    if (ans != 0) {
+        if (ans == 2) {
+            game.get_players()[cur_player_index].set_ended_turn(true);
+            game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+            if (game.get_players_ended_turn() == game.get_players().size()) {
+                kill_animals();
+                set_next_phase();
+                window.recalc_animals();
+                return;
+            }
         }
         cur_player_index = (cur_player_index + 1) % game.get_players().size();
         while (game.get_players()[cur_player_index].get_ended_turn()) {
             cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
-    } else {
-        int ans = get_view()->handle_event(window, event);
-        if (ans != 0) {
-            if (ans == 2) {
-                game.get_players()[cur_player_index].set_ended_turn(true);
-                game.set_players_ended_turn(game.get_players_ended_turn() + 1);
-                if (game.get_players_ended_turn() == game.get_players().size()) {
-                    kill_animals();
-                    set_next_phase();
-                    window.recalc_animals();
-                    return;
-                }
-            }
-            cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            while (game.get_players()[cur_player_index].get_ended_turn()) {
-                cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            }
-            window.change_player();
-        }
     }
 }
 std::size_t FeedingPhase::get_cur_player_index() const {
@@ -128,6 +114,10 @@ std::size_t FeedingPhase::get_cur_player_index() const {
 
 std::string FeedingPhase::get_name() const {
     return "FeedingPhase";
-Game const& FeedingPhase::get_game() {
+}
+Game const &FeedingPhase::get_game() {
     return game;
+}
+Player &FeedingPhase::get_cur_player() {
+    return game.get_players()[game.get_cur_player_index()];
 }

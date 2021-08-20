@@ -226,3 +226,6 @@ std::unique_ptr<Bot> const &Game::get_bot() const {
     return bot;
 }
 
+std::unique_ptr<Log> const &Game::get_log() const {
+    return log;
+}

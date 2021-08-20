@@ -28,9 +28,6 @@ void Deck::generate_deck() {
                     deck_of_cards.push_back(
                         std::make_shared<Swimmings>(Properties(Properties::SWIMMINGS)));
                     break;
-                case Properties::RUNNING:
-                    deck_of_cards.push_back(
-                        std::make_shared<Running>(Properties(Properties::RUNNING)));
                 case Properties::TAIL_LOSS:
                     deck_of_cards.push_back(
                         std::make_shared<TailLoss>(Properties(Properties::TAIL_LOSS)));

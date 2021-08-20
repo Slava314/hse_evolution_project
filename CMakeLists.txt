@@ -56,6 +56,7 @@ add_executable(${PROJECT_NAME}
         source/text_field.cpp
         source/settings.cpp
         source/bot.cpp
+        source/log.cpp
         ${PROTO_SRCS}
         ${GRPC_SRCS})
 

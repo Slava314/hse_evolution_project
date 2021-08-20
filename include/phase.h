@@ -75,6 +75,7 @@ public:
     void kill_animals();
 
     Game const & get_game();
+    Player &get_cur_player();
 
     void decrease_food_balance();
     size_t get_food_balance() const;

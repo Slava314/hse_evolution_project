@@ -15,6 +15,7 @@
 #include "player.h"
 #include "server.grpc.pb.h"
 #include "settings.h"
+#include "log.h"
 
 class Game {
 public:
@@ -47,6 +48,7 @@ public:
     void set_players_ended_turn(int value);
     int get_players_ended_turn() const;
     std::unique_ptr<Bot> const &get_bot() const;
+    std::unique_ptr<Log> const &get_log() const;
 
     bool send_request_to_server(std::function<bool(void)> func, unsigned int interval);
 
@@ -54,8 +56,6 @@ public:
     //    Game() = default;
 private:
     void apply_settings();
-
-private:
     Deck deck;
     Settings settings;
     std::unique_ptr<Phase> phase;
@@ -66,6 +66,7 @@ private:
     int end_of_game = 0;
     int players_ended_turn = 0;
     std::unique_ptr<Bot> bot;
+    std::unique_ptr<Log> log = std::make_unique<Log>();
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_GAME_H_
