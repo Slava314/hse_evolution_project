@@ -15,7 +15,7 @@ void Animal::set_property_is_used(Properties property, bool value) {
     property_is_used[property] = value;
 }
 bool Animal::can_use_property(Properties property) {
-    return !property_is_used[property];
+    return (!property_is_used[property]);
 }
 void Animal::use_property(Properties property, FeedingPhase &phase) {
     if (can_use_property(property)) {

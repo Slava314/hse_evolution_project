@@ -176,7 +176,6 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
 }
 
 DevelopmentPhase::DevelopmentPhase(::Game &game_) : game(game_), cur_player_index(0) {
-    end_turn.resize(game.get_players().size(), 0);
 }
 std::size_t DevelopmentPhase::get_cur_player_index() const {
     return cur_player_index;
@@ -187,6 +186,18 @@ Player &DevelopmentPhase::get_cur_player() {
 std::string DevelopmentPhase::get_name() const {
     return "DevelopmentPhase";
 }
- Game const &DevelopmentPhase::get_game() {
+Game const &DevelopmentPhase::get_game() {
     return game;
+}
+void DevelopmentPhase::run_phase_with_bot(GameWindow &window) {
+    game.get_bot()->make_move(game);
+    if (game.get_players_ended_turn() == game.get_players().size()) {
+        set_next_phase();
+        return;
+    }
+    cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    while (game.get_players()[cur_player_index].get_ended_turn()) {
+        cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    }
+    window.change_player();
 }

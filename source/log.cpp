@@ -9,7 +9,7 @@ void Log::add_action_new_animal(std::string player_name) {
 }
 
 void Log::add_action_new_property(std::string player_name, Properties property) {
-    actions.push_back(player_name + " added property " + std::to_string(property));
+    actions.push_back(player_name + " added property " + get_name(property));
 }
 
 void Log::add_action_feeding(std::string player_name) {
@@ -17,7 +17,7 @@ void Log::add_action_feeding(std::string player_name) {
 }
 
 void Log::add_action_using_property(std::string player_name, Properties property) {
-    actions.push_back(player_name + " used property " + std::to_string(property));
+    actions.push_back(player_name + " used property " + get_name(property));
 }
 
 void Log::add_action_end_turn(std::string player_name) {

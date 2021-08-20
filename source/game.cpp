@@ -92,10 +92,11 @@ void Game::start_game(Settings settings_) {
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
         players.emplace_back(settings.get_player_name(i));
     }
-
     deck.set_cards_info();
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
+
+    //// players[1].set_is_bot(true); //// to play with bot
 }
 
 void Game::start_game() {

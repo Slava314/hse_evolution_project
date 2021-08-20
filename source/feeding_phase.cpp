@@ -17,7 +17,6 @@ void FeedingPhase::set_next_phase() {
 
 FeedingPhase::FeedingPhase(Game &game_)
     : game(game_), food_balance(define_food_balance()), cur_player_index(0) {
-    end_turn.resize(game.get_players().size(), 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -120,4 +119,18 @@ Game const &FeedingPhase::get_game() {
 }
 Player &FeedingPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
+}
+void FeedingPhase::run_phase_with_bot(GameWindow &window) {
+    game.get_bot()->make_move(game);
+    if (game.get_players_ended_turn() == game.get_players().size()) {
+        kill_animals();
+        set_next_phase();
+        window.recalc_animals();
+        return;
+    }
+    cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    while (game.get_players()[cur_player_index].get_ended_turn()) {
+        cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    }
+    window.change_player();
 }

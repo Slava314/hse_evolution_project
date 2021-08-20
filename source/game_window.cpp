@@ -36,23 +36,37 @@ int calc_player(int current, int other) {
 
 std::unique_ptr<Window> GameWindow::handle_events() {
     while (window.isOpen()) {
-        sf::Event event{};
-        if (window.waitEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-                return nullptr;
-            }
-            if (game.get_phase()) {
-                game.get_phase()->run_phase(*this, event);
-                if (game.get_end_game() == 2) {
-                    window.close();
-                    return std::make_unique<EndGameWindow>(std::move(game));
-                }
+        if (game.get_phase()) {
+            if (game.get_players()[game.get_phase()->get_cur_player_index()].get_is_bot()) {
+                game.get_phase()->run_phase_with_bot(*this);
             } else {
-                break;
+                sf::Event event{};
+                if (window.waitEvent(event)) {
+                    if (event.type == sf::Event::Closed) {
+                        window.close();
+                        return nullptr;
+                    }
+                    if (game.get_phase()) {
+                        game.get_phase()->run_phase(*this, event);
+                        if (game.get_end_game() == 2) {
+                            window.close();
+                            return std::make_unique<EndGameWindow>(std::move(game));
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            draw();
+        } else {
+            sf::Event event{};
+            if (window.waitEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                    return nullptr;
+                }
             }
         }
-        draw();
     }
     assert(false);
 }

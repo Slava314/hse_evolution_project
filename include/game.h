@@ -65,7 +65,7 @@ private:
     //    user::UserService::Stub stub_;
     int end_of_game = 0;
     int players_ended_turn = 0;
-    std::unique_ptr<Bot> bot;
+    std::unique_ptr<Bot> bot = std::make_unique<Bot>();
     std::unique_ptr<Log> log = std::make_unique<Log>();
 };
 
