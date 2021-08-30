@@ -231,6 +231,7 @@ private:
     TextField number_of_cards_field;
     TextField number_of_players_field;
     TextField seconds_for_turn_field;
+    TextField number_of_bots_field;
     TextButton start_button;
     Settings settings;
 
@@ -256,8 +257,10 @@ public:
 private:
     TextField number_of_cards_field;
     TextField number_of_players_field;
+    TextField number_of_bots_field;
     TextField seconds_for_turn_field;
     std::size_t number_of_players = 0;
+    std::size_t number_of_bots = 0;
     std::vector<TextField> players_names;
     TextField field_for_number_of_players;
     TextButton start_button;

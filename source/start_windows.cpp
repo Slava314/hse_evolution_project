@@ -231,16 +231,19 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                         check_text_field(room_field, window);
                         check_text_field(name_field, window);
                         check_text_field(number_of_players_field, window);
+                        check_text_field(number_of_bots_field, window);
                         check_text_field(number_of_cards_field, window);
                         check_text_field(seconds_for_turn_field, window);
                         if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
                             if (room_field.get_text() != "" && name_field.get_text() != "" &&
                                 number_of_players_field.get_text() != "" &&
+                                number_of_bots_field.get_text() != "" &&
                                 number_of_cards_field.get_text() != "" &&
                                 seconds_for_turn_field.get_text() != "" &&
                                 already_initialized == false) {
                                 settings = Settings(room_field.get_text(),
                                                     std::stoi(number_of_players_field.get_text()),
+                                                    std::stoi(number_of_bots_field.get_text()),
                                                     std::stoi(number_of_cards_field.get_text()),
                                                     std::stoi(seconds_for_turn_field.get_text()));
                                 //                                game(settings);
@@ -296,6 +299,7 @@ std::unique_ptr<Window> MakeGameWindow::handle_events() {
                     name_field.handle_input(event);
                     number_of_cards_field.handle_input(event);
                     number_of_players_field.handle_input(event);
+                    number_of_bots_field.handle_input(event);
                     seconds_for_turn_field.handle_input(event);
                     break;
                 default:
@@ -325,6 +329,12 @@ void MakeGameWindow::init_window() {
     number_of_players_field.set_position(
         sf::Vector2f((window.getSize().x - 3 * name_field.get_size().x) / 2.0 - 2 * FREE_SPACE,
                      (window.getSize().y - number_of_players_field.get_size().y) / 2.0));
+
+    number_of_bots_field = TextField(20, font, "0");
+    number_of_bots_field.set_additional_text("Enter number of bots (0-3):");
+    number_of_bots_field.set_position(
+        sf::Vector2f((window.getSize().x - 3 * name_field.get_size().x) / 2.0 - 2 * FREE_SPACE,
+                     (window.getSize().y - number_of_bots_field.get_size().y) / 2.0));
 
     number_of_cards_field = TextField(20, font, "84");
     number_of_cards_field.set_additional_text("Enter number of cards:");
@@ -357,6 +367,7 @@ void MakeGameWindow::draw() {
         name_field.draw(window);
         number_of_cards_field.draw(window);
         number_of_players_field.draw(window);
+        number_of_bots_field.draw(window);
         seconds_for_turn_field.draw(window);
     }
     start_button.draw(window);
@@ -375,18 +386,23 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         if (number_of_players == 0) {
                             check_text_field(number_of_players_field, window);
+                            check_text_field(number_of_bots_field, window);
                             check_text_field(number_of_cards_field, window);
                             check_text_field(seconds_for_turn_field, window);
                             if (start_button.is_clicked(sf::Mouse::getPosition(window))) {
                                 if (number_of_players_field.get_text() != "" &&
+                                    number_of_bots_field.get_text() != "" &&
                                     number_of_cards_field.get_text() != "" &&
                                     seconds_for_turn_field.get_text() != "") {
                                     settings = Settings(
                                         "local", std::stoi(number_of_players_field.get_text()),
+                                        std::stoi(number_of_bots_field.get_text()),
                                         std::stoi(number_of_cards_field.get_text()),
                                         std::stoi(seconds_for_turn_field.get_text()));
                                     number_of_players =
                                         std::stoi(number_of_players_field.get_text());
+                                    number_of_bots =
+                                        std::stoi(number_of_bots_field.get_text());
                                     players_names.resize(number_of_players);
                                     init_window();
                                 }
@@ -419,6 +435,7 @@ std::unique_ptr<Window> StartLocalGameWindow::handle_events() {
                     if (number_of_players == 0) {
                         number_of_cards_field.handle_input(event);
                         number_of_players_field.handle_input(event);
+                        number_of_bots_field.handle_input(event);
                         seconds_for_turn_field.handle_input(event);
                     } else {
                         for (int i = 0; i < number_of_players; ++i) {
@@ -441,20 +458,26 @@ void StartLocalGameWindow::init_window() {
         number_of_players_field = TextField(20, font, "2");
         number_of_players_field.set_additional_text("Enter number of players (2-4):");
         number_of_players_field.set_position(sf::Vector2f(
-            (window.getSize().x - 3 * number_of_players_field.get_size().x) / 2.0 - 2 * FREE_SPACE,
+            (window.getSize().x - 4 * number_of_players_field.get_size().x) / 2.0 - 3 * FREE_SPACE,
             (window.getSize().y - number_of_players_field.get_size().y) / 2.0));
+
+        number_of_bots_field = TextField(20, font, "0");
+        number_of_bots_field.set_additional_text("Enter number of bots (0-3):");
+        number_of_bots_field.set_position(sf::Vector2f(
+            (window.getSize().x - 2 * number_of_bots_field.get_size().x) / 2.0 - FREE_SPACE,
+            (window.getSize().y - number_of_bots_field.get_size().y) / 2.0));
 
         number_of_cards_field = TextField(20, font, "84");
         number_of_cards_field.set_additional_text("Enter number of cards:");
         number_of_cards_field.set_position(
-            sf::Vector2f((window.getSize().x - number_of_cards_field.get_size().x) / 2.0,
+            sf::Vector2f((window.getSize().x) / 2.0 + FREE_SPACE,
                          (window.getSize().y - number_of_cards_field.get_size().y) / 2.0));
 
         seconds_for_turn_field = TextField(20, font, "60");
         seconds_for_turn_field.set_additional_text("Enter time for turn in seconds:");
         seconds_for_turn_field.set_position(
             sf::Vector2f((window.getSize().x - seconds_for_turn_field.get_size().x) / 2.0 +
-                             seconds_for_turn_field.get_size().x + 2 * FREE_SPACE,
+                             1.5 * seconds_for_turn_field.get_size().x + 3 * FREE_SPACE,
                          (window.getSize().y - seconds_for_turn_field.get_size().y) / 2.0));
 
     } else {
@@ -496,6 +519,7 @@ void StartLocalGameWindow::draw() {
     if (number_of_players == 0) {
         number_of_cards_field.draw(window);
         number_of_players_field.draw(window);
+        number_of_bots_field.draw(window);
         seconds_for_turn_field.draw(window);
     }
     start_button.draw(window);

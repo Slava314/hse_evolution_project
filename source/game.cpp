@@ -74,6 +74,9 @@ void Game::apply_settings() {
             }
             players[i].set_name(response_.name());
             settings.set_name_in_players_name(response_.name());
+            for (int i = 0; i < settings.get_quantity_of_bots(); ++i) {
+                players[players.size() - i - 1].set_is_bot(true);
+            }
         }
     } else {
         players.resize(settings.get_quantity_of_players());
@@ -92,11 +95,12 @@ void Game::start_game(Settings settings_) {
     for (int i = 0; i < settings.get_quantity_of_players(); ++i) {
         players.emplace_back(settings.get_player_name(i));
     }
+    for (int i = 0; i < settings.get_quantity_of_bots(); i++) {
+        players[players.size() - i - 1].set_is_bot(true);
+    }
     deck.set_cards_info();
     deck.generate_deck();
     phase = std::make_unique<DevelopmentPhase>(*this);
-
-    //// players[1].set_is_bot(true); //// to play with bot
 }
 
 void Game::start_game() {
