@@ -97,6 +97,7 @@ public:
     bool check_new_animal();
     std::shared_ptr<Card> play_animal(const std::shared_ptr<Animal> &shared_ptr);
     bool check_end_turn();
+    bool check_log_button();
     std::shared_ptr<Animal> check_animals();
     void add_property_to_animal(const std::shared_ptr<Animal> &new_animal);
     std::shared_ptr<Card> const &get_selected_card() const;
@@ -111,6 +112,8 @@ public:
     void show_properties(std::shared_ptr<AnimalButton> animal_button, bool phase);
     void use_property(std::shared_ptr<AnimalButton>, Properties prop);
 
+    void show_actions();
+
     void change_player();
 
 private:
@@ -121,6 +124,7 @@ private:
     sf::Sprite sprite;
 
     TextButton end_turn;
+    TextButton log_button;
     sf::RectangleShape deck_shape;
     sf::Text deck_text;
     sf::Text turn_of;
@@ -293,6 +297,28 @@ private:
     sf::Text leaderboard;
 
     void init_window();
+    void draw() override;
+};
+
+class LogWindow : public Window {
+public:
+    LogWindow(){
+        window.create(sf::VideoMode(800, 800), "Log",
+                      sf::Style::Titlebar | sf::Style::Close);
+        window.setPosition({200, 200});
+        auto fs = cmrc::resources::get_filesystem();
+        auto file = fs.open("times.ttf");
+        std::string str(file.begin(), file.end());
+        font.loadFromMemory(str.data(), str.size());
+    }
+
+    std::unique_ptr<Window> handle_events() override;
+    void init_window(std::unique_ptr<Log> const &log);
+
+    ~LogWindow() override = default;
+
+private:
+    sf::Text actions_text;
     void draw() override;
 };
 #endif  // EVOLUTION_PROJECT_WINDOW_H_

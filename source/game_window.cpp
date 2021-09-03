@@ -46,6 +46,11 @@ std::unique_ptr<Window> GameWindow::handle_events() {
                         window.close();
                         return nullptr;
                     }
+                    //                    if (event.type == sf::Event::MouseButtonPressed &&
+                    //                    event.mouseButton.button == sf::Mouse::Left &&
+                    //                    this->check_log_button()) {
+                    //                        ////LogWindow();
+                    //                    }
                     if (game.get_phase()) {
                         game.get_phase()->run_phase(*this, event);
                         if (game.get_end_game() == 2) {
@@ -99,6 +104,7 @@ void GameWindow::draw() {
     }
 
     end_turn.draw(window);
+    log_button.draw(window);
     window.display();
 }
 
@@ -117,6 +123,11 @@ void GameWindow::init_window() {
     end_turn.set_color(sf::Color(55, 55, 55));
     end_turn.set_text("End turn", font);
     end_turn.set_position({(WINDOW_WIDTH - CARD_WIDTH) / 2.0 + 75, deck_shape.getPosition().y});
+
+    log_button.set_size({150, 40});
+    log_button.set_color(sf::Color(55, 55, 55));
+    log_button.set_text("Log", font);
+    log_button.set_position({(WINDOW_WIDTH - CARD_WIDTH) / 2.0 + 300, deck_shape.getPosition().y});
 
     feed_animal_button.set_size({225, 40});
     feed_animal_button.set_color(sf::Color(55, 55, 55));
@@ -320,6 +331,7 @@ void GameWindow::click_card(const std::shared_ptr<Card> &card) {
             }
         }
         end_turn.deactivate();
+        log_button.deactivate();
     } else {
         for (auto &player_cards_button : player_cards_buttons) {
             player_cards_button.activate();
@@ -336,6 +348,7 @@ void GameWindow::click_card(const std::shared_ptr<Card> &card) {
             }
         }
         end_turn.activate();
+        log_button.activate();
     }
 }
 
@@ -358,6 +371,7 @@ std::shared_ptr<Card> GameWindow::play_animal(const std::shared_ptr<Animal> &ani
         }
     }
     end_turn.activate();
+    log_button.activate();
     return card;
 }
 
@@ -402,6 +416,7 @@ void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
             player_cards_button.activate();
         }
         end_turn.activate();
+        log_button.activate();
     }
 }
 
@@ -565,6 +580,18 @@ void GameWindow::set_players_names_positions() {
     }
 }
 
+void GameWindow::show_actions() {
+    window.setActive(false);
+    LogWindow log_window;
+    log_window.init_window(game.get_log());
+    log_window.handle_events();
+    window.setActive(true);
+}
+
+bool GameWindow::check_log_button() {
+    return log_button.is_clicked(sf::Mouse::getPosition(window));
+}
+
 void PropertyWindow::draw() {
     window.clear();
     for (auto button : properties) {
@@ -618,5 +645,34 @@ Properties PropertyWindow::handle_properties() {
     return Properties::DEFAULT;
 }
 std::unique_ptr<Window> PropertyWindow::handle_events() {
+    return std::unique_ptr<Window>();
+}
+
+void LogWindow::draw() {
+    window.clear();
+    window.draw(actions_text);
+    window.display();
+}
+
+void LogWindow::init_window(const std::unique_ptr<Log> &log) {
+    actions_text.setFont(font);
+    std::string all_actions;
+    for (auto &action : log->get_actions()) {
+        all_actions += action;
+        all_actions += '\n';
+    }
+    actions_text.setString(all_actions);
+}
+
+std::unique_ptr<Window> LogWindow::handle_events() {
+    while (window.isOpen()) {
+        sf::Event event{};
+        if (window.waitEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+        draw();
+    }
     return std::unique_ptr<Window>();
 }

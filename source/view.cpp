@@ -95,6 +95,10 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             window.show_properties(clicked_property_animal, false);
             return 0;
         }
+        if (window.check_log_button()) {
+            window.show_actions();
+            return 0;
+        }
         if (const auto &clicked_card = window.get_clicked_card(); clicked_card != nullptr) {
             window.click_card(clicked_card);
             return 0;
@@ -132,6 +136,10 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
             window.show_properties(clicked_property_animal, true);
             return 0;
         }
+        if (window.check_log_button()) {
+            window.show_actions();
+            return 0;
+        }
         if (window.check_food()) {
             window.click_food();
             return 0;
@@ -147,6 +155,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
     }
     return 0;
 }
+
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();
     window.recalc_cards();
