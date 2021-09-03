@@ -48,7 +48,6 @@ public:
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     void run_phase(GameWindow &window, sf::Event event) override;
     void parse_message(const std::string &str);
-    ~DevelopmentPhase() override = default;
     std::string get_name() const override;
     ~DevelopmentPhase() override = default;
 
