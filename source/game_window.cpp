@@ -302,7 +302,7 @@ sf::RenderWindow &GameWindow::get_window() {
 std::shared_ptr<Card> GameWindow::get_clicked_card() {
     for (auto &player_cards_button : player_cards_buttons) {
         if (player_cards_button.is_clicked(sf::Mouse::getPosition(window))) {
-            if (!selected_card) {
+            if (selected_card == nullptr) {
                 selected_card = player_cards_button.get_object();
             } else {
                 selected_card = nullptr;
@@ -313,7 +313,7 @@ std::shared_ptr<Card> GameWindow::get_clicked_card() {
     return nullptr;
 }
 void GameWindow::click_card(const std::shared_ptr<Card> &card) {
-    if (selected_card == card) {
+    if (selected_card != card) {
         for (auto &player_cards_button : player_cards_buttons) {
             if (card != player_cards_button.get_object()) {
                 player_cards_button.deactivate();

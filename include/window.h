@@ -71,8 +71,8 @@ public:
         std::string str(file.begin(), file.end());
         font.loadFromMemory(str.data(), str.size());
         file = fs.open("card.png");
-        str = std::string(file.begin(), file.end());
-        card_texture.loadFromMemory(str.data(), str.size());
+        std::string str1 = std::string(file.begin(), file.end());
+        card_texture.loadFromMemory(str1.data(), str1.size());
         card_texture.setSmooth(true);
         sprite.setTexture(card_texture);
         sprite.setScale(CARD_WIDTH / sprite.getGlobalBounds().width,
@@ -303,7 +303,7 @@ private:
 class LogWindow : public Window {
 public:
     LogWindow(){
-        window.create(sf::VideoMode(800, 800), "Log",
+        window.create(sf::VideoMode(800, 1500), "Log",
                       sf::Style::Titlebar | sf::Style::Close);
         window.setPosition({200, 200});
         auto fs = cmrc::resources::get_filesystem();
