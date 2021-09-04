@@ -108,9 +108,9 @@ int DevelopmentPhaseView::handle_event(GameWindow &window, const sf::Event &even
             phase.get_game().get_log()->add_action_new_animal(phase.get_cur_player().get_name());
             return 1;
         }
-        if (const auto &clicked_animal = window.check_animals(); clicked_animal != nullptr) {
-            add_property(clicked_animal, window);
+        if (const auto &clicked_animal = window.check_animals(); window.get_selected_card() != nullptr && clicked_animal != nullptr) {
             phase.get_game().get_log()->add_action_new_property(phase.get_cur_player().get_name(), window.get_selected_card()->property);
+            add_property(clicked_animal, window);
             return 1;
         }
     }

@@ -121,7 +121,7 @@ Player &FeedingPhase::get_cur_player() {
     return game.get_players()[game.get_cur_player_index()];
 }
 void FeedingPhase::run_phase_with_bot(GameWindow &window) {
-    game.get_bot()->make_move(game);
+    game.get_bot()->make_move(game, window);
     if (game.get_players_ended_turn() == game.get_players().size()) {
         kill_animals();
         set_next_phase();

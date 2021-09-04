@@ -155,23 +155,6 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
             cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
-    } else {
-        int ans = get_view()->handle_event(window, event);
-        if (ans != 0) {
-            if (ans == 2) {
-                game.get_players()[cur_player_index].set_ended_turn(true);
-                game.set_players_ended_turn(game.get_players_ended_turn() + 1);
-                if (game.get_players_ended_turn() == game.get_players().size()) {
-                    set_next_phase();
-                    return;
-                }
-            }
-            cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            while (game.get_players()[cur_player_index].get_ended_turn()) {
-                cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            }
-            window.change_player();
-        }
     }
 }
 
@@ -190,7 +173,7 @@ Game const &DevelopmentPhase::get_game() {
     return game;
 }
 void DevelopmentPhase::run_phase_with_bot(GameWindow &window) {
-    game.get_bot()->make_move(game);
+    game.get_bot()->make_move(game, window);
     if (game.get_players_ended_turn() == game.get_players().size()) {
         set_next_phase();
         return;

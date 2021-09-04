@@ -39,6 +39,7 @@ std::unique_ptr<Window> GameWindow::handle_events() {
         if (game.get_phase()) {
             if (game.get_players()[game.get_phase()->get_cur_player_index()].get_is_bot()) {
                 game.get_phase()->run_phase_with_bot(*this);
+                draw();
             } else {
                 sf::Event event{};
                 if (window.waitEvent(event)) {
@@ -46,11 +47,6 @@ std::unique_ptr<Window> GameWindow::handle_events() {
                         window.close();
                         return nullptr;
                     }
-                    //                    if (event.type == sf::Event::MouseButtonPressed &&
-                    //                    event.mouseButton.button == sf::Mouse::Left &&
-                    //                    this->check_log_button()) {
-                    //                        ////LogWindow();
-                    //                    }
                     if (game.get_phase()) {
                         game.get_phase()->run_phase(*this, event);
                         if (game.get_end_game() == 2) {
@@ -313,7 +309,7 @@ std::shared_ptr<Card> GameWindow::get_clicked_card() {
     return nullptr;
 }
 void GameWindow::click_card(const std::shared_ptr<Card> &card) {
-    if (selected_card != card) {
+    if (selected_card == card) {
         for (auto &player_cards_button : player_cards_buttons) {
             if (card != player_cards_button.get_object()) {
                 player_cards_button.deactivate();
@@ -387,7 +383,7 @@ std::shared_ptr<Animal> GameWindow::check_animals() {
     return nullptr;
 }
 void GameWindow::add_property_to_animal(const std::shared_ptr<Animal> &animal) {
-    if (selected_card != nullptr) {
+    if (selected_card != nullptr || game.get_players()[game.get_cur_player_index()].get_is_bot()) {
         if (int index = find_in_card_buttons(selected_card, player_cards_buttons); index >= 0) {
             player_cards_buttons.erase(std::next(player_cards_buttons.begin(), index));
         }

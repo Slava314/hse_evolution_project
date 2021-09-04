@@ -1,18 +1,19 @@
 #include "bot.h"
 #include "game.h"
+#include "window.h"
 
-void Bot::make_move(Game &game) {
+void Bot::make_move(Game &game, GameWindow &window) {
     sleep(1);  //// bot is thinking :)
     if (game.get_phase()->get_name() == "DevelopmentPhase") {
-        make_move_in_dev_phase(game);
+        make_move_in_dev_phase(game, window);
     } else if (game.get_phase()->get_name() == "FeedingPhase") {
-        make_move_in_feed_phase(game);
+        make_move_in_feed_phase(game, window);
     } else {
         return;
     }
 }
 
-void Bot::make_move_in_dev_phase(Game &game) {
+void Bot::make_move_in_dev_phase(Game &game, GameWindow &window) {
     if (get_bot_player(game).get_cards_in_hands().empty()) {
         end_turn(game);
         return;
@@ -34,13 +35,12 @@ void Bot::make_move_in_dev_phase(Game &game) {
         if (!has_defending_property) {
             for (auto card : get_bot_player(game).get_cards_in_hands()) {
                 if (is_defending_property[card->property]) {
-                    play_card_as_property(game, card, animal);
+                    play_card_as_property(game, card, animal, window);
                     return;
                 }
             }
             if (random_num(0, 1) == 0) {
-                dynamic_cast<DevelopmentPhase *>(game.get_phase().get())
-                    ->give_property_to_animal(get_bot_player(game).get_cards_in_hands()[0], animal);
+                play_card_as_property(game, get_bot_player(game).get_cards_in_hands()[0], animal, window);
                 return;
             }
         }
@@ -48,15 +48,11 @@ void Bot::make_move_in_dev_phase(Game &game) {
 
     if (get_bot_player(game).get_cards_in_hands().size() == 1) {
         if (get_bot_player(game).get_animals_on_board().empty()) {
-            auto new_animal = std::make_shared<Animal>(get_bot_player(game));
-            dynamic_cast<DevelopmentPhase *>(game.get_phase().get())
-                ->add_animal(get_bot_player(game).get_cards_in_hands()[0], new_animal);
+            play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0], window);
             return;
         } else {
             if (random_num(0, 1) == 0) {
-                auto new_animal = std::make_shared<Animal>(get_bot_player(game));
-                dynamic_cast<DevelopmentPhase *>(game.get_phase().get())
-                    ->add_animal(get_bot_player(game).get_cards_in_hands()[0], new_animal);
+                play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0], window);
             } else {
                 end_turn(game);
                 return;
@@ -72,18 +68,18 @@ void Bot::make_move_in_dev_phase(Game &game) {
         if (has_defending_property_card) {
             for (auto card : get_bot_player(game).get_cards_in_hands()) {
                 if (!is_defending_property[card->property]) {
-                    play_card_as_animal(game, card);
+                    play_card_as_animal(game, card, window);
                     return;
                 }
             }
-            play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0]);
+            play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0], window);
             return;
         } else if (get_bot_player(game).get_animals_on_board().empty()) {
-            play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0]);
+            play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0], window);
             return;
         } else {
             if (random_num(0, 1) == 0) {
-                play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0]);
+                play_card_as_animal(game, get_bot_player(game).get_cards_in_hands()[0], window);
                 return;
             } else {
                 end_turn(game);
@@ -93,7 +89,7 @@ void Bot::make_move_in_dev_phase(Game &game) {
     }
 }
 
-void Bot::make_move_in_feed_phase(Game &game) {
+void Bot::make_move_in_feed_phase(Game &game, GameWindow &window) {
     bool has_hungry_animal = false;
     bool has_animal_with_stomper = false;
     for (auto animal : get_bot_player(game).get_animals_on_board()) {
@@ -135,7 +131,9 @@ void Bot::make_move_in_feed_phase(Game &game) {
     } else {
         for (auto animal : get_bot_player(game).get_animals_on_board()) {
             if (animal->is_hungry()) {
+
                 dynamic_cast<FeedingPhase *>(game.get_phase().get())->feed_animal(animal);
+                window.feed_animal(animal);
                 game.get_log()->add_action_feeding(get_bot_player(game).get_name());
                 return;
             }
@@ -153,17 +151,18 @@ void Bot::make_move_in_feed_phase(Game &game) {
     }
 }
 
-void Bot::play_card_as_animal(Game &game, const std::shared_ptr<Card> &card) {
+void Bot::play_card_as_animal(Game &game, const std::shared_ptr<Card> &card, GameWindow &window) {
     auto new_animal = std::make_shared<Animal>(get_bot_player(game));
-    dynamic_cast<DevelopmentPhase *>(game.get_phase().get())
-        ->add_animal(get_bot_player(game).get_cards_in_hands()[0], new_animal);
+    dynamic_cast<DevelopmentPhase *>(game.get_phase().get())->add_animal(card, new_animal);
+    window.play_animal(new_animal);
     game.get_log()->add_action_new_animal(get_bot_player(game).get_name());
 }
 
 void Bot::play_card_as_property(Game &game,
                                 const std::shared_ptr<Card> &card,
-                                const std::shared_ptr<Animal> &animal) {
+                                const std::shared_ptr<Animal> &animal, GameWindow &window) {
     dynamic_cast<DevelopmentPhase *>(game.get_phase().get())->give_property_to_animal(card, animal);
+    window.add_property_to_animal(animal);
     game.get_log()->add_action_new_property(get_bot_player(game).get_name(), card->property);
 }
 
