@@ -43,6 +43,9 @@ void Settings::print_all()const {
 int Settings::get_quantity_of_players() const {
     return quantity_of_players;
 }
+int Settings::get_quantity_of_bots() const {
+    return quantity_of_bots;
+}
 int Settings::get_size_of_deck() const {
     return size_of_deck;
 }

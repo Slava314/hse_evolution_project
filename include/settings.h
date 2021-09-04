@@ -12,21 +12,22 @@ public:
     //TODO - resize player_names with valid quantity
     // constructor for window_settings
     Settings(const std::string &room_name_,
-             const int &quantity_,
+             const int &quantity_of_players_,
+             const int &quantity_of_bots_,
              const int &size_deck_,
              const int &time_)
-        : quantity_of_players(quantity_), size_of_deck(size_deck_), time_of_move(time_), seed(random()), total_players(1) {
+        : quantity_of_players(quantity_of_players_), quantity_of_bots(quantity_of_bots_), size_of_deck(size_deck_), time_of_move(time_), seed(random()), total_players(1) {
         players_names.resize(quantity_of_players);
     }
 
-    Settings(int quantity_,
+    Settings(int quantity_of_players_,
              int size_deck_,
              int time_,
              int local_,
              int seed_,
              int total_,
              std::string room_id_)
-        : quantity_of_players(quantity_),
+        : quantity_of_players(quantity_of_players_),
           size_of_deck(size_deck_),
           time_of_move(time_),
           local_player(local_),
@@ -36,6 +37,7 @@ public:
     }
 
     int get_quantity_of_players() const;
+    int get_quantity_of_bots() const;
     int get_size_of_deck() const;
     int get_time_of_move() const;
     int get_local_player() const;
@@ -55,6 +57,7 @@ public:
     void print_all() const;
 private:
     int quantity_of_players;
+    int quantity_of_bots;
     int size_of_deck;
     int time_of_move;
     int local_player = 0;

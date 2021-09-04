@@ -20,7 +20,11 @@
     if (i == 8)
         return "CAMOUFLAGE";
     if (i == 9)
-        return "SHARP_VISION";
+        return "SHARP VISION";
+    if (i == 10)
+        return "MIMICRY";
+    if (i == 11)
+        return "TAIL LOSS";
     return "NOT VALID";
 }
 

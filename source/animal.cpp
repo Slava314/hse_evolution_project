@@ -15,22 +15,22 @@ void Animal::set_property_is_used(Properties property, bool value) {
     property_is_used[property] = value;
 }
 bool Animal::can_use_property(Properties property) {
-    return !property_is_used[property];
+    return (!property_is_used[property]);
 }
-void Animal::use_property(Properties properties, FeedingPhase &phase) {
-    if (can_use_property(properties)) {
-        switch (properties) {
+void Animal::use_property(Properties property, FeedingPhase &phase) {
+    if (can_use_property(property)) {
+        switch (property) {
             case Properties::DEFAULT:
                 break;
             case Properties::FAT_TISSUE:
                 increase_owning_food();
-                property_is_used[properties] = true;
+                property_is_used[property] = true;
                 break;
             case Properties::BIG:
                 break;
             case Properties::STOMPER:
                 phase.decrease_food_balance();
-                property_is_used[properties] = true;
+                property_is_used[property] = true;
                 break;
             case Properties::CARNIVOROUS:
                 break;

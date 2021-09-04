@@ -27,25 +27,26 @@ void Deck::generate_deck() {
                 case Properties::SWIMMINGS:
                     deck_of_cards.push_back(
                         std::make_shared<Swimmings>(Properties(Properties::SWIMMINGS)));
+                    break;
                 case Properties::TAIL_LOSS:
                     deck_of_cards.push_back(
                         std::make_shared<TailLoss>(Properties(Properties::TAIL_LOSS)));
                     break;
                 case Properties::CARNIVOROUS:
                     deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::CARNIVOROUS)));
+                        std::make_shared<Carnivorous>(Properties(Properties::CARNIVOROUS)));
                     break;
                 case Properties::BURROWING:
                     deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::BURROWING)));
+                        std::make_shared<Burrowing>(Properties(Properties::BURROWING)));
                     break;
                 case Properties::CAMOUFLAGE:
                     deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::CAMOUFLAGE)));
+                        std::make_shared<Camouflage>(Properties(Properties::CAMOUFLAGE)));
                     break;
                 case Properties::SHARP_VISION:
                     deck_of_cards.push_back(
-                        std::make_shared<Stomper>(Properties(Properties::SHARP_VISION)));
+                        std::make_shared<SharpVision>(Properties(Properties::SHARP_VISION)));
                     break;
                 default:
                     continue;

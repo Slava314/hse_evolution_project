@@ -38,6 +38,10 @@ public:
     std::size_t count_result() const;
     const std::string &get_name() const;
     std::size_t get_reset() const;
+    bool get_ended_turn() const;
+    void set_ended_turn(bool value);
+    bool get_is_bot() const;
+    void set_is_bot(bool value);
 
 private:
     void erase_card_from_hands(const std::shared_ptr<Card> &which_card);
@@ -47,6 +51,9 @@ private:
     std::string name;
     std::size_t reset = 0;
     bool chose_to_end_phase = false;
+    int uniq_id;  // server will identify player with this id
+    bool ended_turn = false;
+    bool is_bot = false;
 };
 
 #endif  // EVOLUTION_PROJECT_INCLUDE_PLAYER_H_

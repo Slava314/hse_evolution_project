@@ -129,3 +129,15 @@ const std::string &Player::get_name() const {
 std::size_t Player::get_reset() const {
     return reset;
 }
+bool Player::get_ended_turn() const {
+    return ended_turn;
+}
+void Player::set_ended_turn(bool value) {
+    ended_turn = value;
+}
+bool Player::get_is_bot() const {
+    return is_bot;
+}
+void Player::set_is_bot(bool value) {
+    is_bot = value;
+}

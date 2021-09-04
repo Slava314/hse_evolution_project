@@ -8,12 +8,15 @@ std::unique_ptr<View> FeedingPhase::get_view() {
 }
 
 void FeedingPhase::set_next_phase() {
+    game.set_players_ended_turn(0);
+    for (auto &player : game.get_players()) {
+        player.set_ended_turn(false);
+    }
     game.set_phase(std::make_unique<DevelopmentPhase>(game));
 }
 
 FeedingPhase::FeedingPhase(Game &game_)
     : game(game_), food_balance(define_food_balance()), cur_player_index(0) {
-    end_turn.resize(game.get_players().size(), 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -44,7 +47,7 @@ bool FeedingPhase::is_end_of_phase() const {
 void FeedingPhase::attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim) {
     if (attacker->can_use_property(Properties::CARNIVOROUS)) {
         if (victim->get_properties().find(Properties::RUNNING) != victim->get_properties().end()) {
-            int dice = rand() % 7;
+            int dice = rand() % 6 + 1;
             if (dice <= 3) {
                 return;
             }
@@ -59,6 +62,7 @@ void FeedingPhase::attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Anim
         throw std::logic_error("THIS ANIMAL HAD ALREADY ATTACKED IN THIS PHASE");
     }
 }
+
 void FeedingPhase::kill_animals() {
     for (auto &player : game.get_players()) {
         for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
@@ -70,15 +74,6 @@ void FeedingPhase::kill_animals() {
             }
         }
     }
-
-    //    for (int i = 0; i < player.get_animals_on_board().size(); ++i) {
-    //        if (player.get_animals_on_board()[i]->is_hungry()) {
-    //            player.handle_animal_death(player.get_animals_on_board()[i]);
-    //            i--;
-    //        }else{
-    //            player.get_animals_on_board()[i]->set_owning_food(0);
-    //        }
-    //    }
 }
 
 size_t FeedingPhase::get_food_balance() const {
@@ -92,12 +87,13 @@ void FeedingPhase::set_start_of_phase(bool start) {
 }
 void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
     // TODO check auto end turn
+
     int ans = get_view()->handle_event(window, event);
     if (ans != 0) {
         if (ans == 2) {
-            end_turn[cur_player_index] = 1;
-            sum += 1;
-            if (sum == game.get_players().size()) {
+            game.get_players()[cur_player_index].set_ended_turn(true);
+            game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+            if (game.get_players_ended_turn() == game.get_players().size()) {
                 kill_animals();
                 set_next_phase();
                 window.recalc_animals();
@@ -105,7 +101,7 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
             }
         }
         cur_player_index = (cur_player_index + 1) % game.get_players().size();
-        while (end_turn[cur_player_index] == 1) {
+        while (game.get_players()[cur_player_index].get_ended_turn()) {
             cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
@@ -114,6 +110,27 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
 std::size_t FeedingPhase::get_cur_player_index() const {
     return cur_player_index;
 }
-Game const& FeedingPhase::get_game() {
+
+std::string FeedingPhase::get_name() const {
+    return "FeedingPhase";
+}
+Game const &FeedingPhase::get_game() {
     return game;
+}
+Player &FeedingPhase::get_cur_player() {
+    return game.get_players()[game.get_cur_player_index()];
+}
+void FeedingPhase::run_phase_with_bot(GameWindow &window) {
+    game.get_bot()->make_move(game, window);
+    if (game.get_players_ended_turn() == game.get_players().size()) {
+        kill_animals();
+        set_next_phase();
+        window.recalc_animals();
+        return;
+    }
+    cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    while (game.get_players()[cur_player_index].get_ended_turn()) {
+        cur_player_index = (cur_player_index + 1) % game.get_players().size();
+    }
+    window.change_player();
 }

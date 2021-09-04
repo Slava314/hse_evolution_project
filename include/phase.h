@@ -20,6 +20,8 @@ public:
     virtual std::unique_ptr<View> get_view() = 0;
     virtual std::size_t get_cur_player_index() const = 0;
     virtual void run_phase(GameWindow &window, sf::Event event) = 0;
+    virtual void run_phase_with_bot(GameWindow &window) = 0;
+    virtual std::string get_name() const = 0;
     virtual ~Phase() = default;
 
     const int INTERVAL = 100;
@@ -46,17 +48,16 @@ public:
 
     std::vector<std::vector<std::shared_ptr<Card>>> get_cards();
     void run_phase(GameWindow &window, sf::Event event) override;
+    void run_phase_with_bot(GameWindow &window) override;
+    std::string get_name() const override;
     void parse_message(const std::string &str);
-
-        ~DevelopmentPhase() override = default;
+    ~DevelopmentPhase() override = default;
 
 private:
 //    void add_animal();
 private:
     Game &game;
     int cur_player_index;
-    std::vector<int> end_turn;
-    int sum = 0;
     bool start_of_phase = true;
 };
 
@@ -74,11 +75,15 @@ public:
     void kill_animals();
 
     Game const & get_game();
+    Player &get_cur_player();
 
     void decrease_food_balance();
     size_t get_food_balance() const;
     void feed_animal(std::shared_ptr<Animal> animal);
     void run_phase(GameWindow &window, sf::Event event) override;
+    void run_phase_with_bot(GameWindow &window) override;
+    std::string get_name() const override;
+    void attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim);
 
     ~FeedingPhase() override = default;
 
@@ -86,14 +91,10 @@ private:
     static constexpr size_t MIN_FOOD_BALANCE = 3;
     static constexpr size_t MAX_FOOD_BALANCE = 10;
     static size_t define_food_balance();
-    int cur_player_index;
-    std::vector<int> end_turn;
-    int sum = 0;
-
     Game &game;
     size_t food_balance = 0;
+    int cur_player_index;
     bool start_of_phase = true;
-    void attack(std::shared_ptr<Animal> attacker, std::shared_ptr<Animal> victim);
 };
 
 #endif  // EVOLUTION_PROJECT_SOURCE_PHASE_H_
