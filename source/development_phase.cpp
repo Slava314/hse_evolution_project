@@ -155,28 +155,28 @@ void DevelopmentPhase::run_phase(GameWindow &window, sf::Event event) {
             cur_player_index = (cur_player_index + 1) % game.get_players().size();
         }
         window.change_player();
-    } else {
-        int ans = get_view()->handle_event(window, event);
-        if (ans != 0) {
-            if (ans == 2) {
-                game.get_players()[cur_player_index].set_ended_turn(true);
-                game.set_players_ended_turn(game.get_players_ended_turn() + 1);
-                if (game.get_players_ended_turn() == game.get_players().size()) {
-                    set_next_phase();
-                    return;
-                }
-            }
-            cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            while (game.get_players()[cur_player_index].get_ended_turn()) {
-                cur_player_index = (cur_player_index + 1) % game.get_players().size();
-            }
-            window.change_player();
-        }
     }
+//    else {
+//        int ans = get_view()->handle_event(window, event);
+//        if (ans != 0) {
+//            if (ans == 2) {
+//                game.get_players()[cur_player_index].set_ended_turn(true);
+//                game.set_players_ended_turn(game.get_players_ended_turn() + 1);
+//                if (game.get_players_ended_turn() == game.get_players().size()) {
+//                    set_next_phase();
+//                    return;
+//                }
+//            }
+//            cur_player_index = (cur_player_index + 1) % game.get_players().size();
+//            while (game.get_players()[cur_player_index].get_ended_turn()) {
+//                cur_player_index = (cur_player_index + 1) % game.get_players().size();
+//            }
+//            window.change_player();
+//        }
+//    }
 }
 
 DevelopmentPhase::DevelopmentPhase(::Game &game_) : game(game_), cur_player_index(0) {
-    end_turn.resize(game.get_players().size(), 0);
 }
 std::size_t DevelopmentPhase::get_cur_player_index() const {
     return cur_player_index;

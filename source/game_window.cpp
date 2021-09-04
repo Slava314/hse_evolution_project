@@ -279,7 +279,8 @@ std::shared_ptr<Card> GameWindow::get_clicked_card() {
         if (player_cards_button.is_clicked(sf::Mouse::getPosition(window))) {
             if (!selected_card) {
                 selected_card = player_cards_button.get_object();
-            } else {
+            }
+            else {
                 selected_card = nullptr;
             }
             return player_cards_button.get_object();

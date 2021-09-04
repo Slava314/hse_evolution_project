@@ -139,7 +139,7 @@ int FeedingPhaseView::handle_event(GameWindow &window, const sf::Event &event) c
             }
         }
     }
-    return -1;
+    return 0;
 }
 void FeedingPhaseView::start_feeding_phase(GameWindow &window) const {
     window.make_food();

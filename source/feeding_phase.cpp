@@ -17,7 +17,6 @@ void FeedingPhase::set_next_phase() {
 
 FeedingPhase::FeedingPhase(Game &game_)
     : game(game_), food_balance(define_food_balance()), cur_player_index(0) {
-    end_turn.resize(game.get_players().size(), 0);
 }
 
 size_t FeedingPhase::define_food_balance() {
@@ -102,7 +101,8 @@ void FeedingPhase::run_phase(GameWindow &window, sf::Event event) {
         }
         window.change_player();
     } else {
-        int ans = get_view()->handle_event(window, event);
+        static int ans = -1;
+        ans = get_view()->handle_event(window, event);
         if (ans != 0) {
             if (ans == 2) {
                 game.get_players()[cur_player_index].set_ended_turn(true);

@@ -56,7 +56,6 @@ private:
 private:
     Game &game;
     int cur_player_index;
-    std::vector<int> end_turn;
     int sum = 0;
     bool start_of_phase = true;
 };
@@ -92,7 +91,6 @@ private:
     Game &game;
     size_t food_balance = 0;
     int cur_player_index;
-    std::vector<int> end_turn;
     int sum = 0;
     bool start_of_phase = true;
 };
